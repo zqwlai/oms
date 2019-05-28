@@ -1,0 +1,5 @@
+*/migrations
+*.pyc
+*.o
+*.swp
+*.swo
