@@ -83,7 +83,7 @@ for ip in ip_list:
         values = i['Values'] 
         status = 0
         if values:
-            if values[0]['value'] 
+            if values[0]['value']: 
                 if values[0]['value'] == 1:
                     status = 1
                 else:
