@@ -26,7 +26,7 @@ falcon_sig = settings.falcon_sig
 port_listen_key = settings.port_listen_key
 
 end_time = int(time.time()) # 必须要整形
-start_time = end_time - 120 # 2分钟    #如果本地的服务器时间大于标准时间，可能会取一个未来时间的值，这个当然会取不到，所以取2分钟之前的数据
+start_time = end_time - 70 # 70s 如果本地的服务器时间大于标准时间，可能会取一个未来时间的值，这个当然会取不到，所以取比1分钟稍大的一个值
 directiry="/api/v1/graph/history"
 
 
