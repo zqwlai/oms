@@ -81,13 +81,13 @@ for ip in ip_list:
         counter = i['counter'] 
         port = counter.split('=')[1]
         values = i['Values'] 
+        status = 0
         if values:
-            if values[0]['value'] == 1:
-                status = 1
-            else:
-                status = 2
-        else:
-            status = 0
+            if values[0]['value'] 
+                if values[0]['value'] == 1:
+                    status = 1
+                else:
+                    status = 2
 
         #将状态更新到数据库
         Service.objects.filter(Fhost=endpoint, Fport=port).update(Fstatus=status,Fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
