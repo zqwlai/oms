@@ -4,6 +4,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class OmsUser(AbstractUser):
-    phone = models.IntegerField(default=0)
+    cname = models.CharField(db_column='cname', max_length=20)
+    phone = models.CharField(default='',max_length=20)
     class Meta:
         db_table = 'oms_user'
+
+

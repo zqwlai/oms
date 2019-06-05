@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="ibox ">
+    <div class="ibox-title">
+        <h5>服务信息表</h5></div>
+    <div class="ibox-content m-b-sm border-bottom">
+        <div class="panel-body" style="padding-bottom:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div>
+                            <label class="control-label col-sm-1" style="text-align:left">集群</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="Fcluster" name="Fcluster">
+                            </div>
+                            <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="Fhost" name="Fhost"></div>
+                            <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="Fname" name="Fname"></div>
+                            <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="Fport" name="Fport"></div>
+                        </div>
+                        <div>
+                            <div class="col-sm-1" style="text-align:left;">
+                                <button type="button" id="btn_query" class="btn btn-primary" onclick="ReloadTable()">查询</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <table id="table" class="table table-hover"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+
+$('.chosen-select').chosen({width: "100%"});
+
+
+
+$(function () {
+	//初始化业务逻辑script
+   InitTable();
+})
+
+function InitTable(){
+    $('#table').bootstrapTable({
+        url: '/service/query_status',              //请求后台的URL（*）
+        method: 'GET',                      //请求方式（*）
+        toolbar: '#toolbar',              //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: true,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+        pageSize: 20,                       //每页的记录行数（*）
+        pageList: [20, 50, 100],        //可供选择的每页的行数（*）
+        search: false,                      //是否显示表格搜索
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列（选择显示的列）
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: true,                //是否启用点击选中行
+        //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        showToggle: true,                   //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                  //是否显示父子表
+        //得到查询的参数
+        queryParams : function (params) {
+            //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+            var temp = {
+                limit: params.limit,                         //页面大小
+                page: (params.offset / params.limit) + 1,   //页码
+                sort: params.sort,      //排序列名
+                sortOrder: params.order, //排位命令（desc，asc）
+                Fhost: $("#Fhost").val(),
+                Fname: $("#Fname").val(),
+                Fport: $("#Fport").val(),
+                Fcluster: $("#Fcluster").val()
+            };
+            return temp;
+        },
+        columns: [{
+            field: 'Fcluster',
+            title: '所属集群',
+            sortable: false
+        }, {
+            field: 'Fhost',
+            title: '机器IP',
+        }, {
+            field: 'Fname',
+            title: '服务名',
+        },{
+            field: 'Fport',
+            title: '端口号'
+        }, {
+            field: 'Fdesc',
+            title: '服务描述'
+        }, {
+            field: 'Fcreate_time',
+            title: '创建时间',
+            sortable: true
+        }, {
+            field: 'Fid',
+            title: '端口状态',
+            formatter: actionFormatter,
+            align: 'center'
+        },
+
+        ],
+        onLoadSuccess: function () {
+        },
+        onLoadError: function () {
+        },
+
+    });
+}
+
+
+function actionFormatter(value, row, index){
+    var id = value;
+            var result = "";
+            if (row.Fstatus ==0){
+                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
+            }
+
+            else if(row.Fstatus ==1){
+                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
+            }
+
+            else{
+                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
+            }
+            return result;
+}
+
+function ReloadTable(){
+    $('#table').bootstrapTable("refresh");
+}
+
+
+
+
+</script>
+{% endblock %}

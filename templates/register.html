@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OMS | 注册</title>
+
+    <link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="{{STATIC_URL}}css/animate.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+
+            <h3>欢迎来到运维管理平台</h3>
+            <form class="m-t" role="form" id="form" method="post" >
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="用户名" >
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="密码" >
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">注册</button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="{{STATIC_URL}}js/jquery-3.1.1.min.js"></script>
+    <script src="{{STATIC_URL}}js/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- Jquery Validate -->
+    <script src="{{STATIC_URL}}js/plugins/validate/jquery.validate.min.js"></script>
+
+
+</body>d
+
+<script>
+$(document).ready(function(){
+    $("#form").validate({
+        rules: {
+            username:{
+                required: true,
+                minlength: 6,
+            },
+
+            password: {
+                required: true,
+                minlength : 6
+            },
+        },
+        messages: {
+            username: {
+                required: '用户名不能为空',
+                minlength : "长度不能小于6个字符",
+            },
+		    password : {
+		        required: '密码不能为空',
+                minlength : "长度不能小于6个字符",
+		    },
+  		},
+        submitHandler: function(form) {
+            $.ajax({
+                type: "POST",
+                url: '/process_register',
+                data: $("#form").serialize(),
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.href="/user/profile"
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+        }
+    });
+});
+
+</script>
+</html>

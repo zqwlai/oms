@@ -1,0 +1,459 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+ <div class="ibox ">
+            <div class="ibox-title">
+                <h5>服务信息表</h5>
+            </div>
+<div class="ibox-content m-b-sm border-bottom">
+
+
+
+    <div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form id="formSearch" class="form-horizontal">
+                <div>
+                    <label class="control-label col-sm-1"  style="text-align:left">集群</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="Fcluster" name="Fcluster">
+                    </div>
+                    <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="Fhost" name="Fhost">
+                    </div>
+                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="Fname" name="Fname">
+                    </div>
+                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="Fport" name="Fport">
+                    </div>
+
+                </div>
+
+                <div>
+                    <div class="col-sm-1" style="text-align:left;">
+                        <button type="button"  id="btn_query" class="btn btn-primary" onclick="ReloadTable()">查询</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+
+                    <table id="table" class="table table-hover" ></table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+ </div>
+<div id="toolbar" class="btn-group">
+            <button id="btn_add" type="button" class="btn btn-default"  data-toggle="modal" data-target="#addModal">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+            </button>
+        <!--
+            <button id="btn_edit" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+            </button>
+            <button id="btn_delete" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+            </button>
+            -->
+        </div>
+
+
+
+<div class="modal inmodal fade" id="addModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新建服务</h4></div>
+            <div class="modal-body">
+                <form  role="form" id="addForm">
+                    <div class="form-group  row">
+                        <label class="col-sm-2 col-form-label">所属集群:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="Fcluster" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group  row">
+                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="Fhost" class="form-control"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务名:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fname"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务端口:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fport"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务描述:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fdesc"></div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button  class="btn btn-primary" type="submit">保存</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal inmodal fade" id="editModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
+                <h4 class="modal-title">更新服务信息</h4></div>
+            <div class="modal-body">
+                <form  role="form" id="editForm">
+                    <div class="form-group  row">
+                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="Fid" id="each_Fid" style="display:none" class="form-control">
+                            <input type="text" name="Fhost" id="each_Fhost" class="form-control"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务名:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fname" id="each_Fname"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务端口:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fport" id="each_Fport"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">服务描述:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Fdesc" id="each_Fdesc"></div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button  class="btn btn-primary" type="submit">保存</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+
+
+{% block script %}
+
+<script>
+
+
+
+jQuery.validator.addMethod("isIP", function(value, element) {
+    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+    return reg.test(value)
+}, "IP地址不合法");
+
+
+jQuery.validator.addMethod("positiveinteger", function(value, element) {
+    var aint=parseInt(value);
+    return aint>0&& (aint+"")==value;
+}, "请输入正整数");
+
+
+
+jQuery.validator.addMethod("needsSelection", function(value, element) {
+        return value
+}, "请选择所属集群");
+
+
+$(function () {
+	//初始化业务逻辑script
+   InitTable();
+})
+
+function InitTable(){
+    $('#table').bootstrapTable({
+        url: '/service/query',              //请求后台的URL（*）
+        method: 'GET',                      //请求方式（*）
+        toolbar: '#toolbar',              //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: true,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+        pageSize: 20,                       //每页的记录行数（*）
+        pageList: [20, 50, 100],        //可供选择的每页的行数（*）
+        search: false,                      //是否显示表格搜索
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列（选择显示的列）
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: true,                //是否启用点击选中行
+        //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        showToggle: true,                   //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                  //是否显示父子表
+        //得到查询的参数
+        queryParams : function (params) {
+            //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+            var temp = {
+                limit: params.limit,                         //页面大小
+                page: (params.offset / params.limit) + 1,   //页码
+                sort: params.sort,      //排序列名
+                sortOrder: params.order, //排位命令（desc，asc）
+                Fhost: $("#Fhost").val(),
+                Fname: $("#Fname").val(),
+                Fport: $("#Fport").val(),
+                Fcluster: $("#Fcluster").val()
+            };
+            return temp;
+        },
+        columns: [{
+            field: 'Fcluster',
+            title: '所属集群',
+            sortable: false
+        }, {
+            field: 'Fhost',
+            title: '机器IP',
+        }, {
+            field: 'Fname',
+            title: '服务名',
+        },{
+            field: 'Fport',
+            title: '端口号'
+        }, {
+            field: 'Fdesc',
+            title: '服务描述'
+        }, {
+            field: 'Fcreate_time',
+            title: '创建时间',
+            sortable: false
+        }, {
+            field: 'Fid',
+            title: '操作',
+            formatter: actionFormatter,
+            align: 'center'
+        },
+
+        ],
+        onLoadSuccess: function () {
+        },
+        onLoadError: function () {
+        },
+
+    });
+}
+
+
+function actionFormatter(value, row, index){
+    var id = value;
+            var result = "";
+
+            var args =  row.Fid + ',' + row.Fhost + ',' + row.Fname + ',' + row.Fport + ',' + row.Fdesc
+            result += "<a href=/service/update/?id=" + row.Fid + " title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.Fid + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
+
+            return result;
+}
+
+function ReloadTable(){
+    $('#table').bootstrapTable("refresh");
+}
+
+$(document).ready(function(){
+    $("#addForm").validate({
+        ignore: ':hidden:not("#Fcluster")',
+        rules: {
+            Fcluster:{
+                required: true,
+            },
+            Fhost:{
+                required: true,
+                isIP: true
+            },
+
+            Fname: {
+                required: true
+            },
+            Fport:{
+                required: true,
+                positiveinteger: true
+            }
+        },
+        messages: {
+            Fcluster: {
+                required: '所属集群不能为空'
+            },
+            Fhost: {
+                required: '机器IP不能为空'
+            },
+            Fname : {
+                required : "服务名不能为空"
+            },
+            Fport:{
+                required : "服务端口不能为空",
+
+            }
+        },
+        submitHandler: function(form) {
+            console.log($("#addForm").serialize())
+            $.ajax({
+                type: "POST",
+                url: '/service/add',
+                data: $("#addForm").serialize(),
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.reload();
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+        }
+    });
+
+
+    $("#editForm").validate({
+        rules: {
+            Fhost:{
+                required: true,
+                isIP: true
+            },
+
+            Fname: {
+                required: true
+            },
+            Fport:{
+                required: true,
+                positiveinteger: true
+            }
+        },
+        messages: {
+            Fhost: {
+                required: '机器IP不能为空'
+            },
+            Fname : {
+                required : "服务名不能为空"
+            },
+            Fport:{
+                required : "服务端口不能为空",
+
+            }
+        },
+        submitHandler: function(form) {
+            $.ajax({
+                type: "POST",
+                url: '/service/update',
+                data: $("#editForm").serialize(),
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.reload();
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+        }
+    });
+
+});
+
+function EditViewById(content){
+    var arry = content.split(',')
+    $("#each_Fid").val(arry[0])
+    $("#each_Fhost").val(arry[1])
+    $("#each_Fname").val(arry[2])
+    $("#each_Fport").val(arry[3])
+    $("#each_Fdesc").val(arry[4])
+    $("#editModal").modal("show")
+}
+
+
+function DeleteByIds(id){
+    if (confirm('确认要删除这条记录吗？')){
+        $.ajax({
+            type: "POST",
+            url: '/service/delete',
+            data: {'id':id},
+            dataType: "json",
+            success: function(data){
+                if (data['code'] == 0){
+                    alert(data['message'])
+                    window.location.reload();
+                }
+                else{
+                    alert(data['message'])
+                }
+            },
+            error: function() {
+               alert('服务器内部错误');
+            }
+        });
+
+    }
+
+}
+
+</script>
+{% endblock %}
