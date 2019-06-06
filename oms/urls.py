@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^user/', include('user_app.urls')),
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),
+    url(r'^rbac/', include('rbac.urls')),
 ]
 
 if not settings.DEBUG:

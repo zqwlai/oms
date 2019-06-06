@@ -27,7 +27,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_app',
-    'service_app'	
+    'service_app',
+    'rbac'	
 	
 )
 

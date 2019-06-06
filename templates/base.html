@@ -25,7 +25,15 @@
     <link href="{{STATIC_URL}}bootstrap-table/bootstrap-table.css" rel="stylesheet" />
     <script src="{{STATIC_URL}}bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
 
+
+    <link href="{{STATIC_URL}}zTree_v3/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}zTree_v3/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}zTree_v3/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}zTree_v3/js/jquery.ztree.exedit.js"></script>
+
     <link href="{{STATIC_URL}}css/style.css" rel="stylesheet">
+
+
 
 </head>
 
@@ -61,12 +69,20 @@
                     <a href="/dashboard"><i class="fa fa-th-large"></i> <span class="nav-label">dashboard</span></a>
                 </li>
 
-
                 <li class="{{root_node|is_active:'service'}}">
                     <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">服务管理</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{child_node|is_active:'list'}}"><a href="/service/list">服务信息列表</a></li>
                         <li class="{{child_node|is_active:'monitor'}}"><a href="/service/status">服务监控</a></li>
+                    </ul>
+                </li>
+
+                <li class="{{root_node|is_active:'rbac'}}">
+                    <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">系统管理</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{child_node|is_active:'menu'}}"><a href="/rbac/menu">菜单配置</a></li>
+                        <li class="{{child_node|is_active:'user'}}"><a href="/rbac/user">用户管理</a></li>
+                        <li class="{{child_node|is_active:'usergroup'}}"><a href="/rbac/usergroup">用户组管理</a></li>
                     </ul>
                 </li>
 

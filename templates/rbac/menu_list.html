@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load unicode2utf8 %}
+
+
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>导航菜单设置{{name}}</h5></div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 b-r">
+                        <div class="zTreeDemoBackground left">
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" id="editDiv" style="display:none">
+                        <h4>节点详情</h4>
+                        <form class="form-horizontal form-container" id="updateForm">
+                        <div class="form-group  hidden ">
+                            <label class="col-lg-2 control-label">菜单ID</label>
+                            <div class="col-lg-10">
+                                <input type="number" name="fid" id="fid" placeholder="菜单ID" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group " id="iconDiv" style="display:none">
+                            <label class="col-lg-2 control-label">菜单图标</label>
+                            <div class="col-lg-10">
+                                <select class="form-control" name="fmenu_icon" style="font-family: sans-serif, 'FontAwesome';" id="fmenu_icon">
+                                    <option value="adjust">&#xf042;</option>
+                                    <option value="adn">&#xf170;</option>
+                                    <option value="text-width">&#xf035;</option>
+                                    <option value="th">&#xf00a;</option>
+                                    <option value="th-large">&#xf009;</option>
+                                    <option value="th-list">&#xf00b;</option>
+                                    <option value="themeisle">&#xf2b2;</option>
+                                    <option value="thermometer">&#xf2c7;</option>
+                                    <option value="thermometer-0">&#xf2cb;</option>
+
+                                    <option value="youtube-play">&#xf16a;</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-lg-2 control-label">菜单名称</label>
+                            <div class="col-lg-10">
+                                <input type="text" name="fresource_name" id="fresource_name" placeholder="菜单名称" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-lg-2 control-label">访问链接</label>
+                            <div class="col-lg-10">
+                                <input type="text" name="fresource_url" id="fresource_url" placeholder="菜单链接" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-lg-2 control-label">显示位置</label>
+                            <div class="col-lg-10">
+                                <input type="number" name="flocal" id="flocal" placeholder="显示位置" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-lg-2 control-label">是否显示</label>
+                            <div class="col-lg-10">
+                                <select class="form-control" name="favailable">
+                                    <option value="1">显示</option>
+                                    <option value="0">不显示</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                                    <div class="col-lg-offset-2 col-lg-10">
+                                        <button class="btn btn-sm btn-white" type="button" onclick="update()">修改</button>
+                                    </div>
+                                </div>
+                    </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block script %}
+
+<SCRIPT type="text/javascript">
+		<!--
+
+		var IDMark_Switch = "_switch",
+		IDMark_Icon = "_ico",
+		IDMark_Span = "_span",
+		IDMark_Input = "_input",
+		IDMark_Check = "_check",
+		IDMark_Edit = "_edit",
+		IDMark_Remove = "_remove",
+		IDMark_Ul = "_ul",
+		IDMark_A = "_a";
+
+		var setting = {
+		    callback: {
+		        onClick: zTreeOnClick,
+		    },
+			view: {
+				addHoverDom: addHoverDom,
+                removeHoverDom: removeHoverDom,
+			}
+		};
+
+		function addHoverDom(treeId, treeNode) {
+
+			var aObj = $("#" + treeNode.tId + IDMark_A);
+				if ($("#diyBtn_"+treeNode.fid).length>0) return;
+				var editStr = "<span id='diyBtn_space_" +treeNode.fid+ "' >&nbsp;</span><span class='button icon03' id='diyBtn_" +treeNode.fid+ "' title='"+treeNode.name+"' onfocus='this.blur();'></span>";
+				aObj.append(editStr);
+				var btn = $("#diyBtn_"+treeNode.fid);
+				if (btn) btn.bind("click", function(){alert("diy Button for " + treeNode.fid);return false;});
+
+		}
+
+        function zTreeOnClick(event, treeId, treeNode) {
+
+            //如果是0级菜单则啥也不做
+            if (treeNode.level == 0){
+                $("#editDiv").hide()
+                return
+            }
+            if (treeNode.level == 1){   //如果是1级菜单则显示图标编辑框
+                $("#iconDiv").show()
+            }
+            if (treeNode.level == 2){   //如果是2级菜单则隐藏图标编辑框
+                $("#iconDiv").hide()
+            }
+
+            $("#fid").val(treeNode.fid)
+            $("#fresource_name").val(treeNode.name)
+            $("#fresource_url").val(treeNode.fresource_url)
+            $("#fmenu_icon").val(treeNode.ficon)
+            $("#flocal").val(treeNode.flocal)
+            console.log(treeNode)
+            $("#editDiv").show()
+        };
+
+
+        function removeHoverDom(treeId, treeNode) {
+
+
+				$("#diyBtn_"+treeNode.fid).unbind().remove();
+				$("#diyBtn_space_" +treeNode.fid).unbind().remove();
+
+		}
+
+		$(document).ready(function(){
+
+			 $.ajax({
+                type: "POST",
+                url: '/rbac/menu/data',
+                data: {},
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        var zNodes = data['data']['zNodes']
+                        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+
+		});
+		//-->
+
+
+	function update(){
+	    $.ajax({
+                type: "POST",
+                url: '/rbac/menu/update',
+                data: $("#updateForm").serialize(),
+                dataType: "json",
+                success: function(data){
+                    alert(data)
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.reload();
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+
+	}
+
+	</SCRIPT>
+
+{% endblock %}
