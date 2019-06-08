@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^process_login$', login_exempt(views.process_login)),
     url(r'^process_register$', login_exempt(views.process_register)),
     url(r'^dashboard', views.dashboard),
-    url(r'^logout', views.logout),
+    url(r'^logout', login_exempt(views.logout)),
     url(r'^user/', include('user_app.urls')),
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),

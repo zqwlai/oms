@@ -12,3 +12,4 @@ urlpatterns = [
     url(r'^menu/data', views.data),
 ]
 
+urlpatterns += views.RoleView.urls()

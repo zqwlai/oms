@@ -12,6 +12,46 @@ import json
 from rbac.models import TSysPermission
 from oms import settings
 import traceback
+from django.utils.decorators import classonlymethod
+from django.views.generic.base import View
+from django.conf.urls import include, url
+
+class BaseResView(View):
+
+    @classonlymethod
+    def urls(cls, **initkwargs):
+        name = cls.__name__
+        # 去掉类名中的view
+        name = name.lower().replace('view', '')
+        print name
+        instance = cls(**initkwargs)
+        urls = []
+        urls.append(url(r'^%s' % name, cls.as_view()))
+        for k, v in cls.__dict__.iteritems():
+            print k,v
+            if not k.startswith('_'):
+                urls.append(url(r'^%s/%s/$' %
+                                (name, k), getattr(instance, k)))
+        return urls
+
+
+class RoleView(BaseResView):
+
+    def index(self, request):
+        self.name = 'lynzhang'
+
+    def get(self, request):
+        return HttpResponse(11)
+
+
+    def data(self, request):
+        self._invoke()
+        data = Course.objects.all()
+        s = ServiceSerializer(data, many=True)
+        print s.data
+        for i in s.data:
+            print i['fcreate_time']
+        return HttpResponse(json.dumps(s.data, cls=CJsonEncoder))
 
 
 def menu_list(request):
@@ -27,7 +67,7 @@ def data(request):
             data.append({
                 'fid': int(i.fid), 'name': i.fresource_name, 'open': 'true',
                 'isParent': 'true', 'flocal': int(i.flocal), 'fenable': int(i.favailable),
-                'ficon': str(i.fmenu_icon), 'fresource_url': str(i.fresource_url)
+                'ficon': str(i.fmenu_icon), 'fresource_url': str(i.fresource_url), 'children':[]
             })
         else:
             level2_data = []

@@ -66,7 +66,7 @@ $(function () {
 
 function InitTable(){
     $('#table').bootstrapTable({
-        url: '/service/query_status',              //请求后台的URL（*）
+        url: '/service/status/data',              //请求后台的URL（*）
         method: 'GET',                      //请求方式（*）
         toolbar: '#toolbar',              //工具按钮用哪个容器
         striped: true,                      //是否显示行间隔色
@@ -145,15 +145,15 @@ function actionFormatter(value, row, index){
     var id = value;
             var result = "";
             if (row.Fstatus ==0){
-                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
+                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
             }
 
             else if(row.Fstatus ==1){
-                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
+                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
             }
 
             else{
-                result += "<a href=/service/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
+                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
             }
             return result;
 }

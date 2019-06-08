@@ -39,13 +39,16 @@
 
 <body>
     {% load is_active %}
+    {% load key %}
+    {% load contains %}
+
     <div id="wrapper">
 
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
 
         <ul class="nav navbar-nav navbar-left">
          <li ><a href="#">金蝶运维管理平台</a></li>
-        </ul>>
+        </ul>
 
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
@@ -64,25 +67,48 @@
         <div class="sidebar-collapse">
             <ul class="nav metismenu" id="side-menu">
 
-
+                <!--
                 <li class="{{root_node|is_active:'dashboard'}}">
                     <a href="/dashboard"><i class="fa fa-th-large"></i> <span class="nav-label">dashboard</span></a>
                 </li>
+                -->
 
+                {% for menu in menu_list %}
+                    {% if menu|key:'accept' or request.user.is_superuser %}
+                        {% if not menu|key:'children' %}
+                            <li class="{{menu|key:'fresource_url'|contains:request.path}}">
+                                <a href="{{menu|key:'fresource_url'}}"><i class="fa fa-th-large"></i> <span class="nav-label">{{menu|key:'fname'}}</span></a>
+                            </li>
+                        {% else %}      <!-- 有子菜单  -->
+                            <li class="{{menu|key:'fresource_url'|contains:request.path}}">
+                                <a href="#1"><i class="fa fa-files-o"></i> <span class="nav-label">{{menu|key:'fname'}}</span><span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                {% for child in menu|key:'children' %}
+                                    {% if child|key:'accept' or request.user.is_superuser %}
+                                        <li class="{{child|key:'fresource_url'|contains:request.path}}"><a href="{{child|key:'fresource_url'}}">{{child|key:'fname'}}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                <!--
                 <li class="{{root_node|is_active:'service'}}">
                     <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">服务管理</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{child_node|is_active:'list'}}"><a href="/service/list">服务信息列表</a></li>
+                        <li class="{{child_node|is_active:'list'}}"><a href="/service/conf">服务信息列表</a></li>
                         <li class="{{child_node|is_active:'monitor'}}"><a href="/service/status">服务监控</a></li>
                     </ul>
                 </li>
-
+                -->
                 <li class="{{root_node|is_active:'rbac'}}">
                     <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">系统管理</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{child_node|is_active:'menu'}}"><a href="/rbac/menu">菜单配置</a></li>
                         <li class="{{child_node|is_active:'user'}}"><a href="/rbac/user">用户管理</a></li>
-                        <li class="{{child_node|is_active:'usergroup'}}"><a href="/rbac/usergroup">用户组管理</a></li>
+                        <li class="{{child_node|is_active:'role'}}"><a href="/rbac/role">用户角色管理</a></li>
                     </ul>
                 </li>
 

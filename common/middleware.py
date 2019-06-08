@@ -47,3 +47,32 @@ class LoginMiddleware(object):
             if request.is_ajax():
                 return JsonResponse({'code':3, 'message':'login required'})
             return HttpResponseRedirect('/login')
+
+
+class RbacMiddleware(object):
+    """判断请求过来的url是否在所属菜单中."""
+
+    def process_view(self, request, view, args, kwargs):
+        if getattr(view, 'login_exempt', False):
+            return None
+        if request.user and request.user.is_superuser:
+            return
+
+        if request.path in ['/', 'login']:
+            return
+        acccept_url_list = []
+        #查询此用户的角色
+        role_list = request.user.tsysrole_set.all()
+        for role_obj in role_list:
+            for permission in role_obj.permissions.all():
+                acccept_url_list.append(permission.fresource_url)
+        acccept_url_list = list(set(acccept_url_list))
+
+        accept = False
+        for url in acccept_url_list:
+            if request.path.find(url) == 0:
+                accept = True
+        if accept:
+            return
+        return HttpResponse(json.dumps({'code':403, 'message':'没有访问权限,请联系管理员配置新用户对应的默认角色','data':''},ensure_ascii=False))
+

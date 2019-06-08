@@ -4,15 +4,14 @@
 {% load unicode2utf8 %}
 
 
-
 <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-10">
         <div class="ibox ">
             <div class="ibox-title">
                 <h5>导航菜单设置{{name}}</h5></div>
             <div class="ibox-content">
                 <div class="row">
-                    <div class="col-sm-6 b-r">
+                    <div class="col-sm-4 b-r">
                         <div class="zTreeDemoBackground left">
                             <ul id="treeDemo" class="ztree"></ul>
                         </div>
@@ -21,14 +20,14 @@
                         <h4>节点详情</h4>
                         <form class="form-horizontal form-container" id="updateForm">
                         <div class="form-group  hidden ">
-                            <label class="col-lg-2 control-label">菜单ID</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">菜单ID</label>
+                            <div class="col-lg-6">
                                 <input type="number" name="fid" id="fid" placeholder="菜单ID" class="form-control">
                             </div>
                         </div>
                         <div class="form-group " id="iconDiv" style="display:none">
-                            <label class="col-lg-2 control-label">菜单图标</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">菜单图标</label>
+                            <div class="col-lg-6">
                                 <select class="form-control" name="fmenu_icon" style="font-family: sans-serif, 'FontAwesome';" id="fmenu_icon">
                                     <option value="adjust">&#xf042;</option>
                                     <option value="adn">&#xf170;</option>
@@ -45,26 +44,26 @@
                             </div>
                         </div>
                         <div class="form-group ">
-                            <label class="col-lg-2 control-label">菜单名称</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">菜单名称</label>
+                            <div class="col-lg-6">
                                 <input type="text" name="fresource_name" id="fresource_name" placeholder="菜单名称" class="form-control">
                             </div>
                         </div>
                         <div class="form-group ">
-                            <label class="col-lg-2 control-label">访问链接</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">访问链接</label>
+                            <div class="col-lg-6">
                                 <input type="text" name="fresource_url" id="fresource_url" placeholder="菜单链接" class="form-control">
                             </div>
                         </div>
                         <div class="form-group ">
-                            <label class="col-lg-2 control-label">显示位置</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">显示位置</label>
+                            <div class="col-lg-6">
                                 <input type="number" name="flocal" id="flocal" placeholder="显示位置" class="form-control">
                             </div>
                         </div>
                         <div class="form-group ">
-                            <label class="col-lg-2 control-label">是否显示</label>
-                            <div class="col-lg-10">
+                            <label class="col-lg-3 control-label">是否显示</label>
+                            <div class="col-lg-6">
                                 <select class="form-control" name="favailable">
                                     <option value="1">显示</option>
                                     <option value="0">不显示</option>

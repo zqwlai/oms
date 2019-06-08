@@ -7,13 +7,14 @@ from common.decorators import  login_exempt
 
 
 urlpatterns = [
-    url(r'^list$', views.service_list),
-    url(r'^query$', views.query_service),
-    url(r'^add$', views.add_service),
-    url(r'^delete', views.delete_service),
-    url(r'^status', views.status),
-    url(r'^query_status', views.query_status),
-    url(r'^graph', views.graph),
-    url(r'^query_graph', views.query_graph),
-    url(r'^update', views.update),
+    url(r'^conf$', views.service_list),
+    url(r'^conf/data$', views.query_service),
+    url(r'^conf/add$', views.add_service),
+    url(r'^conf/delete', views.delete_service),
+    url(r'^conf/update', views.update),
+    url(r'^status$', views.status),
+    url(r'^status/data', views.query_status),
+    url(r'^status/graph', views.graph),
+    url(r'^status/query_graph', views.query_graph),
+
 ]

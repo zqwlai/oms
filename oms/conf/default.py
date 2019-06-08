@@ -42,7 +42,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     #'common.middleware.LogRecordMiddleware',
-    'common.middleware.LoginMiddleware'
+    'common.middleware.LoginMiddleware',
+    'common.middleware.RbacMiddleware',  # 权限中间件
 )
 
 ROOT_URLCONF = 'oms.urls'
@@ -60,7 +61,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'common.context_processors.mysetting'
+                'common.context_processors.mysetting',
+                'common.context_processors.menu_list'
             ],
         },
     },
