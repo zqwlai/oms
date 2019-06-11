@@ -50,16 +50,16 @@ params = {
 
 ip_list = []
 
-for i in Service.objects.values('Fhost').distinct():
-    ip_list.append(i['Fhost'])
+for i in Service.objects.values('fhost').distinct():
+    ip_list.append(i['fhost'])
 
 
 
 for ip in ip_list:
     #统计每个IP下有哪些端口号
     counters = []
-    for i in Service.objects.filter(Fhost=ip):
-        counters.append('listen.port/port=%s'%i.Fport)
+    for i in Service.objects.filter(fhost=ip):
+        counters.append('listen.port/port=%s'%i.fport)
         
     payload = {
        "step": 60,
@@ -90,6 +90,6 @@ for ip in ip_list:
                     status = 2
 
         #将状态更新到数据库
-        Service.objects.filter(Fhost=endpoint, Fport=port).update(Fstatus=status,Fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
+        Service.objects.filter(fhost=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
 
