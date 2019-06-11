@@ -118,7 +118,6 @@ class StatusView(BaseResView):
         start_timestamp = end_timestamp - 3600  # 默认取1个小时
         end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
         start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_timestamp))
-        print end_time
         return render(request, 'service/graph.html', locals())
 
 
@@ -148,5 +147,5 @@ class StatusView(BaseResView):
 
 def getport(request):
     host = request.POST['host']
-    port_list = [ i.Fport for i in Service.objects.filter(fhost=host) ]
+    port_list = [ i.fport for i in Service.objects.filter(fhost=host) ]
     return JsonResponse({'code':0, 'data':{'port_list':port_list}, 'message':'ok'})
