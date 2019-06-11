@@ -148,5 +148,5 @@ class StatusView(BaseResView):
 
 def getport(request):
     host = request.POST['host']
-    port_list = [ i.Fport for i in Service.objects.filter(Fhost=host) ]
+    port_list = [ i.Fport for i in Service.objects.filter(fhost=host) ]
     return JsonResponse({'code':0, 'data':{'port_list':port_list}, 'message':'ok'})
