@@ -77,11 +77,11 @@
                     {% if menu|key:'accept' or request.user.is_superuser %}
                         {% if not menu|key:'children' %}
                             <li class="{{menu|key:'fresource_url'|contains:request.path}}">
-                                <a href="{{menu|key:'fresource_url'}}"><i class="fa fa-th-large"></i> <span class="nav-label">{{menu|key:'fname'}}</span></a>
+                                <a href="{{menu|key:'fresource_url'}}"><i class="fa fa-{{menu|key:'fmenu_icon'}}"></i> <span class="nav-label">{{menu|key:'fname'}}</span></a>
                             </li>
                         {% else %}      <!-- 有子菜单  -->
                             <li class="{{menu|key:'fresource_url'|contains:request.path}}">
-                                <a href="#1"><i class="fa fa-files-o"></i> <span class="nav-label">{{menu|key:'fname'}}</span><span class="fa arrow"></span></a>
+                                <a href="#1"><i class="fa fa-{{menu|key:'fmenu_icon'}}"></i> <span class="nav-label">{{menu|key:'fname'}}</span><span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                 {% for child in menu|key:'children' %}
                                     {% if child|key:'accept' or request.user.is_superuser %}
@@ -102,7 +102,7 @@
                         <li class="{{child_node|is_active:'monitor'}}"><a href="/service/status">服务监控</a></li>
                     </ul>
                 </li>
-                -->
+
                 <li class="{{root_node|is_active:'rbac'}}">
                     <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">系统管理</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -111,7 +111,7 @@
                         <li class="{{child_node|is_active:'role'}}"><a href="/rbac/role">用户角色管理</a></li>
                     </ul>
                 </li>
-
+                 -->
             </ul>
 
         </div>

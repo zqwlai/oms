@@ -4,12 +4,8 @@ from django.views.generic import TemplateView
 import views
 from common.decorators import  login_exempt
 
+urlpatterns = []
 
-
-urlpatterns = [
-    url(r'^menu$', views.menu_list),
-    url(r'^menu/update$', views.update_menu),
-    url(r'^menu/data', views.data),
-]
-
+urlpatterns += views.MenuView.urls()
 urlpatterns += views.RoleView.urls()
+urlpatterns += views.UserView.urls()

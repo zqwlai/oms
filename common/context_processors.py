@@ -11,7 +11,6 @@ def mysetting(request):
 
 
 def menu_list(request):    #获取该用户拥有的菜单，来做前端展示
-    request.user
     if not request.user.is_authenticated():
         return {
             'menu_list': []
@@ -35,7 +34,7 @@ def menu_list(request):    #获取该用户拥有的菜单，来做前端展示
             data.append({
                 'fid': i.fid, 'fname': i.fresource_name,
                  'fenable': i.favailable,
-                'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'children': [],
+                'fmenu_icon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'children': [],
                 'accept':accept
             })
         else:   #有子节点
@@ -47,14 +46,14 @@ def menu_list(request):    #获取该用户拥有的菜单，来做前端展示
                 level2_data.append({
                     'fid': j.fid, 'fname': j.fresource_name,
                      'fenable': j.favailable,
-                    'ficon': j.fmenu_icon, 'fresource_url': j.fresource_url,
+                    'fmenu_icon': j.fmenu_icon, 'fresource_url': j.fresource_url,
                     'accept': children_accept
                 })
             data.append({
                 'fid': i.fid, 'fname': i.fresource_name,
                  'children': level2_data,
                  'fenable': i.favailable,
-                'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'accept':accept
+                'fmenu_icon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'accept':accept
             })
 
     return {

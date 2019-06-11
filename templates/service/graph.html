@@ -123,7 +123,7 @@ function query_graph(){
    $.ajax({
         type: "POST",
         url: '/service/status/query_graph',
-        data: {'host':'{{host}}', 'port':'{{port}}', 'service':'{{service}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
+        data: {'fhost':'{{fhost}}', 'fport':'{{fport}}', 'fservice':'{{fservice}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
         dataType: "json",
         success: function(data){
             if (data['code'] == 0){

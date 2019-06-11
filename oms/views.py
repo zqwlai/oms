@@ -9,6 +9,9 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from  user_app.models import OmsUser
 import time
+from django.utils.decorators import classonlymethod
+from django.views.generic.base import View
+from django.conf.urls import include, url
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -16,6 +19,24 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+
+class BaseResView(View):
+
+    @classonlymethod
+    def urls(cls, **initkwargs):
+        name = cls.__name__
+        # 去掉类名中的view
+        name = name.lower().replace('view', '')
+        print name
+        instance = cls(**initkwargs)
+        urls = []
+        urls.append(url(r'^%s$' % name, cls.as_view()))
+        for k, v in cls.__dict__.iteritems():
+            print k,v
+            if not k.startswith('_'):
+                urls.append(url(r'^%s/%s' %
+                                (name, k), getattr(instance, k)))
+        return urls
 
 
 def index(request):

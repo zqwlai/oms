@@ -14,17 +14,17 @@
                         <div>
                             <label class="control-label col-sm-1" style="text-align:left">集群</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="Fcluster" name="Fcluster">
+                                <input type="text" class="form-control" id="fcluster" name="fcluster">
                             </div>
                             <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="Fhost" name="Fhost"></div>
+                                <input type="text" class="form-control" id="fhost" name="fhost"></div>
                             <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="Fname" name="Fname"></div>
+                                <input type="text" class="form-control" id="fname" name="fname"></div>
                             <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="Fport" name="Fport"></div>
+                                <input type="text" class="form-control" id="fport" name="fport"></div>
                         </div>
                         <div>
                             <div class="col-sm-1" style="text-align:left;">
@@ -97,35 +97,35 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                Fhost: $("#Fhost").val(),
-                Fname: $("#Fname").val(),
-                Fport: $("#Fport").val(),
-                Fcluster: $("#Fcluster").val()
+                fhost: $("#fhost").val(),
+                fname: $("#fname").val(),
+                fport: $("#fport").val(),
+                fcluster: $("#fcluster").val()
             };
             return temp;
         },
         columns: [{
-            field: 'Fcluster',
+            field: 'fcluster',
             title: '所属集群',
             sortable: false
         }, {
-            field: 'Fhost',
+            field: 'fhost',
             title: '机器IP',
         }, {
-            field: 'Fname',
+            field: 'fname',
             title: '服务名',
         },{
-            field: 'Fport',
+            field: 'fport',
             title: '端口号'
         }, {
-            field: 'Fdesc',
+            field: 'fdesc',
             title: '服务描述'
         }, {
-            field: 'Fcreate_time',
+            field: 'fcreate_time',
             title: '创建时间',
             sortable: true
         }, {
-            field: 'Fid',
+            field: 'fid',
             title: '端口状态',
             formatter: actionFormatter,
             align: 'center'
@@ -144,16 +144,16 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
             var result = "";
-            if (row.Fstatus ==0){
-                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
+            if (row.fstatus ==0){
+                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
             }
 
-            else if(row.Fstatus ==1){
-                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
+            else if(row.fstatus ==1){
+                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
             }
 
             else{
-                result += "<a href=/service/status/graph/?cluster=" + row.Fcluster + "&service=" + row.Fname + "&host=" + row.Fhost + "&port=" + row.Fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
+                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
             }
             return result;
 }

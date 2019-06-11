@@ -4,7 +4,7 @@
 
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>服务信息表</h5>
+                <h5>系统用户管理</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -16,23 +16,10 @@
         <div class="panel-body">
             <form id="formSearch" class="form-horizontal">
                 <div>
-                    <label class="control-label col-sm-1"  style="text-align:left">集群</label>
+                    <label class="control-label col-sm-1"  style="text-align:left">用户名</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fcluster" name="fcluster">
+                        <input type="text" class="form-control" id="username" name="username">
                     </div>
-                    <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fhost" name="fhost">
-                    </div>
-                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fname" name="fname">
-                    </div>
-                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fport" name="fport">
-                    </div>
-
                 </div>
 
                 <div>
@@ -62,62 +49,46 @@
 </div>
 
  </div>
-<div id="toolbar" class="btn-group">
-            <button id="btn_add" type="button" class="btn btn-default"  onclick="AddView()">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-            </button>
-        <!--
-            <button id="btn_edit" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-            </button>
-            <button id="btn_delete" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-            </button>
-            -->
-        </div>
 
 
 
-<div class="modal inmodal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+<div class="modal inmodal fade" id="editModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="title">新建服务</h4></div>
+                <h4 class="modal-title">更新用户信息</h4></div>
             <div class="modal-body">
-                <form  role="form" id="myForm">
+                <form  role="form" id="editForm">
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">所属集群:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">用户名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fid"  style="display:none" class="form-control">
-                            <input type="text" name="fcluster" class="form-control">
+                            <input type="text" name="edit_id" id="edit_id"  class="form-control" style="display:none">
+                            <input type="text" name="edit_username" id="edit_username" readonly  class="form-control">
                         </div>
                     </div>
 
-                    <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">状态:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fhost" class="form-control"></div>
+                            <select name="edit_status" id="edit_status" class="chosen-select" tabindex="2">
+                                <option value="1">启用</option>
+                                <option value="0" >禁用</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务名:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">用户角色:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fname"></div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务端口:<span class="red">&nbsp;*</span></label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fport"></div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务描述:</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fdesc"></div>
+                            <select  class="chosen-select" multiple style="width:350px;" tabindex="4" id="edit_role" name="edit_role">
+                                {% for i in role_list %}
+                                    <option value="{{i.fid}}">{{i.fname}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
 
@@ -134,17 +105,14 @@
 </div>
 
 
-
-
 {% endblock %}
-
-
-
 
 
 {% block script %}
 
 <script>
+
+$('.chosen-select').chosen({width: "100%"});
 
 
 jQuery.validator.addMethod("isIP", function(value, element) {
@@ -160,6 +128,11 @@ jQuery.validator.addMethod("positiveinteger", function(value, element) {
 
 
 
+jQuery.validator.addMethod("needsSelection", function(value, element) {
+        return value
+}, "请选择所属集群");
+
+
 $(function () {
 	//初始化业务逻辑script
    InitTable();
@@ -167,7 +140,7 @@ $(function () {
 
 function InitTable(){
     $('#table').bootstrapTable({
-        url: '/service/conf/data',              //请求后台的URL（*）
+        url: '/rbac/user/data',              //请求后台的URL（*）
         method: 'GET',                      //请求方式（*）
         toolbar: '#toolbar',              //工具按钮用哪个容器
         striped: true,                      //是否显示行间隔色
@@ -198,35 +171,25 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhost: $("#fhost").val(),
-                fname: $("#fname").val(),
-                fport: $("#fport").val(),
-                fcluster: $("#fcluster").val()
+                username: $("#username").val(),
             };
             return temp;
         },
         columns: [{
-            field: 'fcluster',
-            title: '所属集群',
+            field: 'username',
+            title: '用户名',
             sortable: false
         }, {
-            field: 'fhost',
-            title: '机器IP',
+            field: 'email',
+            title: '邮箱',
         }, {
-            field: 'fname',
-            title: '服务名',
+            field: '手机号',
+            title: 'phone',
         },{
-            field: 'fport',
-            title: '端口号'
-        }, {
-            field: 'fdesc',
-            title: '服务描述'
-        }, {
-            field: 'fcreate_time',
-            title: '创建时间',
-            sortable: false
-        }, {
-            field: 'fid',
+            field: 'is_active',
+            title: '状态'
+        },{
+            field: 'id',
             title: '操作',
             formatter: actionFormatter,
             align: 'center'
@@ -245,9 +208,10 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
             var result = "";
-            var args =  row.fid + ',' + row.fcluster + ',' + row.fhost + ',' + row.fname + ',' + row.fport + ',' + row.fdesc
+
+            var args =  row.id + ',' + row.username + ',' + row.is_active + ',' + row.roleids
             result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"EditViewById('" + args + "')\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
-            result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.fid + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
 
             return result;
 }
@@ -257,50 +221,46 @@ function ReloadTable(){
 }
 
 $(document).ready(function(){
-    $("#myForm").validate({
+    $("#addForm").validate({
+        ignore: ':hidden:not("#Fcluster")',
         rules: {
-            fcluster:{
+            Fcluster:{
                 required: true,
             },
-            fhost:{
+            Fhost:{
                 required: true,
                 isIP: true
             },
 
-            fname: {
+            Fname: {
                 required: true
             },
-            fport:{
+            Fport:{
                 required: true,
                 positiveinteger: true
             }
         },
         messages: {
-            fcluster: {
+            Fcluster: {
                 required: '所属集群不能为空'
             },
-            fhost: {
+            Fhost: {
                 required: '机器IP不能为空'
             },
-            fname : {
+            Fname : {
                 required : "服务名不能为空"
             },
-            fport:{
+            Fport:{
                 required : "服务端口不能为空",
 
             }
         },
         submitHandler: function(form) {
-            if (form.getAttribute('option') == 'create'){
-                var url = '/service/conf/add'
-            }
-            else{
-                var url = '/service/conf/update'
-            }
+            console.log($("#addForm").serialize())
             $.ajax({
                 type: "POST",
-                url: url,
-                data: $("#myForm").serialize(),
+                url: '/service/conf/add',
+                data: $("#addForm").serialize(),
                 dataType: "json",
                 success: function(data){
                     if (data['code'] == 0){
@@ -317,36 +277,59 @@ $(document).ready(function(){
             });
         }
     });
-})
+
+
+    $("#editForm").validate({
+        submitHandler: function(form) {
+            $.ajax({
+                type: "POST",
+                url: '/rbac/user/update',
+                data: $("#editForm").serialize(),
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.reload();
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+        }
+    });
+
+});
 
 function EditViewById(content){
-    console.log(content)
     var arry = content.split(',')
-    var fid = arry[0]
-    var fcluster = arry[1]
-    var fhost = arry[2]
-    var fname = arry[3]
-    var fport = arry[4]
-    var fdesc = arry[5]
-    var form_obj = document.getElementById('myForm');
-    form_obj.fid.value = fid
-    form_obj.fcluster.value = fcluster
-    form_obj.fhost.value = fhost
-    form_obj.fname.value = fname
-    form_obj.fport.value = fport
-    form_obj.fdesc.value = fdesc
-    $("#title").html("更新服务")
-    form_obj.setAttribute('option', 'update')
-    $("#myModal").modal("show")
+    $("#edit_id").val(arry[0])
+    $("#edit_username").val(arry[1])
+    role_id_list = arry[3].split('|')
+    console.log(role_id_list)
+    if (arry[2] == 'false'){
+        status = '0'
+    }
+    else{
+        status = '1'
+    }
+    $("#edit_status").val(status)
+    $("#edit_status").trigger("chosen:updated");
+    $("#edit_role").val(role_id_list)
+    $("#edit_role").trigger("chosen:updated");
+    $("#editModal").modal("show")
 }
 
 
-function DeleteByIds(fid){
+function DeleteByIds(id){
     if (confirm('确认要删除这条记录吗？')){
         $.ajax({
             type: "POST",
             url: '/service/conf/delete',
-            data: {'fid':fid},
+            data: {'id':id},
             dataType: "json",
             success: function(data){
                 if (data['code'] == 0){
@@ -366,12 +349,5 @@ function DeleteByIds(fid){
 
 }
 
-function AddView(){
-    var form_obj = document.getElementById('myForm');
-    form_obj.reset()
-    $("#title").html("新建服务")
-    form_obj.setAttribute('option', 'create')
-    $("#myModal").modal("show")
-}
 </script>
 {% endblock %}

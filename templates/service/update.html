@@ -10,36 +10,36 @@
                 <h5>服务信息修改</h5></div>
             <div class="ibox-content m-b-sm border-bottom">
                 <form role="form" id="editForm">
-                    <input type="text" style="display:none" name="Fid" class="form-control" value="{{service_obj.Fid}}">
+                    <input type="text" style="display:none" name="fid" class="form-control" value="{{service_obj.fid}}">
                     <div class="form-group  row">
                         <label class="col-sm-2 col-form-label">所属集群:
                             <span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="Fcluster" class="form-control" value="{{service_obj.Fcluster}}">
+                            <input type="text" name="fcluster" class="form-control" value="{{service_obj.fcluster}}">
                         </div>
                     </div>
                     <div class="form-group  row">
                         <label class="col-sm-2 col-form-label">机器IP:
                             <span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="Fhost" class="form-control" value="{{service_obj.Fhost}}"></div>
+                            <input type="text" name="fhost" class="form-control" value="{{service_obj.fhost}}"></div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">服务名:
                             <span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="Fname" value="{{service_obj.Fname}}"></div>
+                            <input type="text" class="form-control" name="fname" value="{{service_obj.fname}}"></div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">服务端口:
                             <span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="Fport" value="{{service_obj.Fport}}"></div>
+                            <input type="text" class="form-control" name="fport" value="{{service_obj.fport}}"></div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">服务描述:</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="Fdesc" value="{{service_obj.Fdesc}}"></div>
+                            <input type="text" class="form-control" name="fdesc" value="{{service_obj.fdesc}}"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
@@ -81,35 +81,35 @@ jQuery.validator.addMethod("needsSelection", function(value, element) {
 
 $(document).ready(function(){
     $("#editForm").validate({
-        ignore: ':hidden:not("#Fcluster")',
+        ignore: ':hidden:not("#fcluster")',
         rules: {
-            Fcluster:{
+            fcluster:{
                 required: true,
             },
-            Fhost:{
+            fhost:{
                 required: true,
                 isIP: true
             },
 
-            Fname: {
+            fname: {
                 required: true
             },
-            Fport:{
+            fport:{
                 required: true,
                 positiveinteger: true
             }
         },
         messages: {
-            Fcluster: {
+            fcluster: {
                 required: '所属集群不能为空'
             },
-            Fhost: {
+            fhost: {
                 required: '机器IP不能为空'
             },
-            Fname : {
+            fname : {
                 required : "服务名不能为空"
             },
-            Fport:{
+            fport:{
                 required : "服务端口不能为空",
 
             }
@@ -140,27 +140,27 @@ $(document).ready(function(){
 
     $("#editForm").validate({
         rules: {
-            Fhost:{
+            fhost:{
                 required: true,
                 isIP: true
             },
 
-            Fname: {
+            fname: {
                 required: true
             },
-            Fport:{
+            fport:{
                 required: true,
                 positiveinteger: true
             }
         },
         messages: {
-            Fhost: {
+            fhost: {
                 required: '机器IP不能为空'
             },
-            Fname : {
+            fname : {
                 required : "服务名不能为空"
             },
-            Fport:{
+            fport:{
                 required : "服务端口不能为空",
 
             }
@@ -191,11 +191,11 @@ $(document).ready(function(){
 
 function EditViewById(content){
     var arry = content.split(',')
-    $("#each_Fid").val(arry[0])
-    $("#each_Fhost").val(arry[1])
-    $("#each_Fname").val(arry[2])
-    $("#each_Fport").val(arry[3])
-    $("#each_Fdesc").val(arry[4])
+    $("#each_fid").val(arry[0])
+    $("#each_fhost").val(arry[1])
+    $("#each_fname").val(arry[2])
+    $("#each_fport").val(arry[3])
+    $("#each_fdesc").val(arry[4])
     $("#editModal").modal("show")
 }
 

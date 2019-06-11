@@ -4,11 +4,9 @@
 
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>服务信息表</h5>
+                <h5>用户角色</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
-
-
 
     <div class="panel-body" style="padding-bottom:0px;">
     <div class="panel panel-default">
@@ -16,23 +14,10 @@
         <div class="panel-body">
             <form id="formSearch" class="form-horizontal">
                 <div>
-                    <label class="control-label col-sm-1"  style="text-align:left">集群</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fcluster" name="fcluster">
-                    </div>
-                    <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fhost" name="fhost">
-                    </div>
-                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
+                    <label class="control-label col-sm-1"  style="text-align:left">角色名</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="fname" name="fname">
                     </div>
-                    <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" id="fport" name="fport">
-                    </div>
-
                 </div>
 
                 <div>
@@ -63,7 +48,7 @@
 
  </div>
 <div id="toolbar" class="btn-group">
-            <button id="btn_add" type="button" class="btn btn-default"  onclick="AddView()">
+            <button id="btn_add" type="button" class="btn btn-default"  data-toggle="modal" data-target="#addModal">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
             </button>
         <!--
@@ -78,48 +63,52 @@
 
 
 
-<div class="modal inmodal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+<div class="modal inmodal fade" id="addModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="title">新建服务</h4></div>
+                <h4 class="modal-title">新建角色</h4></div>
             <div class="modal-body">
-                <form  role="form" id="myForm">
+                <form  role="form" id="addForm">
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">所属集群:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">角色名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fid"  style="display:none" class="form-control">
-                            <input type="text" name="fcluster" class="form-control">
+                            <input type="text" name="fname" class="form-control">
                         </div>
                     </div>
 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button  class="btn btn-primary" type="submit">保存</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal inmodal fade" id="editModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
+                <h4 class="modal-title">更新角色</h4></div>
+            <div class="modal-body">
+                <form  role="form" id="editForm">
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">角色名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fhost" class="form-control"></div>
+                            <input type="text" name="edit_fid" id="edit_fid" style="display:none" class="form-control">
+                            <input type="text" name="edit_fname" id="edit_fname"  class="form-control"></div>
                     </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务名:<span class="red">&nbsp;*</span></label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fname"></div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务端口:<span class="red">&nbsp;*</span></label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fport"></div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">服务描述:</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fdesc"></div>
-                    </div>
-
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
@@ -135,6 +124,35 @@
 
 
 
+<div class="modal inmodal fade" id="authModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
+                <h4 class="modal-title">权限设置</h4></div>
+            <div class="modal-body">
+                <form  role="form" id="editForm">
+                    <div class="form-group  row">
+
+                        <div class="zTreeDemoBackground left">
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button  class="btn btn-primary" type="button" onclick="UpdateAuth()">保存</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
 
@@ -147,27 +165,13 @@
 <script>
 
 
-jQuery.validator.addMethod("isIP", function(value, element) {
-    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-    return reg.test(value)
-}, "IP地址不合法");
-
-
-jQuery.validator.addMethod("positiveinteger", function(value, element) {
-    var aint=parseInt(value);
-    return aint>0&& (aint+"")==value;
-}, "请输入正整数");
-
-
-
 $(function () {
-	//初始化业务逻辑script
    InitTable();
 })
 
 function InitTable(){
     $('#table').bootstrapTable({
-        url: '/service/conf/data',              //请求后台的URL（*）
+        url: '/rbac/role/data',              //请求后台的URL（*）
         method: 'GET',                      //请求方式（*）
         toolbar: '#toolbar',              //工具按钮用哪个容器
         striped: true,                      //是否显示行间隔色
@@ -198,32 +202,14 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhost: $("#fhost").val(),
                 fname: $("#fname").val(),
-                fport: $("#fport").val(),
-                fcluster: $("#fcluster").val()
+
             };
             return temp;
         },
         columns: [{
-            field: 'fcluster',
-            title: '所属集群',
-            sortable: false
-        }, {
-            field: 'fhost',
-            title: '机器IP',
-        }, {
             field: 'fname',
-            title: '服务名',
-        },{
-            field: 'fport',
-            title: '端口号'
-        }, {
-            field: 'fdesc',
-            title: '服务描述'
-        }, {
-            field: 'fcreate_time',
-            title: '创建时间',
+            title: '角色名',
             sortable: false
         }, {
             field: 'fid',
@@ -245,7 +231,10 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
             var result = "";
-            var args =  row.fid + ',' + row.fcluster + ',' + row.fhost + ',' + row.fname + ',' + row.fport + ',' + row.fdesc
+
+            var args =  row.fid + ',' + row.fname
+            //result += "<a href=/rbac/role/update/?id=" + row.fid + " title='编辑'><span class='glyphicon glyphicon-pencil' ></span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs green' onclick=\"AuthByIds('" + row.fid + "')\" title='权限设置'><span class='glyphicon glyphicon-zoom-in'></span></a>";
             result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"EditViewById('" + args + "')\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
             result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.fid + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
 
@@ -257,50 +246,24 @@ function ReloadTable(){
 }
 
 $(document).ready(function(){
-    $("#myForm").validate({
+    $("#addForm").validate({
+        ignore: ':hidden:not("#Fcluster")',
         rules: {
-            fcluster:{
+            fname:{
                 required: true,
             },
-            fhost:{
-                required: true,
-                isIP: true
-            },
-
-            fname: {
-                required: true
-            },
-            fport:{
-                required: true,
-                positiveinteger: true
-            }
         },
         messages: {
-            fcluster: {
-                required: '所属集群不能为空'
-            },
-            fhost: {
-                required: '机器IP不能为空'
-            },
             fname : {
-                required : "服务名不能为空"
+                required : "角色名不能为空"
             },
-            fport:{
-                required : "服务端口不能为空",
-
-            }
         },
         submitHandler: function(form) {
-            if (form.getAttribute('option') == 'create'){
-                var url = '/service/conf/add'
-            }
-            else{
-                var url = '/service/conf/update'
-            }
+            console.log($("#addForm").serialize())
             $.ajax({
                 type: "POST",
-                url: url,
-                data: $("#myForm").serialize(),
+                url: '/rbac/role/add',
+                data: $("#addForm").serialize(),
                 dataType: "json",
                 success: function(data){
                     if (data['code'] == 0){
@@ -317,27 +280,52 @@ $(document).ready(function(){
             });
         }
     });
-})
+
+
+    $("#editForm").validate({
+        rules: {
+            fname: {
+                required: true
+            }
+        },
+        messages: {
+            fname : {
+                required : "角色名不能为空"
+            },
+
+        },
+        submitHandler: function(form) {
+            $.ajax({
+                type: "POST",
+                url: '/rbac/role/update',
+                data: $("#editForm").serialize(),
+                dataType: "json",
+                success: function(data){
+                    if (data['code'] == 0){
+                        alert(data['message'])
+                        window.location.reload();
+                    }
+                    else{
+                        alert(data['message'])
+                    }
+                },
+                error: function() {
+                   alert('服务器内部错误');
+                }
+            });
+        }
+    });
+
+});
 
 function EditViewById(content){
-    console.log(content)
     var arry = content.split(',')
-    var fid = arry[0]
-    var fcluster = arry[1]
-    var fhost = arry[2]
-    var fname = arry[3]
-    var fport = arry[4]
-    var fdesc = arry[5]
-    var form_obj = document.getElementById('myForm');
-    form_obj.fid.value = fid
-    form_obj.fcluster.value = fcluster
-    form_obj.fhost.value = fhost
-    form_obj.fname.value = fname
-    form_obj.fport.value = fport
-    form_obj.fdesc.value = fdesc
-    $("#title").html("更新服务")
-    form_obj.setAttribute('option', 'update')
-    $("#myModal").modal("show")
+    fid = arry[0]
+    fname = arry[1]
+    $("#edit_fid").val(fid)
+    $("#edit_fname").val(fname)
+    $("#editModal").modal("show")
+
 }
 
 
@@ -345,7 +333,7 @@ function DeleteByIds(fid){
     if (confirm('确认要删除这条记录吗？')){
         $.ajax({
             type: "POST",
-            url: '/service/conf/delete',
+            url: '/rbac/role/delete',
             data: {'fid':fid},
             dataType: "json",
             success: function(data){
@@ -366,12 +354,57 @@ function DeleteByIds(fid){
 
 }
 
-function AddView(){
-    var form_obj = document.getElementById('myForm');
-    form_obj.reset()
-    $("#title").html("新建服务")
-    form_obj.setAttribute('option', 'create')
-    $("#myModal").modal("show")
+
+var setting = {
+    check:{
+        enable:true
+    },
+};
+
+
+function AuthByIds(fid){
+    $.ajax({
+        type: "POST",
+        url: '/rbac/role/permission',
+        data: {'fid':fid},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                var zNodes = data['data']['zNodes']
+                $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                $("#authModal").modal("show")
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
+
+}
+
+
+function UpdateAuth(){
+    var checked_id_list = []
+    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+    var nodes = treeObj.getNodes();
+    console.log(nodes)
+    for (i=0; i< nodes.length; i++){
+        if (nodes[i]['checked'] == true){
+            checked_id_list.push(nodes[i]['fid'])
+        }
+        var children_nodes = nodes[i]['children']
+        if (children_nodes.length !=0){
+            for (j=0; j<children_nodes.length; j++){
+                if (children_nodes[j]['checked'] == true){
+                    checked_id_list.push(children_nodes[j]['fid'])
+                }
+            }
+        }
+    }
+    console.log(checked_id_list)
 }
 </script>
 {% endblock %}
