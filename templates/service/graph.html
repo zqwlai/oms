@@ -63,14 +63,14 @@ myChart = echarts.init(document.getElementById('main'));
 
 option = {
     title : {
-        text: '服务端口状态【集群-{{cluster}}，服务-{{service}}，端口-{{port}}】',
+        text: '服务端口状态【集群-{{fcluster}}，服务-{{fservice}}，端口-{{fport}}】',
         subtext: ''
     },
     tooltip : {
         trigger: 'axis'
     },
     legend: {
-        data:['{{host}}']
+        data:['{{fhost}}']
     },
     toolbox: {
         show : true,
