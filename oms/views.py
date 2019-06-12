@@ -109,7 +109,6 @@ def handler_404(request):
 
 
 def handler_500(request):
-    print 555555
     logger_500.error('%s %s'%(request.request_id, traceback.format_exc()))
 
     if request.is_ajax() or request.method == 'POST':

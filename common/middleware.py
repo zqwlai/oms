@@ -17,20 +17,17 @@ from django.http import JsonResponse
 class LogRecordMiddleware(object):
 
     def process_request(self, request):
-        print '111111'
-        if not request.path.startswith('/static') and not request.path.startswith('/favicon.ico') and not request.path.startswith('/skin_config'):
+        if not request.path.startswith('/site_static') and not request.path.startswith('/favicon.ico') and not request.path.startswith('/skin_config'):
             request.request_id = uuid.uuid1().get_hex()
             logger_request.info('%s %s'%(request.request_id, handler_paramer(request)))
 
 
     def process_response(self, request, response):
-        print '222222'
-        if not request.path.startswith('/static')  and not request.path.startswith('/favicon.ico') and  not request.path.startswith('/skin_config'):
+        if not request.path.startswith('/site_static')  and not request.path.startswith('/favicon.ico') and  not request.path.startswith('/skin_config'):
             if request.is_ajax() or request.method == 'POST':
                 try:
-                    print 333333
                     logger_response.info('%s %s'%(request.request_id, response.content))
-                    print 4444444
+
                 except:
                     logger_response.info('%s %s'%(request.request_id, response))
         return response

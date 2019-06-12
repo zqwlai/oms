@@ -30,11 +30,11 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index),
     url(r'^login$', login_exempt(TemplateView.as_view(template_name="login.html"))),
-    url(r'^register', login_exempt(TemplateView.as_view(template_name="register.html"))),
+    url(r'^register$', login_exempt(TemplateView.as_view(template_name="register.html"))),
     url(r'^process_login$', login_exempt(views.process_login)),
     url(r'^process_register$', login_exempt(views.process_register)),
-    url(r'^dashboard', views.dashboard),
-    url(r'^logout', login_exempt(views.logout)),
+    url(r'^dashboard$', views.dashboard),
+    url(r'^logout$', login_exempt(views.logout)),
     url(r'^user/', include('user_app.urls')),
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),
@@ -44,8 +44,8 @@ urlpatterns = [
 ]
 
 
-#handler404 = views.handler_404
-#handler500  = views.handler_500
+handler404 = views.handler_404
+handler500  = views.handler_500
 
 
 
