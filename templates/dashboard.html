@@ -41,7 +41,7 @@
 
 
 
-        <div class="row  border-bottom white-bg dashboard-header">
+        <div class="row  border-bottom white-bg dashboard-header" >
 
                     <div class="col-md-6">
                         <div class="statistic-box">
@@ -53,7 +53,7 @@
                                 {% for i in status_info %}
 
                                     <div class="col-lg-3">
-                                        <canvas id="chart_{{forloop.counter0}}" width="80" height="80" style="margin: 18px auto 0"></canvas>
+                                        <canvas id="chart_{{forloop.counter0}}" width="120" height="80" style="margin: 18px auto 0"></canvas>
                                         <h5 ><a href="#">{{i|key:'fcluster'}}</a></h5>
                                     </div>
                                 {% endfor %}

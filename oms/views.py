@@ -45,7 +45,7 @@ def index(request):
 def dashboard(request):
     #统计集群数，服务数、机器数
     cluster_count = Service.objects.values('fcluster').distinct().count()
-    service_count = Service.objects.values('fname').distinct().count()
+    service_count = Service.objects.values('fhost', 'fname', 'fport').distinct().count()
     host_count = Service.objects.values('fhost').distinct().count()
 
     #统计每个集群的健康度
