@@ -1,7 +1,7 @@
 #-*-coding:utf-8-*-
 import os
 
-DEBUG = False
+DEBUG = True
 
 ###############  数据库配置  ###########
 
