@@ -1,12 +1,7 @@
 #-*-coding:utf-8-*-
 import os
 
-DEBUG = True
-
-if not DEBUG:
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+DEBUG = False
 
 ###############  数据库配置  ###########
 

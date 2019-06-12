@@ -18,8 +18,13 @@ from django.views.generic import TemplateView
 import views
 from common.decorators import  login_exempt
 from django.conf.urls import handler404, handler500
-from django.views.static import serve
 import settings
+from django.views.generic.base import RedirectView
+from django.views.static import serve
+import django.views
+import django.views.static
+static_serve = django.views.static.serve
+favicon_view = RedirectView.as_view(url='/site_static/favicon.ico', permanent=True)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -34,10 +39,10 @@ urlpatterns = [
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),
     url(r'^rbac/', include('rbac.urls')),
+    url(r'^favicon\.ico$', favicon_view),
+    url(r'^site_static/(?P<path>.*)$',static_serve,{'document_root':settings.STATIC_ROOT,}),
 ]
 
-if not settings.DEBUG:
-    urlpatterns += [url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT})]
 
 #handler404 = views.handler_404
 #handler500  = views.handler_500

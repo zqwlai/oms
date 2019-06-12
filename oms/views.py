@@ -9,9 +9,11 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from  user_app.models import OmsUser
 import time
+import json
 from django.utils.decorators import classonlymethod
 from django.views.generic.base import View
 from django.conf.urls import include, url
+from service_app.models import Service
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -27,12 +29,10 @@ class BaseResView(View):
         name = cls.__name__
         # 去掉类名中的view
         name = name.lower().replace('view', '')
-        print name
         instance = cls(**initkwargs)
         urls = []
         urls.append(url(r'^%s$' % name, cls.as_view()))
         for k, v in cls.__dict__.iteritems():
-            print k,v
             if not k.startswith('_'):
                 urls.append(url(r'^%s/%s' %
                                 (name, k), getattr(instance, k)))
@@ -43,7 +43,23 @@ def index(request):
     return HttpResponseRedirect('/dashboard')
 
 def dashboard(request):
-    return render(request, 'dashboard.html',{'root_node':'dashboard'})
+    #统计集群数，服务数、机器数
+    cluster_count = Service.objects.values('fcluster').distinct().count()
+    service_count = Service.objects.values('fname').distinct().count()
+    host_count = Service.objects.values('fhost').distinct().count()
+
+    #统计每个集群的健康度
+    status_info = []
+
+    for i in Service.objects.values('fcluster').distinct():
+        fcluster = i['fcluster']
+        success_num = Service.objects.filter(fcluster=fcluster, fstatus=1).count()
+        unknow_num = Service.objects.filter(fcluster=fcluster, fstatus=0).count()
+        fail_num = Service.objects.filter(fcluster=fcluster, fstatus=2).count()
+        status_info.append({'fcluster':fcluster, 'data':[success_num,unknow_num, fail_num]})
+    status_json = json.dumps(status_info)
+
+    return render(request, 'dashboard.html',locals())
 
 def process_login(request):
     username = request.POST['username']

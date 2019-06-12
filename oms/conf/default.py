@@ -48,7 +48,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'oms.urls'
 
-print os.path.join(BASE_DIR, 'templates')
 
 TEMPLATES = [
     {
@@ -88,12 +87,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT=os.path.join(BASE_DIR,"static")
 
 
 request_log = '/var/logs/oms/request.log'
