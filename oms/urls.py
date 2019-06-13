@@ -23,7 +23,7 @@ from django.views.generic.base import RedirectView
 from django.views.static import serve
 import django.views
 import django.views.static
-static_serve = django.views.static.serve
+static_serve = login_exempt(django.views.static.serve)
 favicon_view = RedirectView.as_view(url='/site_static/favicon.ico', permanent=True)
 
 urlpatterns = [
