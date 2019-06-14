@@ -28,6 +28,7 @@ class TSysPermission(models.Model):
 class TSysRole(models.Model):
     fid = models.AutoField(db_column='Fid', primary_key=True)  # Field name made lowercase.
     fname = models.CharField(db_column='Fname', max_length=64)
+    fcname = models.CharField(db_column='Fcname', max_length=64)
     users = models.ManyToManyField(OmsUser)
     permissions = models.ManyToManyField(TSysPermission)
     fcreate_time = models.DateTimeField(db_column='Fcreate_time', auto_now_add=True)  # Field name made lowercase.

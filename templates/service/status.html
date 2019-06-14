@@ -125,8 +125,13 @@ function InitTable(){
             title: '创建时间',
             sortable: true
         }, {
-            field: 'fid',
+            field: 'fstatus',
             title: '端口状态',
+            formatter: statusFormatter,
+            align: 'center'
+        },{
+            field: 'fid',
+            title: '操作',
             formatter: actionFormatter,
             align: 'center'
         },
@@ -142,6 +147,12 @@ function InitTable(){
 
 
 function actionFormatter(value, row, index){
+    var result = "";
+    result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'>监控详情</a>";
+    return result
+}
+
+function statusFormatter(value, row, index){
     var id = value;
             var result = "";
             if (row.fstatus ==0){

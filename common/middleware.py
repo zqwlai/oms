@@ -55,7 +55,7 @@ class RbacMiddleware(object):
         if request.user and request.user.is_superuser:
             return
 
-        if request.path in ['/', 'login']:
+        if request.path in ['/', 'login', '/user/profile', '/dashboard']:
             return
         acccept_url_list = []
         #查询此用户的角色

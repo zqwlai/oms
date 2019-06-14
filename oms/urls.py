@@ -24,7 +24,6 @@ from django.views.static import serve
 import django.views
 import django.views.static
 static_serve = login_exempt(django.views.static.serve)
-favicon_view = RedirectView.as_view(url='/site_static/favicon.ico', permanent=True)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -39,8 +38,8 @@ urlpatterns = [
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),
     url(r'^rbac/', include('rbac.urls')),
-    url(r'^favicon\.ico$', favicon_view),
     url(r'^site_static/(?P<path>.*)$',static_serve,{'document_root':settings.STATIC_ROOT,}),
+
 ]
 
 

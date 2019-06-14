@@ -1,0 +1,101 @@
+{%  extends 'base.html' %}
+
+
+{% block content %}
+{% load key %}
+        <div class="row">
+                    <div class="col-lg-3">
+                        <div class="ibox ">
+                            <div class="ibox-title">
+                                <span class="label label-success float-right">集群数</span>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{{cluster_count}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="ibox ">
+                            <div class="ibox-title">
+                                <span class="label label-info float-right">服务数</span>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{{service_count}}</h1>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="ibox ">
+                            <div class="ibox-title">
+                                <span class="label label-primary float-right">机器数</span>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{{host_count}}</h1>
+
+                            </div>
+                        </div>
+                    </div>
+
+        </div>
+
+
+
+        <div class="row  border-bottom white-bg dashboard-header" >
+
+                    <div class="col-md-6">
+                        <div class="statistic-box">
+                        <h4>
+                            集群状态展示
+                        </h4>
+
+                            <div class="row text-center">
+                                {% for i in status_info %}
+
+                                    <div class="col-lg-3">
+                                        <canvas id="chart_{{forloop.counter0}}" width="120" height="80" style="margin: 18px auto 0"></canvas>
+                                        <h5 ><a href="#">{{i|key:'fcluster'}}</a></h5>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block  script %}
+
+<script>
+
+
+    var status_info = {{status_json|safe}}
+
+    var doughnutOptions = {
+                responsive: false,
+                legend: {
+                    display: false
+                }
+            };
+    for (i=0; i<status_info.length;i++){
+        var doughnutData = {
+                labels: ["正常服务","未知服务","异常服务" ],
+                datasets: [{
+                    data: status_info[i]['data'],
+                    backgroundColor: ["#32CD32","#FF7F50","#FF0000"]
+                }]
+        } ;
+
+        var ctx = document.getElementById("chart_"+i).getContext("2d");
+        new Chart(ctx, {type: 'doughnut', data: doughnutData, options:doughnutOptions});
+    }
+</script>
+{% endblock %}

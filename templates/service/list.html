@@ -246,8 +246,8 @@ function actionFormatter(value, row, index){
     var id = value;
             var result = "";
             var args =  row.fid + ',' + row.fcluster + ',' + row.fhost + ',' + row.fname + ',' + row.fport + ',' + row.fdesc
-            result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"EditViewById('" + args + "')\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
-            result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.fid + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + args + "')\" title='编辑'>编辑</span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.fid + "')\" title='删除'>删除</a>";
 
             return result;
 }

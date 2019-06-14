@@ -104,30 +104,27 @@ class UserView(BaseResView):
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
     def update(self, request):
-        try:
-            print request.POST.dict()
-            id = request.POST['edit_id']
-            status = request.POST['edit_status']
-            role_list = request.POST.getlist('edit_role')
-            user_obj = OmsUser.objects.get(id=id)
-            user_obj.is_active = status
-            user_obj.save()
+        id = request.POST['edit_id']
+        status = request.POST['edit_status']
+        role_list = request.POST.getlist('edit_role')
+        user_obj = OmsUser.objects.get(id=id)
+        user_obj.is_active = status
+        user_obj.save()
 
-            #获取原先的权限列表
-            old_role_list = [i.id for i in user_obj.tsysrole_set.all()]
+        #获取原先的权限列表
+        old_role_list = [i.id for i in user_obj.tsysrole_set.all()]
 
-            #需要增加的权限
-            need_add_role_list = list(set(role_list).difference(old_role_list))
-            print need_add_role_list
-            for i in need_add_role_list:
-                user_obj.tsysrole_set.add(i)
-            #需要删除的权限
-            need_remove_role_list = list(set(old_role_list).difference(role_list))
-            for i in need_remove_role_list:
-                user_obj.tsysrole_set.remove(i)
-            user_obj.save()
-        except:
-            print traceback.format_exc()
+        #需要增加的权限
+        need_add_role_list = list(set(role_list).difference(old_role_list))
+        print need_add_role_list
+        for i in need_add_role_list:
+            user_obj.tsysrole_set.add(i)
+        #需要删除的权限
+        need_remove_role_list = list(set(old_role_list).difference(role_list))
+        for i in need_remove_role_list:
+            user_obj.tsysrole_set.remove(i)
+        user_obj.save()
+
         return JsonResponse({'code': 0, 'data': '', 'message': '更新成功'})
 
 
@@ -168,48 +165,60 @@ class RoleView(BaseResView):
         return JsonResponse({'code': 0, 'data': '', 'message': '角色更新成功'})
 
     def permission(self, request):      #获取该角色有哪些菜单权限
-        try:
-            fid = request.POST['fid']
-            role_obj = TSysRole.objects.get(fid=fid)
-            accept_menu_id_list = [i.fid for i in role_obj.permissions.all()]
-            data = []
-            for i in TSysPermission.objects.filter(fparent_id=0).order_by('flocal'):
-                if i.fid in accept_menu_id_list:
-                    checked = True
+        fid = request.POST['fid']
+        role_obj = TSysRole.objects.get(fid=fid)
+        accept_menu_id_list = [i.fid for i in role_obj.permissions.all()]
+        data = []
+        for i in TSysPermission.objects.filter(fparent_id=0).order_by('flocal'):
+            if i.fid in accept_menu_id_list:
+                checked = True
+            else:
+                checked = False
+            if not TSysPermission.objects.filter(fparent_id=i.fid):  # 判断该一级节点有没有子节点
+                if i.fresource_url == '/dashboard':     #dashboard菜单栏禁用checkbox
+                    chkDisabled = 'true'
                 else:
-                    checked = False
-                if not TSysPermission.objects.filter(fparent_id=i.fid):  # 判断该一级节点有没有子节点
-                    if i.fresource_url == '/dashboard':     #dashboard菜单栏禁用checkbox
-                        chkDisabled = 'true'
-                    else:
-                        chkDisabled = 'false'
-                    data.append({
-                        'fid': i.fid, 'name': i.fresource_name,
-                        'fenable': i.favailable,
-                        'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'children': [],
-                        'checked': checked, 'open':'true', 'chkDisabled':chkDisabled
+                    chkDisabled = 'false'
+                data.append({
+                    'fid': i.fid, 'name': i.fresource_name,
+                    'fenable': i.favailable,
+                    'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'children': [],
+                    'checked': checked, 'open':'true', 'chkDisabled':chkDisabled
+                })
+            else:  # 有子节点
+                level2_data = []
+                for j in TSysPermission.objects.filter(fparent_id=i.fid).order_by('flocal'):  # 遍历子节点
+                    children_accept = False
+                    if j.fid in accept_menu_id_list:
+                        children_accept = True
+                    level2_data.append({
+                        'fid': j.fid, 'name': j.fresource_name,
+                        'fenable': j.favailable,
+                        'ficon': j.fmenu_icon, 'fresource_url': j.fresource_url,
+                        'checked': children_accept
                     })
-                else:  # 有子节点
-                    level2_data = []
-                    for j in TSysPermission.objects.filter(fparent_id=i.fid).order_by('flocal'):  # 遍历子节点
-                        children_accept = False
-                        if j.fid in accept_menu_id_list:
-                            children_accept = True
-                        level2_data.append({
-                            'fid': j.fid, 'name': j.fresource_name,
-                            'fenable': j.favailable,
-                            'ficon': j.fmenu_icon, 'fresource_url': j.fresource_url,
-                            'checked': children_accept
-                        })
-                    data.append({
-                        'fid': i.fid, 'name': i.fresource_name,
-                        'children': level2_data,
-                        'fenable': i.favailable,
-                        'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'checked': checked, 'open':'true'
-                    })
+                data.append({
+                    'fid': i.fid, 'name': i.fresource_name,
+                    'children': level2_data,
+                    'fenable': i.favailable,
+                    'ficon': i.fmenu_icon, 'fresource_url': i.fresource_url, 'checked': checked, 'open':'true'
+                })
 
-            print data
-        except:
-            print traceback.format_exc()
         return JsonResponse({'code':0, 'data':{'zNodes':data,}, 'message':'ok'})
+
+
+
+    def updateauth(self, request):
+        checked_id_list =  request.POST.getlist('checked_id_list[]')
+        fid = request.POST['fid']       #获取角色id
+        role_obj = TSysRole.objects.get(fid=fid)
+        #获取老的菜单id
+        old_menu_id = [str(i.fid) for i in  role_obj.permissions.all()]
+        need_add_menu_ids = list(set(checked_id_list).difference(old_menu_id))
+        need_remove_menu_ids = list(set(old_menu_id).difference(checked_id_list))
+        for i in need_add_menu_ids:
+            role_obj.permissions.add(i)
+        for i in   need_remove_menu_ids:
+            role_obj.permissions.remove(i)
+        return JsonResponse({'code':0, 'data':'', 'message':'更新成功'})
 

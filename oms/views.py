@@ -90,7 +90,9 @@ def process_register(request):
         return JsonResponse({'code':1, 'data':'', 'message':'用户已经存在!'})
 
     #创建用户并跳转到dashboard
-    OmsUser.objects.create_user(username=username,password=password, last_login=time.strftime('%Y-%m-%d %H:%M:%S'))
+    p = OmsUser.objects.create_user(username=username,password=password, last_login=time.strftime('%Y-%m-%d %H:%M:%S'))
+    p.tsysrole_set.add(1)   #用户注册后加到默认用户组
+    p.save()
     user = auth.authenticate(username=username, password=password)
     auth.login(request, user)
     return JsonResponse({'code':0, 'data':'', 'message':'用户注册成功!'})

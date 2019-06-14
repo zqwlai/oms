@@ -4,64 +4,74 @@
 {% block content %}
 {% load key %}
         <div class="row">
-                    <div class="col-lg-3">
-                        <div class="ibox ">
-                            <div class="ibox-title">
-                                <span class="label label-success float-right">集群数</span>
-                            </div>
-                            <div class="ibox-content">
-                                <h1 class="no-margins">{{cluster_count}}</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="ibox ">
-                            <div class="ibox-title">
-                                <span class="label label-info float-right">服务数</span>
-                            </div>
-                            <div class="ibox-content">
-                                <h1 class="no-margins">{{service_count}}</h1>
-
+                        <div class="col-sm-3">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <span class="label label-success pull-right">Clusters</span>
+                                    <h5>集群总数</h5></div>
+                                <div class="ibox-content">
+                                    <h1 class="no-margins">
+                                        <a href="#">{{cluster_count}}</a></h1>
+                                    <small>All Cluters</small></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="ibox ">
-                            <div class="ibox-title">
-                                <span class="label label-primary float-right">机器数</span>
-                            </div>
-                            <div class="ibox-content">
-                                <h1 class="no-margins">{{host_count}}</h1>
-
+                        <div class="col-sm-3">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <span class="label label-info pull-right">Hosts</span>
+                                    <h5>主机总数</h5></div>
+                                <div class="ibox-content">
+                                    <h1 class="no-margins">
+                                        <a href="#">{{host_count}}</a></h1>
+                                    <small>All hosts</small></div>
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <span class="label label-primary pull-right">Services</span>
+                                    <h5>服务总数</h5></div>
+                                <div class="ibox-content">
+                                    <h1 class="no-margins">
+                                        <a href="#">
+                                            <span id="online_users"></span>{{service_count}}</a>
+                                    </h1>
+                                    <small>Services</small></div>
+                            </div>
+                        </div>
+
                     </div>
 
-        </div>
 
 
+        <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox ">
+                            <div class="ibox-content">
+                                    <div>
 
-        <div class="row  border-bottom white-bg dashboard-header" >
+                                        <h1 class="m-b-xs">集群状态展示</h1>
 
-                    <div class="col-md-6">
-                        <div class="statistic-box">
-                        <h4>
-                            集群状态展示
-                        </h4>
+                                    </div>
 
-                            <div class="row text-center">
-                                {% for i in status_info %}
+                                <div class="row text-center">
+                                    {% for i in status_info %}
 
                                     <div class="col-lg-3">
                                         <canvas id="chart_{{forloop.counter0}}" width="120" height="80" style="margin: 18px auto 0"></canvas>
                                         <h5 ><a href="#">{{i|key:'fcluster'}}</a></h5>
                                     </div>
                                 {% endfor %}
+                                </div>
+
+
+
                             </div>
                         </div>
                     </div>
+                </div>
 
-            </div>
+
 
 
 

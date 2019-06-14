@@ -210,8 +210,8 @@ function actionFormatter(value, row, index){
             var result = "";
 
             var args =  row.id + ',' + row.username + ',' + row.is_active + ',' + row.roleids
-            result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"EditViewById('" + args + "')\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
-            result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + args + "')\" title='编辑'>编辑</a>";
+            result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'>删除</a>";
 
             return result;
 }
