@@ -406,7 +406,7 @@ function UpdateAuth(){
             }
         }
     }
-    alert(checked_id_list)
+
 
     $.ajax({
         type: "POST",
@@ -416,7 +416,7 @@ function UpdateAuth(){
         success: function(data){
             if (data['code'] == 0){
                 alert(data['message'])
-
+                window.location.reload();
             }
             else{
                 alert(data['message'])

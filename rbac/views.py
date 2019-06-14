@@ -175,10 +175,12 @@ class RoleView(BaseResView):
             else:
                 checked = False
             if not TSysPermission.objects.filter(fparent_id=i.fid):  # 判断该一级节点有没有子节点
-                if i.fresource_url == '/dashboard':     #dashboard菜单栏禁用checkbox
+                if i.fresource_url == '/dashboard':     #dashboard菜单栏禁用checkbox，同时选中该节点
                     chkDisabled = 'true'
+                    checked = True
                 else:
                     chkDisabled = 'false'
+                    checked = False
                 data.append({
                     'fid': i.fid, 'name': i.fresource_name,
                     'fenable': i.favailable,
