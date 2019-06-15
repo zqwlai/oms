@@ -10,27 +10,29 @@
             <div class="panel panel-default">
                 <div class="panel-heading">查询条件</div>
                 <div class="panel-body">
-                    <form id="formSearch" class="form-horizontal">
-                        <div>
-                            <label class="control-label col-sm-1" style="text-align:left">集群</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="fcluster" name="fcluster">
-                            </div>
-                            <label class="control-label col-sm-1" for="txt_search_departmentname" style="text-align:left">IP地址</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="fhost" name="fhost"></div>
-                            <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">服务名</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="fname" name="fname"></div>
-                            <label class="control-label col-sm-1" for="txt_search_statu" style="text-align:left">端口号</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="fport" name="fport"></div>
-                        </div>
-                        <div>
-                            <div class="col-sm-1" style="text-align:left;">
-                                <button type="button" id="btn_query" class="btn btn-primary" onclick="ReloadTable()">查询</button></div>
-                        </div>
-                    </form>
+            <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
+
+        <div class="input-group">
+            <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名">
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" id="fhost" name="fhost" placeholder="IP地址">
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" id="fname" name="fname" placeholder="服务名">
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" id="fport" name="fport" placeholder="端口号">
+        </div>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="ReloadTable()">
+                    搜索
+                </button>
+            </div>
+        </div>
+    </form>
+
                 </div>
             </div>
         </div>
