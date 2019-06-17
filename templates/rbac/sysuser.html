@@ -328,7 +328,7 @@ function DeleteByIds(id){
     if (confirm('确认要删除这条记录吗？')){
         $.ajax({
             type: "POST",
-            url: '/service/conf/delete',
+            url: '/rbac/user/delete',
             data: {'id':id},
             dataType: "json",
             success: function(data){
