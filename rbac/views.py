@@ -141,7 +141,7 @@ class RoleView(BaseResView):
         total = TSysRole.objects.filter(fname__contains=fname).count()
         result = []
         for i in data:
-            result.append({'fid': i.fid, 'fname': i.fname, 'fcreate_time': str(i.fcreate_time)})
+            result.append({'fid': i.fid, 'fname': i.fname, 'fcname':i.fcname,'fcreate_time': str(i.fcreate_time)})
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
     def delete(self, request):
