@@ -104,26 +104,24 @@ class UserView(BaseResView):
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
     def update(self, request):
-        try:
-            id = request.POST['edit_id']
-            status = request.POST['edit_status']
-            role_list = request.POST.getlist('edit_role')
-            user_obj = OmsUser.objects.get(id=id)
-            user_obj.is_active = status
-            user_obj.save()
-            #获取原先的权限列表
-            old_role_list = [str(i.fid) for i in user_obj.tsysrole_set.all()]
-            #需要增加的权限
-            need_add_role_list = list(set(role_list).difference(old_role_list))
-            for i in need_add_role_list:
-                user_obj.tsysrole_set.add(i)
-            #需要删除的权限
-            need_remove_role_list = list(set(old_role_list).difference(role_list))
-            for i in need_remove_role_list:
-                user_obj.tsysrole_set.remove(i)
-            user_obj.save()
-        except:
-            print traceback.format_exc()
+        id = request.POST['edit_id']
+        status = request.POST['edit_status']
+        print status
+        role_list = request.POST.getlist('edit_role')
+        user_obj = OmsUser.objects.get(id=id)
+        user_obj.is_active = int(status)
+        user_obj.save()
+        #获取原先的权限列表
+        old_role_list = [str(i.fid) for i in user_obj.tsysrole_set.all()]
+        #需要增加的权限
+        need_add_role_list = list(set(role_list).difference(old_role_list))
+        for i in need_add_role_list:
+            user_obj.tsysrole_set.add(i)
+        #需要删除的权限
+        need_remove_role_list = list(set(old_role_list).difference(role_list))
+        for i in need_remove_role_list:
+            user_obj.tsysrole_set.remove(i)
+
         return JsonResponse({'code': 0, 'data': '', 'message': '更新成功'})
 
 

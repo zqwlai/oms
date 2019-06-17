@@ -221,63 +221,6 @@ function ReloadTable(){
 }
 
 $(document).ready(function(){
-    $("#addForm").validate({
-        ignore: ':hidden:not("#Fcluster")',
-        rules: {
-            Fcluster:{
-                required: true,
-            },
-            Fhost:{
-                required: true,
-                isIP: true
-            },
-
-            Fname: {
-                required: true
-            },
-            Fport:{
-                required: true,
-                positiveinteger: true
-            }
-        },
-        messages: {
-            Fcluster: {
-                required: '所属集群不能为空'
-            },
-            Fhost: {
-                required: '机器IP不能为空'
-            },
-            Fname : {
-                required : "服务名不能为空"
-            },
-            Fport:{
-                required : "服务端口不能为空",
-
-            }
-        },
-        submitHandler: function(form) {
-            console.log($("#addForm").serialize())
-            $.ajax({
-                type: "POST",
-                url: '/service/conf/add',
-                data: $("#addForm").serialize(),
-                dataType: "json",
-                success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
-                },
-                error: function() {
-                   alert('服务器内部错误');
-                }
-            });
-        }
-    });
-
 
     $("#editForm").validate({
         submitHandler: function(form) {
