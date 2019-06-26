@@ -34,7 +34,9 @@ class BaseResView(View):
         urls.append(url(r'^%s$' % name, cls.as_view()))
         for k, v in cls.__dict__.iteritems():
             if not k.startswith('_'):
-                urls.append(url(r'^%s/%s' %
+                urls.append(url(r'^%s/%s/$' %
+                                (name, k), getattr(instance, k)))
+                urls.append(url(r'^%s/%s$' %
                                 (name, k), getattr(instance, k)))
         return urls
 

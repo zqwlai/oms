@@ -8,5 +8,5 @@ from common.decorators import  login_exempt
 
 urlpatterns = [
     url(r'^getPort$', login_exempt(views.getport)),
-   
+    url(r'^getComponent$', login_exempt(views.getcomponent))
 ]

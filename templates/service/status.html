@@ -16,7 +16,7 @@
             <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" id="fhost" name="fhost" placeholder="IP地址">
+            <input type="text" class="form-control" id="fhostname" name="fhostname" placeholder="主机名">
         </div>
         <div class="input-group">
             <input type="text" class="form-control" id="fname" name="fname" placeholder="服务名">
@@ -99,7 +99,7 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhost: $("#fhost").val(),
+                fhostname: $("#fhostname").val(),
                 fname: $("#fname").val(),
                 fport: $("#fport").val(),
                 fcluster: $("#fcluster").val()
@@ -111,8 +111,8 @@ function InitTable(){
             title: '所属集群',
             sortable: false
         }, {
-            field: 'fhost',
-            title: '机器IP',
+            field: 'fhostname',
+            title: '主机名',
         }, {
             field: 'fname',
             title: '服务名',
@@ -128,7 +128,7 @@ function InitTable(){
             sortable: true
         }, {
             field: 'fstatus',
-            title: '端口状态',
+            title: '运行状态',
             formatter: statusFormatter,
             align: 'center'
         },{
@@ -150,7 +150,8 @@ function InitTable(){
 
 function actionFormatter(value, row, index){
     var result = "";
-    result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'>监控详情</a>";
+    result += "<a href=/service/status/port/?fid=" + row.fid + " title='详情'>端口监控</a> | ";
+    result += "<a href=/service/status/performance/?fid=" + row.fid + " title='详情'>性能监控</a>";
     return result
 }
 
@@ -158,15 +159,15 @@ function statusFormatter(value, row, index){
     var id = value;
             var result = "";
             if (row.fstatus ==0){
-                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
+                result += "<a href=/service/status/port/?fid=" + row.fid  + " title='详情'><span class='badge badge-warning'>UNKNOWN</span></a>";
             }
 
             else if(row.fstatus ==1){
-                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
+                result += "<a href=/service/status/port/?fid=" + row.fid + " title='详情'><span class='badge badge-primary'>RUNNING</span></a>";
             }
 
             else{
-                result += "<a href=/service/status/graph/?fcluster=" + row.fcluster + "&fservice=" + row.fname + "&fhost=" + row.fhost + "&fport=" + row.fport + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
+                result += "<a href=/service/status/port/?fid=" + row.fid + " title='详情'><span class='badge badge-danger'>FAILED</span></a>";
             }
             return result;
 }

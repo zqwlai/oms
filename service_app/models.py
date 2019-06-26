@@ -25,6 +25,7 @@ class Service(models.Model):
     #clusters = models.ManyToManyField(Cluster)  
     fcluster = models.CharField(db_column='Fcluster', max_length=100, default='')
     fhost = models.CharField(db_column='Fhost', max_length=15)  # Field name made lowercase.
+    fhostname = models.CharField(db_column='Fhostname', max_length=100)
     fname = models.CharField(db_column='Fname', max_length=100)
     fport = models.IntegerField(db_column='Fport', max_length=5, default=0)
     fdesc = models.CharField(db_column='Fdesc', max_length=100)  # Field name made lowercase.

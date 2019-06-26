@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+ <div class="ibox ">
+            <div class="ibox-title">
+                <h5>服务端口监控</h5>
+            </div>
+<div class="ibox-content m-b-sm border-bottom">
+
+
+
+    <div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form id="formSearch" class=" form-inline" style="padding-bottom: 8px">
+
+                <div class="form-group" id="date">
+                    <div class="input-daterange input-group" id="datepicker">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" id="start_time" class="input-sm form-control" style="width: 180px;" name="start_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{start_time}}">
+
+                        <span class="input-group-addon">to</span>
+                        <input type="text" id="end_time" class="input-sm form-control" style="width: 180px;" name="end_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{end_time}}">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="query_graph()">
+                        查询
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+
+                    <div id="main" style="width: 1200px;height:400px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+ </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+window.onload=function(){
+  query_graph()
+}
+
+
+function query_graph(){
+$.ajax({
+        type: "POST",
+        url: '/service/status/query_graph',
+        data: {'fid':'{{fid}}', 'counter':'{{counter}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+               var title = {
+                 text: '{{counter}}'
+               };
+               var subtitle = {
+                  text: '服务名：'+ '{{service_obj.fname}}' + ' 端口号：' + {{service_obj.fport}}
+               };
+               var xAxis = {
+                  //categories: data['data']['time_list'],
+                    type: 'datetime',
+                    labels: {
+                        formatter: function() {
+
+                            return  Highcharts.dateFormat('%H:%M', this.value*1000);
+                        }
+                    }
+               };
+               var yAxis = {
+                  title: {
+                     text: ''
+                  },
+                  plotLines: [{
+                     value: 0,
+                     width: 1,
+                     color: '#808080'
+                  }]
+               };
+
+               var tooltip = {
+                     formatter:function(){
+                        return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x*1000)+': '+ '<strong>' + this.y + '</strong>';
+                     }
+               }
+
+               var legend = {
+
+               };
+
+               var plotOptions =  {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                };
+               var series = data['data']['hdata']
+
+               var credits = {
+                    enabled:false // 禁用版权信息
+               }
+
+               var global = {}
+               var json = {};
+
+               json.title = title;
+               json.subtitle = subtitle;
+               json.xAxis = xAxis;
+               json.yAxis = yAxis;
+               json.tooltip = tooltip;
+               json.legend = legend;
+               json.series = series;
+               json.credits = credits;
+               json.plotOptions = plotOptions
+                json.global = global
+               $('#main').highcharts(json);
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
+
+
+}
+</script>
+{% endblock %}

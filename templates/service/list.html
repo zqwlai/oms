@@ -23,7 +23,7 @@
             <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" id="fhost" name="fhost" placeholder="IP地址">
+            <input type="text" class="form-control" id="fhostname" name="fhost" placeholder="主机名">
         </div>
         <div class="input-group">
             <input type="text" class="form-control" id="fname" name="fname" placeholder="服务名">
@@ -95,9 +95,9 @@
                     </div>
 
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">主机名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fhost" class="form-control"></div>
+                            <input type="text" name="fhostname" class="form-control"></div>
                     </div>
 
                     <div class="form-group row">
@@ -196,7 +196,7 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhost: $("#fhost").val(),
+                fhostname: $("#fhostname").val(),
                 fname: $("#fname").val(),
                 fport: $("#fport").val(),
                 fcluster: $("#fcluster").val()
@@ -207,9 +207,9 @@ function InitTable(){
             field: 'fcluster',
             title: '所属集群',
             sortable: false
-        }, {
-            field: 'fhost',
-            title: '机器IP',
+        },{
+            field: 'fhostname',
+            title: '主机名',
         }, {
             field: 'fname',
             title: '服务名',
@@ -243,10 +243,8 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
             var result = "";
-            var args =  row.fid + ',' + row.fcluster + ',' + row.fhost + ',' + row.fname + ',' + row.fport + ',' + row.fdesc
-            result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + args + "')\" title='编辑'>编辑</span></a>";
+            result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + row.fid + "')\" title='编辑'>编辑</span></a>";
             result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.fid + "')\" title='删除'>删除</a>";
-
             return result;
 }
 
@@ -260,11 +258,9 @@ $(document).ready(function(){
             fcluster:{
                 required: true,
             },
-            fhost:{
+            fhostname:{
                 required: true,
-                isIP: true
             },
-
             fname: {
                 required: true
             },
@@ -277,8 +273,8 @@ $(document).ready(function(){
             fcluster: {
                 required: '所属集群不能为空'
             },
-            fhost: {
-                required: '机器IP不能为空'
+            fhostname: {
+                required: '主机名不能为空'
             },
             fname : {
                 required : "服务名不能为空"
@@ -317,25 +313,40 @@ $(document).ready(function(){
     });
 })
 
-function EditViewById(content){
-    console.log(content)
-    var arry = content.split(',')
-    var fid = arry[0]
-    var fcluster = arry[1]
-    var fhost = arry[2]
-    var fname = arry[3]
-    var fport = arry[4]
-    var fdesc = arry[5]
-    var form_obj = document.getElementById('myForm');
-    form_obj.fid.value = fid
-    form_obj.fcluster.value = fcluster
-    form_obj.fhost.value = fhost
-    form_obj.fname.value = fname
-    form_obj.fport.value = fport
-    form_obj.fdesc.value = fdesc
-    $("#title").html("更新服务")
-    form_obj.setAttribute('option', 'update')
-    $("#myModal").modal("show")
+function EditViewById(fid){
+    $.ajax({
+        type: "POST",
+        url: '/service/conf/get_service_obj',
+        data: {'fid':fid},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                console.log(data['data'])
+                var fcluster = data['data']['fcluster']
+                var fhost = data['data']['fhost']
+                var fname = data['data']['fname']
+                var fhostname = data['data']['fhostname']
+                var fport = data['data']['fport']
+                var fdesc = data['data']['fdesc']
+                var form_obj = document.getElementById('myForm');
+                form_obj.fid.value = fid
+                form_obj.fcluster.value = fcluster
+                form_obj.fhostname.value = fhostname
+                form_obj.fname.value = fname
+                form_obj.fport.value = fport
+                form_obj.fdesc.value = fdesc
+                $("#title").html("更新服务")
+                form_obj.setAttribute('option', 'update')
+                $("#myModal").modal("show")
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
 }
 
 
