@@ -188,14 +188,6 @@ class StatusView(BaseResView):
 
 
 
-
-def getport(request):
-    host = request.POST['host']
-    port_list = [ i.fport for i in Service.objects.filter(fhost=host) ]
-    return JsonResponse({'code':0, 'data':{'port_list':port_list}, 'message':'ok'})
-
-
-
 def getcomponent(request):  #获取对应主机下所有的组件信息
     hostname = request.POST['hostname']
     Service.objects.filter(fhostname=hostname)
