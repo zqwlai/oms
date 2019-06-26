@@ -125,9 +125,7 @@ $.ajax({
                     enabled:false // 禁用版权信息
                }
 
-               var global = {}
                var json = {};
-
                json.title = title;
                json.subtitle = subtitle;
                json.xAxis = xAxis;
@@ -137,8 +135,13 @@ $.ajax({
                json.series = series;
                json.credits = credits;
                json.plotOptions = plotOptions
-                json.global = global
-               $('#main').highcharts(json);
+
+               Highcharts.setOptions({
+                    global: {
+                        useUTC: false,
+                    }
+                });
+                Highcharts.chart('main',json)
             }
             else{
                 alert(data['message'])

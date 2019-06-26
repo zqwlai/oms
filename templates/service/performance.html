@@ -82,7 +82,6 @@ window.onload=function(){
 function query_graph(){
     var counter = $("#counter").val()
     if (!counter){
-        alert('未找到该组件的的监控项！')
         return false
     }
     $.ajax({
@@ -140,9 +139,9 @@ function query_graph(){
 
                var credits = {
                     enabled:false // 禁用版权信息
-               }
-               var json = {};
+               };
 
+               var json = {};
                json.title = title;
                json.subtitle = subtitle;
                json.xAxis = xAxis;
@@ -152,8 +151,12 @@ function query_graph(){
                json.series = series;
                json.credits = credits;
                json.plotOptions = plotOptions
-
-               $('#main').highcharts(json);
+               Highcharts.setOptions({
+                    global: {
+                        useUTC: false,
+                    }
+                });
+                Highcharts.chart('main',json)
             }
             else{
                 alert(data['message'])
