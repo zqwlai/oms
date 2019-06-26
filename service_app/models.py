@@ -29,7 +29,9 @@ class Service(models.Model):
     fname = models.CharField(db_column='Fname', max_length=100)
     fport = models.IntegerField(db_column='Fport', max_length=5, default=0)
     fdesc = models.CharField(db_column='Fdesc', max_length=100)  # Field name made lowercase.
-    fstatus = models.IntegerField(db_column='Fstatus', max_length=1, default=0) 
+    fstatus = models.IntegerField(db_column='Fstatus', max_length=1, default=0)
+    fadmin_user = models.CharField(db_column='Fadmin_user', max_length=100, default='')
+    fadmin_password = models.CharField(db_column='Fadmin_password', max_length=100, default='')
     fversion = models.CharField(db_column='Fversion', max_length=20)  # Field name made lowercase.
     fcreate_time = models.DateTimeField(db_column='Fcreate_time', auto_now_add=True)  # Field name made lowercase.
     fmodify_time = models.DateTimeField(db_column='Fmodify_time', auto_now=True)  # Field name made lowercase.

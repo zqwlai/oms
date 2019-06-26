@@ -42,8 +42,10 @@ class ConfView(BaseResView):
         total = Service.objects.filter(**query_dict).count()
         result = []
         for i in data:
-            result.append({'fid': i.fid, 'fcluster': i.fcluster, 'fname': i.fname, 'fport': i.fport,
-                           'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname})
+            result.append({
+                'fid': i.fid, 'fcluster': i.fcluster, 'fname': i.fname, 'fport': i.fport,
+                'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname,
+                'fadmin_user':i.fadmin_user, 'fadmin_password':i.fadmin_password})
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
 
@@ -53,11 +55,14 @@ class ConfView(BaseResView):
         fport = request.POST['fport']
         fdesc = request.POST['fdesc']
         fcluster = request.POST['fcluster']
+        fadmin_user = request.POST['fadmin_user']
+        fadmin_password = request.POST['fadmin_password']
         # 判断服务是否已经存在
         if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在！' % (fcluster, fhostname, fname, fport)})
-        s = Service.objects.create(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc)
+        s = Service.objects.create(
+            fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
         return JsonResponse({'code': 0, 'data': '', 'message': '服务创建成功！'})
 
     def delete(self, request):
@@ -72,10 +77,14 @@ class ConfView(BaseResView):
         fport = request.POST['fport']
         fdesc = request.POST['fdesc']
         fcluster = request.POST['fcluster']
+        fadmin_user = request.POST['fadmin_user']
+        fadmin_password = request.POST['fadmin_password']
         if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhostname, fname, fport)})
-        Service.objects.filter(fid=fid).update(fname=fname, fhostname=fhostname, fport=fport, fcluster=fcluster, fdesc=fdesc)
+        Service.objects.filter(fid=fid).update(
+            fname=fname, fhostname=fhostname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
+
         return JsonResponse({'code': 0, 'data': '', 'message': '服务更新成功'})
 
 
@@ -84,7 +93,9 @@ class ConfView(BaseResView):
         service_obj = Service.objects.get(fid=fid)
         data = {
             'fid':service_obj.fid,'fhostname':service_obj.fhostname,'fname':service_obj.fname,
-            'fport':service_obj.fport,'fcluster':service_obj.fcluster,'fdesc':service_obj.fdesc,'fcreate_time':service_obj.fcreate_time}
+            'fport':service_obj.fport,'fcluster':service_obj.fcluster,'fdesc':service_obj.fdesc,'fcreate_time':service_obj.fcreate_time,
+            'fadmin_user':service_obj.fadmin_user, 'fadmin_password':service_obj.fadmin_password
+        }
         return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
 
 
@@ -190,5 +201,5 @@ def getcomponent(request):  #获取对应主机下所有的组件信息
     Service.objects.filter(fhostname=hostname)
     data = []
     for i in Service.objects.filter(fhostname=hostname):
-        data.append({'fname':i.fname, 'fport':i.fport})
+        data.append({'fname':i.fname, 'fport':i.fport,'fadmin_user':i.fadmin_user,'fadmin_password':i.fadmin_password})
     return JsonResponse({'code':0, 'data':data, 'message':'ok'})
