@@ -144,16 +144,9 @@ class StatusView(BaseResView):
             endpoint = service_obj.fhostname
             f = Falcon()
             history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], [counter], CF='AVERAGE')
-
-            time_list = []
             hdata = []
             for i in history_data:
                 hdata.append({'name':endpoint, 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
-            #time_list = [time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['timestamp']) ) for i in history_data[0]['Values']]
-            #print time_list
-            print hdata
-
-
         except:
             print traceback.format_exc()
         return JsonResponse({'code':0, 'data':{'hdata':hdata}, 'message':'ok'})
@@ -168,7 +161,6 @@ class StatusView(BaseResView):
             endpoint_id = 0
             f = Falcon()
             endpoints = f.get_endpoints(service_obj.fhostname)
-            print endpoints
             for endpoint_info in endpoints:
                 if endpoint_info['endpoint'] == service_obj.fhostname:
                     endpoint_id = endpoint_info['id']

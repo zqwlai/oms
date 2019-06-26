@@ -46,25 +46,25 @@ params = {
     'timeout': 30
 }
 
-#先统计IP列表
+#先统计主机列表
 
-ip_list = []
+hostname_list = []
 
-for i in Service.objects.values('fhost').distinct():
-    ip_list.append(i['fhost'])
+for i in Service.objects.values('fhostname').distinct():
+    hostname_list.append(i['fhostname'])
 
 
 
-for ip in ip_list:
-    #统计每个IP下有哪些端口号
+for hostname in hostname_list:
+    #统计每个主机下有哪些端口号
     counters = []
-    for i in Service.objects.filter(fhost=ip):
+    for i in Service.objects.filter(fhostname=hostname):
         counters.append('listen.port/port=%s'%i.fport)
         
     payload = {
        "step": 60,
        "start_time": start_time,
-       "hostnames": [ip],
+       "hostnames": [hostname],
        "end_time": end_time,
        "counters": counters,
        "consol_fun": "AVERAGE"
@@ -90,6 +90,6 @@ for ip in ip_list:
                     status = 2
 
         #将状态更新到数据库
-        Service.objects.filter(fhost=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
+        Service.objects.filter(fhostname=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
 
