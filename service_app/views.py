@@ -50,13 +50,13 @@ class ConfView(BaseResView):
 
 
     def add(self, request):
-        fhostname = request.POST['fhostname']
-        fname = request.POST['fname']
-        fport = request.POST['fport']
+        fhostname = request.POST['fhostname'].strip()
+        fname = request.POST['fname'].strip()
+        fport = request.POST['fport'].strip()
         fdesc = request.POST['fdesc']
-        fcluster = request.POST['fcluster']
-        fadmin_user = request.POST['fadmin_user']
-        fadmin_password = request.POST['fadmin_password']
+        fcluster = request.POST['fcluster'].strip()
+        fadmin_user = request.POST['fadmin_user'].strip()
+        fadmin_password = request.POST['fadmin_password'].strip()
         # 判断服务是否已经存在
         if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster):
             return JsonResponse(
@@ -72,13 +72,13 @@ class ConfView(BaseResView):
 
     def update(self, request):
         fid = request.POST['fid']
-        fhostname = request.POST['fhostname']
-        fname = request.POST['fname']
-        fport = request.POST['fport']
-        fdesc = request.POST['fdesc']
-        fcluster = request.POST['fcluster']
-        fadmin_user = request.POST['fadmin_user']
-        fadmin_password = request.POST['fadmin_password']
+        fhostname = request.POST['fhostname'].strip()
+        fname = request.POST['fname'].strip()
+        fport = request.POST['fport'].strip()
+        fdesc = request.POST['fdesc'].strip()
+        fcluster = request.POST['fcluster'].strip()
+        fadmin_user = request.POST['fadmin_user'].strip()
+        fadmin_password = request.POST['fadmin_password'].strip()
         if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhostname, fname, fport)})
