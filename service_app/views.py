@@ -14,7 +14,7 @@ from common.falcon import Falcon
 from oms import settings
 import traceback
 from oms.views import BaseResView
-
+from common.item import items
 
 class ConfView(BaseResView):
     def get(self, request):
@@ -146,18 +146,23 @@ class StatusView(BaseResView):
         try:
             print request.POST.dict()
             fid = request.POST['fid']
-            counter = request.POST['counter']
+            metric = request.POST['metric']
             start_time = request.POST['start_time']
             end_time = request.POST['end_time']
             start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
             end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
             service_obj = Service.objects.get(fid=fid)
             endpoint = service_obj.fhostname
+            #统计该组件对应的counter有哪些
+            item_list = items[service_obj.fname][metric]
+            counter_list = ['%s/%s=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
+            #print counter_list
             f = Falcon()
-            history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], [counter], CF='AVERAGE')
+            history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counter_list, CF='AVERAGE')
+            #print history_data[0]
             hdata = []
             for i in history_data:
-                hdata.append({'name':endpoint, 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
+                hdata.append({'name':i['counter'], 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
         except:
             print traceback.format_exc()
         return JsonResponse({'code':0, 'data':{'hdata':hdata}, 'message':'ok'})
@@ -168,16 +173,10 @@ class StatusView(BaseResView):
             fid = request.GET['fid']
             #获取该服务有哪些counter
             service_obj = Service.objects.get(fid=fid)
-            counter_list = []
-            endpoint_id = 0
-            f = Falcon()
-            endpoints = f.get_endpoints(service_obj.fhostname)
-            for endpoint_info in endpoints:
-                if endpoint_info['endpoint'] == service_obj.fhostname:
-                    endpoint_id = endpoint_info['id']
-                    counters = f.get_counters(endpoint_info['id'], metricQuery='%s=%s'%(service_obj.fname, service_obj.fport))
-                    for counter_info in counters:
-                        counter_list.append(counter_info['counter'])
+
+            #获取该服务下有哪些聚合的metric
+            metric_list = items.get(service_obj.fname, [])
+            print metric_list
             end_timestamp = int(time.time())
             start_timestamp = end_timestamp - 3600  # 默认取1个小时
             end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
