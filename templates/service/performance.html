@@ -19,9 +19,9 @@
             <form id="formSearch" class=" form-inline" style="padding-bottom: 8px">
 
                 <div class="input-group">
-                    <select name="counter" id="metric" class="chosen-select" tabindex="2" data-placeholder="请选择监控项" style="width:300px">
-                        {% for i in metric_list %}
-                            <option value="{{i}}">{{i}}</option>
+                    <select name="counter" id="metric" class="chosen-select" tabindex="2" data-placeholder="请选择监控项" style="width:300px" onchange="return query_graph()">
+                        {% for k, v in metric_list %}
+                            <option value="{{k}}">{{k}}</option>
                         {% endfor %}
                     </select>
                  </div>
