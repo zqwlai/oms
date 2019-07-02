@@ -171,7 +171,7 @@ class StatusView(BaseResView):
             #获取该服务有哪些counter
             service_obj = Service.objects.get(fid=fid)
             #获取该服务下有哪些聚合的metric
-            metric_list = items.get(service_obj.fname, [])
+            metric_list = items.get(service_obj.fname, {})
             metric_list = sorted(metric_list.items(), key=lambda x: x[1], reverse=True)
             end_timestamp = int(time.time())
             start_timestamp = end_timestamp - 3600  # 默认取1个小时
