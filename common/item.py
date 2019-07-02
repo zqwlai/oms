@@ -2,9 +2,9 @@
 
 items = {
     'mysql':{
-        'Sent_Received':['Bytes_received', 'Bytes_sent'],
-        'Com_operations': ['Com_select', 'Com_insert', 'Com_update', 'Com_delete', 'Com_replace'],
-        'Innodb_rows_operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
+        'Sent Received':['Bytes_received', 'Bytes_sent'],
+        'Com operations': ['Com_select', 'Com_insert', 'Com_update', 'Com_delete', 'Com_replace'],
+        'Innodb rows operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
         'Status': ['Slow_queries', 'MySQL_QPS', 'MySQL_TPS', 'Connections']
     },
 
@@ -15,7 +15,7 @@ items = {
     },
 
     'zookeeper':{
-        'Sent_Received':['zookeeper_stat_received', 'zookeeper_stat_sent'],
+        'Sent Received':['zookeeper_stat_received', 'zookeeper_stat_sent'],
         'Status':[
             'zookeeper_stat_connections',
             'zookeeper_stat_outstanding',
@@ -37,9 +37,10 @@ items = {
         ]
     },
     'rabbitmq':{
-        'Used_Rate':['rabbitmq.mem_used_rate', 'rabbitmq.proc_used_rate'],
-        'Message_Number': ['rabbitmq.messages_total', 'rabbitmq.messages_ready', 'rabbitmq.messages_unacknowledged'],
-        'Global_Counts':['rabbitmq,channels', 'rabbitmq.connections', 'rabbitmq.consumers', 'rabbitmq.exchanges', 'rabbitmq.queues']
+        'Mem Usage': ['rabbitmq.mem_used'],
+        'Used Rate':['rabbitmq.mem_used_rate', 'rabbitmq.proc_used_rate'],
+        'Message Number': ['rabbitmq.messages_total', 'rabbitmq.messages_ready', 'rabbitmq.messages_unacknowledged'],
+        'Global Counts':['rabbitmq,channels', 'rabbitmq.connections', 'rabbitmq.consumers', 'rabbitmq.exchanges', 'rabbitmq.queues']
     }
 }
 
