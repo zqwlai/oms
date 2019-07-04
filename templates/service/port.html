@@ -70,7 +70,7 @@ window.onload=function(){
 function query_graph(){
 $.ajax({
         type: "POST",
-        url: '/service/status/query_graph',
+        url: '/service/status/query_graph2',
         data: {'fid':'{{fid}}', 'counter':'{{counter}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
         dataType: "json",
         success: function(data){

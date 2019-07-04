@@ -149,6 +149,22 @@ class StatusView(BaseResView):
         return render(request, 'service/port.html', locals())
 
 
+    def query_graph2(self, request):
+        fid = request.POST['fid']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        counter = request.POST['counter']
+        start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
+        end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
+        service_obj = Service.objects.get(fid=fid)
+        endpoint = service_obj.fhostname
+        f = Falcon()
+        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], [counter], CF='AVERAGE')
+        # print history_data[0]
+        hdata = []
+        for i in history_data:
+            hdata.append({'name': i['endpoint'], 'data': [[j['timestamp'], j['value']] for j in i['Values']]})
+        return JsonResponse({'code': 0, 'data': {'hdata': hdata}, 'message': 'ok'})
 
     def query_graph(self, request):
         fid = request.POST['fid']
