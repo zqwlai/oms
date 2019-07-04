@@ -102,7 +102,8 @@ class ConfView(BaseResView):
 class StatusView(BaseResView):
 
     def get(self, request):
-        return render(request, 'service/status.html')
+        fcluster = request.GET.get('fcluster', '')
+        return render(request, 'service/status.html', locals())
 
     def data(self, request):
         limit = int(request.GET['limit'])
@@ -111,8 +112,15 @@ class StatusView(BaseResView):
         fname = request.GET['fname']
         fport = request.GET['fport']
         fcluster = request.GET['fcluster']
+        sort = request.GET.get('sort', 'fcluster')
+        sortOrder = request.GET['sortOrder']    #['asc', 'desc']
+        if sortOrder == 'asc':
+            oder_string = sort
+        else:
+            oder_string = '-' + sort
+
         data = Service.objects.filter(fcluster__contains=fcluster, fhostname__contains=fhostname, fname__contains=fname,
-                                      fport__contains=fport)[
+                                      fport__contains=fport).order_by(oder_string)[
                (page - 1) * limit: page * limit]
         total = Service.objects.filter(fcluster__contains=fcluster, fhostname__contains=fhostname, fname__contains=fname,
                                        fport__contains=fport).count()

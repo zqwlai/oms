@@ -13,7 +13,7 @@
             <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
 
         <div class="input-group">
-            <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名">
+            <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名" value="{{fcluster}}">
         </div>
         <div class="input-group">
             <input type="text" class="form-control" id="fhostname" name="fhostname" placeholder="主机名">
@@ -129,7 +129,8 @@ function InitTable(){
             field: 'fstatus',
             title: '运行状态',
             formatter: statusFormatter,
-            align: 'center'
+            align: 'center',
+            sortable: true
         },{
             field: 'fid',
             title: '操作',

@@ -64,9 +64,6 @@
 
 
 
-
-
-
 {% endblock %}
 
 
@@ -99,6 +96,22 @@
 	},
 	tooltip: {
 		pointFormat: '可用性: <b>{point.y:.1f}%</b>'
+	},
+	plotOptions :{
+        column: {
+            minPointLength: 3,
+            cursor:'pointer',
+            animation:false,
+            events: {
+                click: function(e) {
+                //console.log(e.point.category)
+                    location.href = '/service/status?fcluster='+e.point.category;
+                    //上面是当前页跳转，如果是要跳出新页面，那就用
+                    //window.open(e.point.url);
+                    //这里的url要后面的data里给出
+                }
+            }
+        }
 	},
 	series: [{
 		type: 'column',
