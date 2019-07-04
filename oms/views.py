@@ -53,14 +53,27 @@ def dashboard(request):
     #统计每个集群的健康度
     status_info = []
 
+    cluster_list = []
+    success_rate_list = []
     for i in Service.objects.values('fcluster').distinct():
         fcluster = i['fcluster']
-        success_num = Service.objects.filter(fcluster=fcluster, fstatus=1).count()
-        unknow_num = Service.objects.filter(fcluster=fcluster, fstatus=0).count()
-        fail_num = Service.objects.filter(fcluster=fcluster, fstatus=2).count()
+        cluster_list.append(fcluster)
+
+        success_num = int(Service.objects.filter(fcluster=fcluster, fstatus=1).count())
+        unknow_num = int(Service.objects.filter(fcluster=fcluster, fstatus=0).count())
+        fail_num = int(Service.objects.filter(fcluster=fcluster, fstatus=2).count())
+        total = success_num+unknow_num+fail_num
+        if total == 0:
+            success_rate = 100
+        else:
+            success_rate = '%.2f'%(float(success_num)/total*100)
+            success_rate = float(success_rate)
+        success_rate_list.append(success_rate)
         status_info.append({'fcluster':fcluster, 'data':[success_num,unknow_num, fail_num]})
     status_json = json.dumps(status_info)
-
+    #success_rate_list = json.dumps(success_rate_list)
+    print success_rate_list
+    cluster_list = json.dumps(cluster_list)
     return render(request, 'dashboard.html',locals())
 
 def process_login(request):

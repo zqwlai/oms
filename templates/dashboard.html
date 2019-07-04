@@ -45,31 +45,19 @@
 
 
         <div class="row">
-                    <div class="col-lg-12">
-                        <div class="ibox ">
-                            <div class="ibox-content">
-                                    <div>
-
-                                        <h1 class="m-b-xs">集群状态展示</h1>
-
-                                    </div>
-
-                                <div class="row text-center">
-                                    {% for i in status_info %}
-
-                                    <div class="col-lg-3">
-                                        <canvas id="chart_{{forloop.counter0}}" width="120" height="80" style="margin: 18px auto 0"></canvas>
-                                        <h5 ><a href="#">{{i|key:'fcluster'}}</a></h5>
-                                    </div>
-                                {% endfor %}
-                                </div>
-
-
-
-                            </div>
+            <div class="col-lg-6">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>集群可用性</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div id="cluster_status" class="ct-perfect-fourth"></div>
                         </div>
                     </div>
                 </div>
+
+
+        </div>
 
 
 
@@ -86,26 +74,38 @@
 
 <script>
 
-
-    var status_info = {{status_json|safe}}
-
-    var doughnutOptions = {
-                responsive: false,
-                legend: {
-                    display: false
-                }
-            };
-    for (i=0; i<status_info.length;i++){
-        var doughnutData = {
-                labels: ["正常服务","未知服务","异常服务" ],
-                datasets: [{
-                    data: status_info[i]['data'],
-                    backgroundColor: ["#32CD32","#FF7F50","#FF0000"]
-                }]
-        } ;
-
-        var ctx = document.getElementById("chart_"+i).getContext("2d");
-        new Chart(ctx, {type: 'doughnut', data: doughnutData, options:doughnutOptions});
-    }
+    var chart = Highcharts.chart('cluster_status', {
+    chart: {
+        inverted: true,
+        polar: false
+    },
+    credits: {
+        enabled:false // 禁用版权信息
+    },
+	title: {
+		text: '各集群可用性'
+	},
+	subtitle: {
+		text: null
+	},
+	xAxis: {
+		categories: {{cluster_list|safe}}
+	},
+	yAxis: {
+	    max:100,
+	    title: {
+			text: '可用性(%)'
+		}
+	},
+	tooltip: {
+		pointFormat: '可用性: <b>{point.y:.1f}%</b>'
+	},
+	series: [{
+		type: 'column',
+		colorByPoint: true,
+		data: {{success_rate_list}},
+		showInLegend: false
+	}]
+});
 </script>
 {% endblock %}
