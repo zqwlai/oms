@@ -102,7 +102,8 @@
     var chart = Highcharts.chart('cluster_status', {
     chart: {
         inverted: false,
-        polar: false
+        polar: false,
+        type: 'column'
     },
     credits: {
         enabled:false // 禁用版权信息
@@ -119,17 +120,22 @@
 	yAxis: {
 	    max:100,
 	    title: {
-			text: '健康度(%)'
+			text: null
 		}
 	},
 	tooltip: {
-		pointFormat: '健康度: <b>{point.y:.1f}%</b>'
+		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>' +
+		'({point.percentage:.0f}%)<br/>',
+		//:.0f 表示保留 0 位小数，详见教程：https://www.hcharts.cn/docs/basic-labels-string-formatting
+		shared: true
 	},
 	plotOptions :{
         column: {
             minPointLength: 3,
             cursor:'pointer',
             animation:false,
+            pointWidth:25,
+            stacking: 'percent',
             events: {
                 click: function(e) {
                 //console.log(e.point.category)
@@ -141,19 +147,13 @@
             }
         }
 	},
-	series: [{
-		type: 'column',
-		colorByPoint: true,
-		data: {{success_rate_list}},
-		showInLegend: false
-	}]
+	series: {{series|safe}}
 });
 
 
 $(document).ready(function() {
 
             $('.footable').footable();
-            $('.footable2').footable();
 
         });
 
