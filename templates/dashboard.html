@@ -4,7 +4,7 @@
 {% block content %}
 {% load key %}
         <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-title">
                                     <span class="label label-success pull-right">Clusters</span>
@@ -15,7 +15,7 @@
                                     <small>All Cluters</small></div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-title">
                                     <span class="label label-info pull-right">Hosts</span>
@@ -26,7 +26,7 @@
                                     <small>All hosts</small></div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-title">
                                     <span class="label label-primary pull-right">Services</span>
@@ -45,13 +45,41 @@
 
 
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                     <div class="ibox ">
                         <div class="ibox-title">
                             <h5>集群可用性</h5>
                         </div>
                         <div class="ibox-content">
                             <div id="cluster_status" class="ct-perfect-fourth"></div>
+                            <table class="footable table table-stripped toggle-arrow-tiny">
+                                <thead>
+                                <tr>
+                                    <th data-toggle="true">集群名</th>
+                                    <th>正在运行服务</th>
+                                    <th>未知服务</th>
+                                    <th >异常服务</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in status_info %}
+                                    <tr>
+                                        <td>{{i|key:'fcluster'}}</td>
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1"><font color="green">{{i|key:'success_num'}}</font></a></td>
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0"><font color="gray">{{i|key:'unknow_num'}}</font></a></td>
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=2"><font color="red">{{i|key:'fail_num'}}</font></a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="5">
+                                        <ul class="pagination float-right"></ul>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -80,7 +108,7 @@
         enabled:false // 禁用版权信息
     },
 	title: {
-		text: '各集群可用性'
+		text: '各集群健康度'
 	},
 	subtitle: {
 		text: null
@@ -91,11 +119,11 @@
 	yAxis: {
 	    max:100,
 	    title: {
-			text: '可用性(%)'
+			text: '健康度(%)'
 		}
 	},
 	tooltip: {
-		pointFormat: '可用性: <b>{point.y:.1f}%</b>'
+		pointFormat: '健康度: <b>{point.y:.1f}%</b>'
 	},
 	plotOptions :{
         column: {
@@ -120,5 +148,17 @@
 		showInLegend: false
 	}]
 });
+
+
+$(document).ready(function() {
+
+            $('.footable').footable();
+            $('.footable2').footable();
+
+        });
+
+
+
+
 </script>
 {% endblock %}

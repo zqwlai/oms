@@ -24,6 +24,15 @@
         <div class="input-group">
             <input type="text" class="form-control" id="fport" name="fport" placeholder="端口号">
         </div>
+
+        <div class="input-group">
+            <select data-placeholder="端口状态" class="chosen-select"  id="fstatus" name="fstatus" tabindex="2">
+                <option value="">端口状态</option>
+                <option value="0">未知</option>
+                <option value="1" >运行中</option>
+                <option value="2">异常</option>
+            </select>
+        </div>
         <div class="input-group">
             <div class="input-group-btn">
                 <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="ReloadTable()">
@@ -57,12 +66,16 @@
 
 <script>
 
+
+
+var form_obj = document.getElementById('search_form');
+form_obj.fstatus.value = '{{fstatus}}'
+
 $('.chosen-select').chosen({width: "100%"});
-
-
 
 $(function () {
 	//初始化业务逻辑script
+
    InitTable();
 })
 
@@ -102,7 +115,8 @@ function InitTable(){
                 fhostname: $("#fhostname").val(),
                 fname: $("#fname").val(),
                 fport: $("#fport").val(),
-                fcluster: $("#fcluster").val()
+                fcluster: $("#fcluster").val(),
+                fstatus: $("#fstatus").val(),
             };
             return temp;
         },

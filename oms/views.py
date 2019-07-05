@@ -69,7 +69,7 @@ def dashboard(request):
             success_rate = '%.2f'%(float(success_num)/total*100)
             success_rate = float(success_rate)
         success_rate_list.append(success_rate)
-        status_info.append({'fcluster':fcluster, 'data':[success_num,unknow_num, fail_num]})
+        status_info.append({'fcluster':fcluster, 'success_num':success_num,'unknow_num':unknow_num, 'fail_num':fail_num})
     status_json = json.dumps(status_info)
     #success_rate_list = json.dumps(success_rate_list)
     print success_rate_list

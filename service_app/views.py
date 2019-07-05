@@ -103,6 +103,7 @@ class StatusView(BaseResView):
 
     def get(self, request):
         fcluster = request.GET.get('fcluster', '')
+        fstatus = request.GET.get('fstatus', '')
         return render(request, 'service/status.html', locals())
 
     def data(self, request):
@@ -114,16 +115,23 @@ class StatusView(BaseResView):
         fcluster = request.GET['fcluster']
         sort = request.GET.get('sort', 'fcluster')
         sortOrder = request.GET['sortOrder']    #['asc', 'desc']
+        fstatus = request.GET.get('fstatus', '')
         if sortOrder == 'asc':
             oder_string = sort
         else:
             oder_string = '-' + sort
+        query_dict = {
+            'fcluster__contains':fcluster,
+            'fhostname__contains':fhostname,
+            'fname__contains':fname,
+            'fport__contains': fport
+        }
+        if fstatus:
+            query_dict.update({'fstatus':fstatus})
 
-        data = Service.objects.filter(fcluster__contains=fcluster, fhostname__contains=fhostname, fname__contains=fname,
-                                      fport__contains=fport).order_by(oder_string)[
+        data = Service.objects.filter(**query_dict).order_by(oder_string)[
                (page - 1) * limit: page * limit]
-        total = Service.objects.filter(fcluster__contains=fcluster, fhostname__contains=fhostname, fname__contains=fname,
-                                       fport__contains=fport).count()
+        total = Service.objects.filter(**query_dict).count()
         result = []
         for i in data:
             result.append({
