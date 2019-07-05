@@ -6,7 +6,7 @@
 
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>组件性能监控</h5>
+                <h5>组件性能监控【主机名：{{service_obj.fhostname}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -17,14 +17,6 @@
         <div class="panel-heading">查询条件</div>
         <div class="panel-body">
             <form id="formSearch" class=" form-inline" style="padding-bottom: 8px">
-
-                <div class="input-group">
-                    <select name="counter" id="metric" class="chosen-select" tabindex="2" data-placeholder="请选择监控项" style="width:300px" onchange="return query_graph()">
-                        {% for k, v in metric_list %}
-                            <option value="{{k}}">{{k}}</option>
-                        {% endfor %}
-                    </select>
-                 </div>
 
                 <div class="form-group" id="date">
                     <div class="input-daterange input-group" id="datepicker">
@@ -52,9 +44,9 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">
-                <div class="ibox-content">
+                <div class="ibox-content" id="main">
 
-                    <div id="main" style="width: 1200px;height:400px;"></div>
+
 
                 </div>
             </div>
@@ -79,91 +71,100 @@ window.onload=function(){
 }
 
 
+
+
 function query_graph(){
-    var metric = $("#metric").val()
-    if (!metric){
-        return false
-    }
     $.ajax({
         type: "POST",
         url: '/service/status/query_graph',
-        data: {'fid':'{{fid}}', 'metric':metric, 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
+        data: {'fid':'{{fid}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
         dataType: "json",
         success: function(data){
             if (data['code'] == 0){
-                var chart = {};
-               var title = {
-                 text: '{{service_obj.fhostname}}：'+ metric
-               };
-               var subtitle = {
-                  text: '服务名：'+ '{{service_obj.fname}}' + ' 端口号：' + {{service_obj.fport}}
-               };
-               var xAxis = {
-                  //categories: data['data']['time_list'],
-                    type: 'datetime',
-                    labels: {
-                        formatter: function() {
+                $("#main").html('')
+                var data = data['data']['all_data']
+                for (i=0;i<data.length;i++){
+                    var chart = {
+                        spacingTop: 20,
+					    spacingBottom: 20,
+					    zoomType: 'x',
+                    };
+                   var title = {
+                     text: '{{service_obj.fhostname}}：'+ data[i]['metric'],
+                     align: 'left',
+                     margin: 0,
+					 x: 30
+                   };
+                   var subtitle = {
+                      text: null
+                   };
+                   var xAxis = {
+                      //categories: data['data']['time_list'],
+                        type: 'datetime',
+                        labels: {
+                            formatter: function() {
 
-                            return  Highcharts.dateFormat('%H:%M', this.value*1000);
+                                return  Highcharts.dateFormat('%H:%M', this.value*1000);
+                            }
                         }
-                    }
-               };
-               var yAxis = {
-                  title: {
-                     text: ''
-                  },
-                  plotLines: [{
-                     value: 0,
-                     width: 1,
-                     color: '#808080'
-                  }]
-               };
+                   };
+                   var yAxis = {
+                      title: {
+                         text: ''
+                      },
+                   };
 
-               var tooltip = {
-                    formatter:function(){
-                        return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x*1000)+': '+ '<strong>' + this.y + '</strong>';
-                     }
-               }
+                   var tooltip = {
+                        formatter:function(){
+                            return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x*1000)+': '+ '<strong>' + this.y + '</strong>';
+                         }
+                   }
 
-               var legend = {
-                    layout: 'vertical',
-                    //align: 'left',
-                    verticalAlign: 'bottom',
-
-               };
-
-               var plotOptions =  {
-                    spline: {
-                        animation:false,
-                        marker: {
-                            enabled: true
+                   var legend = {
+                        layout: 'vertical',
+                        //align: 'left',
+                        verticalAlign: 'bottom',
+                        itemStyle : {
+                            'fontSize' : '16px'
                         }
-                    }
-                };
-               var series = data['data']['hdata']
+                   };
 
-               var credits = {
-                    enabled:false // 禁用版权信息
-               };
+                   var plotOptions =  {
+                        spline: {
+                            animation:false,
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    };
+                   var series = data[i]['hdata']
 
-               var json = {};
-               json.chart = chart;
-               json.title = title;
-               json.subtitle = subtitle;
-               json.xAxis = xAxis;
-               json.yAxis = yAxis;
-               json.tooltip = tooltip;
-               json.legend = legend;
-               json.series = series;
-               json.credits = credits;
-               json.plotOptions = plotOptions
-               Highcharts.setOptions({
-                    global: {
-                        useUTC: false,
-                    }
-                });
+                   var credits = {
+                        enabled:false // 禁用版权信息
+                   };
 
-                Highcharts.chart('main',json)
+                   var json = {};
+                   json.chart = chart;
+                   json.title = title;
+                   json.subtitle = subtitle;
+                   json.xAxis = xAxis;
+                   json.yAxis = yAxis;
+                   json.tooltip = tooltip;
+                   json.legend = legend;
+                   json.series = series;
+                   json.credits = credits;
+                   json.plotOptions = plotOptions
+                   Highcharts.setOptions({
+                        global: {
+                            useUTC: false,
+                        }
+                    });
+
+
+                    $('<div class="chart">')
+				        .appendTo('#main')
+				        .highcharts(json)
+                }
             }
             else{
                 alert(data['message'])

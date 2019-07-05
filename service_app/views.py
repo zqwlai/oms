@@ -174,27 +174,31 @@ class StatusView(BaseResView):
             hdata.append({'name': i['endpoint'], 'data': [[j['timestamp'], j['value']] for j in i['Values']]})
         return JsonResponse({'code': 0, 'data': {'hdata': hdata}, 'message': 'ok'})
 
+
     def query_graph(self, request):
         fid = request.POST['fid']
-        metric = request.POST['metric']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
         start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
         end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
         service_obj = Service.objects.get(fid=fid)
         endpoint = service_obj.fhostname
-        #统计该组件对应的counter有哪些
-        item_list = items[service_obj.fname][metric]
-        counter_list = ['%s/%s=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
-        #print counter_list
-        f = Falcon()
-        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counter_list, CF='AVERAGE')
-        #print history_data[0]
-        hdata = []
-        for i in history_data:
-            hdata.append({'name':i['counter'], 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
+        #统计该组件对应的大metric有哪些
+        all_data = []
+        for metric,item_list in items[service_obj.fname].items():
 
-        return JsonResponse({'code':0, 'data':{'hdata':hdata}, 'message':'ok'})
+
+            counter_list = ['%s/%s=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
+            #print counter_list
+            f = Falcon()
+            history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counter_list, CF='AVERAGE')
+            #print history_data[0]
+            hdata = []
+            for i in history_data:
+                hdata.append({'name':i['counter'], 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
+            all_data.append({'metric':metric, 'hdata':hdata})
+
+        return JsonResponse({'code':0, 'data':{'all_data':all_data}, 'message':'ok'})
 
 
     def performance(self, request):

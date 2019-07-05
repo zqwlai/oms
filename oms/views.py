@@ -85,7 +85,6 @@ def dashboard(request):
     series = json.dumps(series)
     status_json = json.dumps(status_info)
     #success_rate_list = json.dumps(success_rate_list)
-    print series
     cluster_list = json.dumps(cluster_list)
     return render(request, 'dashboard.html',locals())
 
