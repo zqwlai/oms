@@ -4,8 +4,10 @@ items = {
     'mysql':{
         'Sent Received':['Bytes_received', 'Bytes_sent'],
         'Com operations': ['Com_select', 'Com_insert', 'Com_update', 'Com_delete', 'Com_replace'],
-        'Innodb rows operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
-        'Status': ['Slow_queries', 'MySQL_QPS', 'MySQL_TPS', 'Connections']
+        #'Innodb rows operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
+        'Slow Queries':['Slow_queries'],
+        'QPS/TPS': ['MySQL_QPS', 'MySQL_TPS'],
+        'Connections':['Connections']
     },
 
     'redis':{
