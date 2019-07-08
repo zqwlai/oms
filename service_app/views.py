@@ -209,6 +209,7 @@ class StatusView(BaseResView):
             #获取该服务下有哪些聚合的metric
             metric_list = items.get(service_obj.fname, {})
             metric_list = sorted(metric_list.items(), key=lambda x: x[1], reverse=True)
+            metric_list_length = len(metric_list)
             end_timestamp = int(time.time())
             start_timestamp = end_timestamp - 3600  # 默认取1个小时
             end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
