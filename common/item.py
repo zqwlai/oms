@@ -2,29 +2,29 @@
 
 items = {
     'mysql':{
-        'Sent Received':['Bytes_received', 'Bytes_sent'],
-        'Com operations': ['Com_select', 'Com_insert', 'Com_update', 'Com_delete', 'Com_replace'],
+        'Sent Received':['MySQL.bytes.received', 'MySQL.bytes.sent'],
+        'Com operations': ['Com.select', 'Com.insert', 'Com.update', 'Com.delete', 'Com.replace'],
         #'Innodb rows operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
-        'Slow Queries':['Slow_queries'],
-        'QPS/TPS': ['MySQL_QPS', 'MySQL_TPS'],
-        'Connections':['Connections']
+        'Slow Queries':['Slow.queries'],
+        'QPS/TPS': ['MySQL.QPS', 'MySQL.TPS'],
+        'Connections':['MySQL.Connections']
     },
 
     'redis':{
-        'Memory': ['redis.used_memory', 'redis.used_memory_rss'],
-        'Connections': ['redis.connected_clients', 'redis.blocked_clients', 'redis.rejected_connections'],
-        'KeyStatus': ['redis.expired_keys', 'redis.evicted_keys', 'redis.keyspace_hits', 'redis.keyspace_misses', 'redis.keys_num']
+        'Memory': ['redis.used.memory', 'redis.used.memory.rss'],
+        'Connections': ['redis.connected.clients', 'redis.blocked.clients', 'redis.rejected.connections'],
+        'KeyStatus': ['redis.expired.keys', 'redis.evicted.keys', 'redis.keyspace.hits', 'redis.keyspace.misses', 'redis.keys.num']
     },
 
     'zookeeper':{
-        'Sent Received':['zookeeper_stat_received', 'zookeeper_stat_sent'],
+        'Sent Received':['zookeeper.stat.received', 'zookeeper.stat.sent'],
         'Status':[
-            'zookeeper_stat_connections',
-            'zookeeper_stat_outstanding',
-            'zookeeper_stat_nodecount',
-            'zookeeper_wchs_connections',
-            'zookeeper_wchs_watchingpaths',
-            'zookeeper_wchs_totalwatches'
+            'zookeeper.stat.connections',
+            'zookeeper.stat.outstanding',
+            'zookeeper.stat.nodecount',
+            'zookeeper.wchs.connections',
+            'zookeeper.wchs.watchingpaths',
+            'zookeeper.wchs.totalwatches'
         ]
     },
     'nginx':{
@@ -39,10 +39,18 @@ items = {
         ]
     },
     'rabbitmq':{
-        'Mem Usage': ['rabbitmq.mem_used'],
-        'Used Rate':['rabbitmq.mem_used_rate', 'rabbitmq.proc_used_rate'],
-        'Message Number': ['rabbitmq.messages_total', 'rabbitmq.messages_ready', 'rabbitmq.messages_unacknowledged'],
+        'Used Percent':['rabbitmq.mem.used.percent', 'rabbitmq.proc.used.percent'],
+        'Message Number': ['rabbitmq.messages.total', 'rabbitmq.messages.ready', 'rabbitmq.messages.unacknowledged'],
         'Global Counts':['rabbitmq,channels', 'rabbitmq.connections', 'rabbitmq.consumers', 'rabbitmq.exchanges', 'rabbitmq.queues']
+    },
+    'elasticsearch':{
+        'nodes count': ['es.nodes.count.data', 'es.nodes.count.master', 'es.nodes.count.total'],
+        'indices count': ['es.indices.count'],
+        'docs.count': ['es.docs.count'],
+        'shards': ['es.shards.total', 'es.shards.primaries'],
+        'mem.used.percent': ['es.mem.used.percent'],
+        'fs.used.percent': ['es.fs.used.percent'],
+        'cpu.percent': ['es.nodes.cpu.percent']
     }
 }
 
