@@ -56,18 +56,24 @@
                                 <thead>
                                 <tr>
                                     <th data-toggle="true">集群名</th>
-                                    <th>正在运行服务</th>
-                                    <th>未知服务</th>
-                                    <th >异常服务</th>
+                                    <th>状态</th>
+                                    <th>运行服务数</th>
+                                    <th>服务总数</th>
+                                    <th >操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for i in status_info %}
                                     <tr>
                                         <td>{{i|key:'fcluster'}}</td>
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1"><font color="green">{{i|key:'success_num'}}</font></a></td>
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0"><font color="gray">{{i|key:'unknow_num'}}</font></a></td>
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=2"><font color="red">{{i|key:'fail_num'}}</font></a></td>
+                                        {% if i|key:'success_num' == 0 %}
+                                            <td><i class="fa fa-times text-danger"></i> 已停止</td>
+                                        {% else %}
+                                            <td><i class="fa fa-check text-navy"></i> 运行中</td>
+                                        {% endif %}
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1">{{i|key:'success_num'}}</a></td>
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0">{{i|key:'total_num'}}</a></td>
+                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}">详情</a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -98,7 +104,7 @@
 {% block  script %}
 
 <script>
-
+    /*
     var chart = Highcharts.chart('cluster_status', {
     chart: {
         inverted: false,
@@ -149,7 +155,7 @@
 	},
 	series: {{series|safe}}
 });
-
+*/
 
 $(document).ready(function() {
 

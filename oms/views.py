@@ -78,7 +78,8 @@ def dashboard(request):
             success_rate = '%.2f'%(float(success_num)/total*100)
             success_rate = float(success_rate)
         success_rate_list.append(success_rate)
-        status_info.append({'fcluster':fcluster, 'success_num':success_num,'unknow_num':unknow_num, 'fail_num':fail_num})
+        status_info.append({'fcluster':fcluster, 'success_num':success_num,'unknow_num':unknow_num,
+                            'fail_num':fail_num, 'total_num':success_num+unknow_num+fail_num})
     series.append({'name':'正常服务数', 'data':success_num_list, 'color':'#008000'})
     series.append({'name': '未知服务数', 'data': unknow_num_list, 'color':'#FF8C00'})
     series.append({'name': '异常服务数', 'data': fail_num_list, 'color':'#FF0000'})
