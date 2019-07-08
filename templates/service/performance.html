@@ -74,6 +74,9 @@ window.onload=function(){
 
 
 function query_graph(){
+    if ( {{metric_list}}.length == 0){
+        return false
+    }
     $.ajax({
         type: "POST",
         url: '/service/status/query_graph',
