@@ -17,6 +17,14 @@ from django.conf.urls import include, url
 
 
 
+
 def  sms(request):
+    print request.POST.dict()
+    return HttpResponse("11111")
+
+
+
+
+def mail(request):
     print request.POST.dict()
     return HttpResponse("11111")

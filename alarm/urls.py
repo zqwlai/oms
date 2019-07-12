@@ -9,5 +9,5 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     url(r'^sms', login_exempt(views.sms)),
-
+    url(r'^mail', login_exempt(views.mail)),
 ]
