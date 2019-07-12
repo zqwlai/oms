@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^service/', include('service_app.urls')),
     url(r'^api/', include('service_app.api_urls')),
     url(r'^rbac/', include('rbac.urls')),
+    url(r'^alarm/', include('alarm.urls')),
     url(r'^site_static/(?P<path>.*)$',static_serve,{'document_root':settings.STATIC_ROOT,}),
 
 ]
