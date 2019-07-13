@@ -1,46 +1,45 @@
-# -*- coding:utf-8 -*-
+#!-*- coding:utf8 -*-
 
-import sys
-import json
 import smtplib
-import email.MIMEBase
-import email.Encoders
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-reload(sys) # Python2.5 初始化后删除了 sys.setdefaultencoding 方法，我们需要重新载入
-sys.setdefaultencoding('utf-8')
 
-def send_mail(msg,toaddrs,subject):
-    '''''
-    @subject:邮件主题
-    @msg:邮件内容
-    @toaddrs:收信人的邮箱地址
-    @fromaddr:发信人的邮箱地址
-    @smtpaddr:smtp服务地址，可以在邮箱看，比如163邮箱为smtp.163.com
-    @password:发信人的邮箱密码
-    '''
-    fromaddr = "zqwlai@126.com"
-    smtpaddr = "smtp.126.com"
-    password = "19870207aaa"
 
-    mail_msg = MIMEMultipart()
-    if not isinstance(subject,unicode):
-        subject = unicode(subject, 'utf-8')
-    mail_msg['Subject'] = subject
-    mail_msg['From'] = '堡垒机系统'
-    mail_msg['To'] = ','.join(toaddrs)
-    mail_msg.attach(MIMEText(msg, 'html', 'utf-8'))
-    ret = {'code':0, 'error':'', 'message':''}
+def send_mail(tos, subject, content):
+
+    #设置服务器所需信息
+    #126邮箱服务器地址
+    mail_host = 'smtp.126.com'
+    #126用户名
+    mail_user = 'zqwlai'
+    #密码(部分邮箱为授权码)
+    mail_pass = '670986aaa'
+    #邮件发送方邮箱地址
+    sender = 'zqwlai@126.com'
+    #邮件接受方邮箱地址，注意需要[]包裹，这意味着你可以写多个邮件地址群发
+    receivers = tos.split(',')
+
+    #设置email信息
+    #邮件内容设置
+    message = MIMEText(content,'plain','utf-8')
+    #邮件主题
+    message['Subject'] = subject
+    #发送方信息
+    message['From'] = sender
+    #接受方信息
+    message['To'] = ";".join(receivers)
+
+    #登录并发送邮件
     try:
-        s = smtplib.SMTP()
-        s.connect(smtpaddr)  #连接smtp服务器
-        s.starttls()
-        s.login(fromaddr,password)  #登录邮箱
-        s.sendmail(fromaddr, toaddrs, mail_msg.as_string()) #发送邮件
-        s.quit()
-    except Exception,e:
-       print "Error: unable to send email"
-       print traceback.format_exc()
-       ret['code'] = 1
-       ret['error'] = str(e)
-    return ret
+        smtpObj = smtplib.SMTP()
+        #连接到服务器
+        smtpObj.connect(mail_host,25)
+        #登录到服务器
+        smtpObj.login(mail_user,mail_pass)
+        #发送
+        smtpObj.sendmail(
+            sender,receivers,message.as_string())
+        #退出
+        smtpObj.quit()
+        print('success')
+    except smtplib.SMTPException as e:
+        print('error',e) #打印错误

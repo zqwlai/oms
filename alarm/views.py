@@ -14,7 +14,7 @@ from django.utils.decorators import classonlymethod
 from django.views.generic.base import View
 from django.conf.urls import include, url
 
-
+from common.alarm import send_mail
 
 
 
@@ -27,4 +27,8 @@ def  sms(request):
 
 def mail(request):
     print request.POST.dict()
+    tos = request.POST['tos']
+    subject = request.POST['subject']
+    content = request.POST['content']
+    send_mail(tos, subject, content)
     return HttpResponse("11111")
