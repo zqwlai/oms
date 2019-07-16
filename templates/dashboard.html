@@ -109,6 +109,7 @@
                                 <tr>
                                     <th>状态</th>
                                     <th>主机</th>
+                                    <th>监控项</th>
                                     <th>事件信息</th>
                                     <th>更新时间</th>
                                     <th>详情</th>
@@ -119,6 +120,7 @@
                                     <tr>
                                         <td>{{i|key:'status'}}</td>
                                         <td>{{i|key:'endpoint'}}</td>
+                                        <td>{{i|key:'metric'}}</td>
                                         {% if i|key:'status' == 'PROBLEM' %}
                                             <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
                                         {% else %}

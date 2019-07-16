@@ -95,7 +95,7 @@ def dashboard(request):
     f = Falcon()
     eventcase_list = f.get_eventcase(endpoints=hostname_list, metrics=settings.port_listen_key)
     eventcase_list = eventcase_list[0:10]
-    print eventcase_list
+    #print eventcase_list
     return render(request, 'dashboard.html',locals())
 
 def process_login(request):
