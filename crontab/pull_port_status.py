@@ -17,6 +17,15 @@ from service_app.models import Service
 from oms import settings
 
 
+def gen_tags(tags):
+    ret = {}
+    for i in tags.split(','):
+        key = i.split('=')[0]
+        value = i.split('=')[1]
+        ret[key] = value
+    return ret
+
+    
 
 falcon_domain = settings.falcon_domain
 
@@ -79,16 +88,17 @@ for hostname in hostname_list:
     for i in data:
         endpoint = i['endpoint']  
         counter = i['counter'] 
-        port = counter.split('=')[1]
+        tags = counter.split('/')[1]
+        tag_dict = gen_tags(tags)
+        port = tag_dict['port']
         values = i['Values'] 
-        status = 0
+        status = 0      #0:未知，1:正常，2:异常
         if values:      #如果期间没有收到上报数据，则认为是未知状态
-            if values[0]['value']: 
+            if values:
                 if values[0]['value'] == 1:
                     status = 1
                 else:
                     status = 2
-
         #将状态更新到数据库
         Service.objects.filter(fhostname=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
