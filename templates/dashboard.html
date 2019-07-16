@@ -3,6 +3,7 @@
 
 {% block content %}
 {% load key %}
+{% load utc2local %}
         <div class="row">
                         <div class="col-sm-4">
                             <div class="ibox float-e-margins">
@@ -126,7 +127,7 @@
                                         {% else %}
                                             <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
                                         {% endif %}
-                                        <td>{{i|key:'timestamp'}}</td>
+                                        <td>{{i|key:'timestamp'|utc2local}}</td>
                                         <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
                                     </tr>
                                 {% endfor %}
