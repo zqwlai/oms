@@ -17,11 +17,12 @@ from common.alarm import send_mail
 from common.decorators import  login_exempt
 from common.falcon import  Falcon
 from alarm.models import TMailServer
+from oms import settings
 
 class EventcaseView(BaseResView):
     def get(self, request):
         end_timestamp = int(time.time())
-        start_timestamp = end_timestamp - 3600  # 默认取1个小时
+        start_timestamp = end_timestamp - 30*86400  # 默认取1个月
         end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
         start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_timestamp))
         return render(request, 'alarm/eventcase.html', locals())
@@ -42,7 +43,7 @@ class EventcaseView(BaseResView):
         f = Falcon()
         #end_time = int(time.time())  # 必须要整形
         #start_time = end_time - 5 * 86400  # 30分钟
-        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, metrics='df.bytes.free.percent/fstype=', endpoints=fhostname)
+        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, metrics=settings.port_listen_key, endpoints=fhostname)
         print data
         data = data[
                (page - 1) * limit: page * limit]

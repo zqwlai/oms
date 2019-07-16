@@ -15,6 +15,7 @@ from django.views.generic.base import View
 from django.conf.urls import include, url
 from service_app.models import Service
 from common.falcon import Falcon
+from oms import  settings
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -92,7 +93,7 @@ def dashboard(request):
     #统计最近10次的告警事件
     hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
     f = Falcon()
-    eventcase_list = f.get_eventcase(endpoints=hostname_list)
+    eventcase_list = f.get_eventcase(endpoints=hostname_list, metrics=settings.port_listen_key)
     eventcase_list = eventcase_list[0:10]
     print eventcase_list
     return render(request, 'dashboard.html',locals())
