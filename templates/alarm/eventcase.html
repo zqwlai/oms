@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+ <div class="ibox ">
+            <div class="ibox-title">
+                <h5>告警事件</h5>
+            </div>
+<div class="ibox-content m-b-sm border-bottom">
+
+
+
+    <div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+
+
+
+            <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
+
+        <div class="input-group">
+            <input type="text" class="form-control" id="fhostname" name="fhostname" placeholder="主机名">
+        </div>
+
+        <div class="input-group">
+            <div class="input-daterange input-group" id="datepicker">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" id="start_time" class="input-sm form-control" style="width: 180px;" name="start_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{start_time}}">
+
+                        <span class="input-group-addon">to</span>
+                        <input type="text" id="end_time" class="input-sm form-control" style="width: 180px;" name="end_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{end_time}}">
+                    </div>
+        </div>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="ReloadTable()">
+                    搜索
+                </button>
+            </div>
+        </div>
+    </form>
+
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+
+                    <table id="table" class="table table-hover" ></table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+ </div>
+<div id="toolbar" class="btn-group">
+            <button id="btn_add" type="button" class="btn btn-default"  onclick="AddView()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+            </button>
+        <!--
+            <button id="btn_edit" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+            </button>
+            <button id="btn_delete" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+            </button>
+            -->
+        </div>
+
+
+
+
+{% endblock %}
+
+
+
+
+
+{% block script %}
+
+<script>
+
+
+
+
+
+$(function () {
+    //初始化业务逻辑script
+   InitTable();
+})
+
+function InitTable(){
+    $('#table').bootstrapTable({
+        url: '/alarm/eventcase/data',              //请求后台的URL（*）
+        method: 'GET',                      //请求方式（*）
+        toolbar: '#toolbar',              //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: true,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+        pageSize: 20,                       //每页的记录行数（*）
+        pageList: [20, 50, 100],        //可供选择的每页的行数（*）
+        search: false,                      //是否显示表格搜索
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列（选择显示的列）
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: true,                //是否启用点击选中行
+        //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        showToggle: true,                   //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                  //是否显示父子表
+        //得到查询的参数
+        queryParams : function (params) {
+            //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+            var temp = {
+                limit: params.limit,                         //页面大小
+                page: (params.offset / params.limit) + 1,   //页码
+                sort: params.sort,      //排序列名
+                sortOrder: params.order, //排位命令（desc，asc）
+                fhostname: $("#fhostname").val(),
+                start_time: $("#start_time").val(),
+                end_time: $("#end_time").val(),
+            };
+            return temp;
+        },
+        columns: [{
+            field: 'status',
+            title: '状态',
+            sortable: false
+        },{
+            field: 'priority',
+            title: '优先级',
+        }, {
+            field: 'current_step',
+            title: '当前告警次数',
+            formatter: stepFormatter,
+        },{
+            field: 'endpoint',
+            title: '主机名'
+        }, {
+            field: 'metric',
+            title: 'Metric'
+        }, {
+            field: 'func',
+            title: '告警函数',
+        },{
+            field: 'cond',
+            title: '当前值',
+        },{
+            field: 'timestamp',
+            title: '告警时间',
+            formatter: dateFormatter,
+            sortable: false
+        },
+        {
+            field: 'id',
+            title: '操作',
+            formatter: actionFormatter,
+        },
+        ],
+        onLoadSuccess: function () {
+        },
+        onLoadError: function () {
+        },
+
+    });
+}
+
+Date.prototype.format = function(fmt) {
+     var o = {
+        "M+" : this.getMonth()+1,                 //月份
+        "d+" : this.getDate(),                    //日
+        "h+" : this.getHours(),                   //小时
+        "m+" : this.getMinutes(),                 //分
+        "s+" : this.getSeconds(),                 //秒
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度
+        "S"  : this.getMilliseconds()             //毫秒
+    };
+    if(/(y+)/.test(fmt)) {
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    }
+     for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+         }
+     }
+    return fmt;
+}
+
+
+function dateFormatter(value, row, index){
+            console.log(row.timestamp)
+            var result = new Date(row.timestamp).format("yyyy-MM-dd hh:mm:ss")
+            return result;
+}
+
+
+function actionFormatter(value, row, index){
+    var id = value;
+            var result = "";
+            result += "<a href='/alarm/eventcase/detail?id=" + row.id +"' class='btn btn-xs btn-info' title='历史告警事件'>历史告警事件</span></a>";
+            return result;
+}
+
+
+function stepFormatter(value, row, index){
+    var id = value;
+    var result = "";
+    result += "第<font color='red'>#" + row.current_step + "</font>次/最大" + row.step + "次"
+    return result;
+}
+
+
+
+function ReloadTable(){
+    $('#table').bootstrapTable("refresh");
+}
+
+
+
+</script>
+{% endblock %}

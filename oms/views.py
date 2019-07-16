@@ -14,6 +14,7 @@ from django.utils.decorators import classonlymethod
 from django.views.generic.base import View
 from django.conf.urls import include, url
 from service_app.models import Service
+from common.falcon import Falcon
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -87,6 +88,13 @@ def dashboard(request):
     status_json = json.dumps(status_info)
     #success_rate_list = json.dumps(success_rate_list)
     cluster_list = json.dumps(cluster_list)
+
+    #统计最近10次的告警事件
+    hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
+    f = Falcon()
+    eventcase_list = f.get_eventcase(endpoints=hostname_list)
+    eventcase_list = eventcase_list[0:10]
+    print eventcase_list
     return render(request, 'dashboard.html',locals())
 
 def process_login(request):

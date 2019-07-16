@@ -3,11 +3,9 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 import views
 from common.decorators import  login_exempt
-from django.views.generic.base import RedirectView
 
+urlpatterns = []
 
+urlpatterns += views.EventcaseView.urls()
+urlpatterns += views.SenderView.urls()
 
-urlpatterns = [
-    url(r'^sms', login_exempt(views.sms)),
-    url(r'^mail', login_exempt(views.mail)),
-]

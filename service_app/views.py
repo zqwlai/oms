@@ -153,7 +153,7 @@ class StatusView(BaseResView):
         start_timestamp = end_timestamp - 3600  # 默认取1个小时
         end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
         start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_timestamp))
-        counter = '%s/port=%s'%(settings.port_listen_key, service_obj.fport)
+        counter = '%s/port=%s,project=oms'%(settings.port_listen_key, service_obj.fport)
         return render(request, 'service/port.html', locals())
 
 

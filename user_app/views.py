@@ -15,9 +15,10 @@ def update_profile(request):
     user_id = int(request.POST['user_id'])
     arg_dict = request.POST.dict()
     #判断当前修改用户是否是自己
+    arg_dict.pop('user_id')
     if user_id != request.user.id:
         return JsonResponse({'code':1, 'data':'', 'message':'没有权限修改该用户信息！'})
-    OmsUser.objects.filter(id=user_id).update(email=arg_dict['email'], phone=int(arg_dict['phone']))
+    OmsUser.objects.filter(id=user_id).update(**arg_dict)
     return JsonResponse({'code':0, 'data':'', 'message':'更新成功！'})
 
 

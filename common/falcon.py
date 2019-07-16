@@ -62,3 +62,51 @@ class Falcon(object):
         }
         r = requests.get(**params)
         return r.json()
+
+
+
+    def get_eventcase(self, endpoints='', metrics='', startTime='', endTime='', priority='', Status=''):
+        directory = '/api/v1/alarm/eventcases'
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        data = {}
+        if endpoints:
+            data['endpoints'] = endpoints
+        if metrics:
+            data['metrics'] = metrics
+        if  startTime:
+            data['startTime'] = startTime
+        if  endTime:
+            data['endTime'] = endTime
+        if  priority:
+            data['priority'] = priority
+        if   Status:
+            data['Status'] = Status
+        params['data'] = json.dumps(data)
+        rsponse = requests.post(**params)
+        ret = json.loads(rsponse.text)
+        return ret
+
+
+    def get_events(self, event_id='', startTime='', endTime=''):
+        directory = '/api/v1/alarm/events'
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        data = {}
+        if event_id:
+            data['event_id'] = event_id
+        if startTime:
+            data['startTime'] = startTime
+        if  endTime:
+            data['endTime'] = endTime
+
+        params['data'] = json.dumps(data)
+        rsponse = requests.post(**params)
+        ret = json.loads(rsponse.text)
+        return ret

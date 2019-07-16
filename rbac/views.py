@@ -14,8 +14,33 @@ from user_app.models import OmsUser
 from oms import settings
 import traceback
 from oms.views import BaseResView
+from alarm.models import TMailServer
+from common.alarm import check_mailserver
 
+class MailSettingsView(BaseResView):
+    def get(self, request):
+        mailserver_obj = TMailServer.objects.first()
+        return render(request, 'rbac/mailsettings.html', locals())
 
+    def check(self, request):
+        user = request.POST['user']
+        password = request.POST['password']
+        host = request.POST['host']
+        return  JsonResponse( {'code':0, 'data':check_mailserver(host, user, password), 'message':''})
+
+    def update(self, request):
+        user = request.POST['user']
+        password = request.POST['password']
+        host = request.POST['host']
+        mailserver_obj = TMailServer.objects.first()
+        if mailserver_obj:
+            mailserver_obj.fuser = user
+            mailserver_obj.fpassword = password
+            mailserver_obj.fhost = host
+            mailserver_obj.save()
+        else:
+            TMailServer.objects.create(fuser=user, fpassword=password, fhost=host)
+        return     JsonResponse( {'code':0, 'data':'', 'message':'更新成功'})
 
 class MenuView(BaseResView):
     def get(self, request):

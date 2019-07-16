@@ -59,7 +59,7 @@ for hostname in hostname_list:
     #统计每个主机下有哪些端口号
     counters = []
     for i in Service.objects.filter(fhostname=hostname):
-        counters.append('listen.port/port=%s'%i.fport)
+        counters.append('listen.port/port=%s,project=oms'%i.fport)
         
     payload = {
        "step": 60,
@@ -82,7 +82,7 @@ for hostname in hostname_list:
         port = counter.split('=')[1]
         values = i['Values'] 
         status = 0
-        if values:
+        if values:      #如果期间没有收到上报数据，则认为是未知状态
             if values[0]['value']: 
                 if values[0]['value'] == 1:
                     status = 1

@@ -9,3 +9,4 @@ urlpatterns = []
 urlpatterns += views.MenuView.urls()
 urlpatterns += views.RoleView.urls()
 urlpatterns += views.UserView.urls()
+urlpatterns += views.MailSettingsView.urls()

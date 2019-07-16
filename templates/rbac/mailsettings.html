@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>该邮件服务器用来统一发送邮件告警给用户</h5>
+            </div>
+            <div class="ibox-content">
+                    <form class="m-t-md" action="#">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-sm-2 col-form-label">用户名</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="user" placeholder="" value="{{mailserver_obj.fuser}}">
+                                        <span class="form-text">例：zhangsan</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">邮件服务器地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="host" placeholder="" value="{{mailserver_obj.fhost}}">
+                                        <span class="form-text">例：smtp.126.com</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="password" placeholder="" value={{mailserver_obj.fpassword}}>
+                                        <span class="form-text">用户的邮箱密码</span>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div>
+                                    <button class="btn btn-success btn-sm" type="button" onclick="checkmail()">测试</button>
+                                    <button  class="btn btn-primary" onclick="update()">保存</button>
+                                </div>
+                            </form>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+<script>
+function checkmail(){
+    user = $("#user").val()
+    password = $("#password").val()
+    host = $("#host").val()
+    if (user.length == 0){
+        alert('用户名不能为空')
+        return false
+    }
+    if (password.length == 0){
+        alert('密码不能为空')
+        return false
+    }
+    if (host.length == 0){
+        alert('邮件服务器地址不能为空')
+        return false
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/rbac/mailsettings/check',
+        data: {'user':user, 'password':password, 'host':host},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                alert(data['data']['message'])
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
+}
+
+
+function update(){
+    user = $("#user").val()
+    password = $("#password").val()
+    host = $("#host").val()
+    if (user.length == 0){
+        alert('用户名不能为空')
+        return false
+    }
+    if (password.length == 0){
+        alert('密码不能为空')
+        return false
+    }
+    if (host.length == 0){
+        alert('邮件服务器地址不能为空')
+        return false
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/rbac/mailsettings/update',
+        data: {'user':user, 'password':password, 'host':host},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                alert(data['message'])
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
+}
+
+
+
+</script>
+{% endblock %}

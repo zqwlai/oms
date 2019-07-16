@@ -96,6 +96,49 @@
 
 
 
+        <div class="row">
+            <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>最近10条告警事件</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div id="cluster_status" class="ct-perfect-fourth"></div>
+                             <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>状态</th>
+                                    <th>主机</th>
+                                    <th>事件信息</th>
+                                    <th>更新时间</th>
+                                    <th>详情</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in eventcase_list %}
+                                    <tr>
+                                        <td>{{i|key:'status'}}</td>
+                                        <td>{{i|key:'endpoint'}}</td>
+                                        {% if i|key:'status' == 'PROBLEM' %}
+                                            <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
+                                        {% else %}
+                                            <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
+                                        {% endif %}
+                                        <td>{{i|key:'timestamp'}}</td>
+                                        <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+        </div>
+
 
 
 {% endblock %}
