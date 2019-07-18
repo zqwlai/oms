@@ -42,7 +42,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    #'common.middleware.LogRecordMiddleware',
+    'common.middleware.LogRecordMiddleware',
     'common.middleware.LoginMiddleware',
     'common.middleware.RbacMiddleware',  # 权限中间件
 )
