@@ -24,6 +24,7 @@ DATABASES = {
 ############   open-falcon相关配置    ########
 
 falcon_sig = 'default-token-used-in-server-side'
-falcon_domain = os.getenv('FALCON_DOMAIN', 'http://127.0.0.1:8080')
+FALCON_PORT=os.getenv('FALCON_PORT', 'tcp://127.0.0.1:8080')
+falcon_domain = FALCON_PORT.replace('tcp', 'http')
 falcon_user = 'admin'
 port_listen_key = 'listen.port'
