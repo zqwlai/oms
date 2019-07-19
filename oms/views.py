@@ -92,9 +92,12 @@ def dashboard(request):
 
     #统计最近10次的告警事件
     hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
-    f = Falcon()
-    eventcase_list = f.get_eventcase(endpoints=hostname_list, metrics=settings.port_listen_key)
-    eventcase_list = eventcase_list[0:10]
+    if not hostname_list:
+        eventcase_list = []
+    else:
+        f = Falcon()
+        eventcase_list = f.get_eventcase(endpoints=hostname_list, metrics=settings.port_listen_key)
+        eventcase_list = eventcase_list[0:10]
     #print eventcase_list
     return render(request, 'dashboard.html',locals())
 
