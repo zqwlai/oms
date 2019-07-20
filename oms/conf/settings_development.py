@@ -24,6 +24,6 @@ DATABASES = {
 ############   open-falcon相关配置    ########
 
 falcon_sig = 'default-token-used-in-server-side'
-falcon_domain = 'http://172.18.7.14:8080'
+falcon_domain = 'http://127.0.0.1:8080'
 falcon_user = 'admin'
 port_listen_key = 'listen.port'

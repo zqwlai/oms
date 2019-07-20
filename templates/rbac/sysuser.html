@@ -52,45 +52,45 @@
 
 
 
-<div class="modal inmodal fade" id="editModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
+<div class="modal inmodal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop=”static” aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                <h4 class="modal-title">更新用户信息</h4></div>
+                <h4 class="modal-title" id="title">更新用户信息</h4></div>
             <div class="modal-body">
-                <form  role="form" id="editForm">
+                <form  role="form" id="myForm">
                     <div class="form-group  row">
                         <label class="col-sm-2 col-form-label">用户名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="edit_id" id="edit_id"  class="form-control" style="display:none">
-                            <input type="text" name="edit_username" id="edit_username" readonly  class="form-control">
+                            <input type="text" name="id"   class="form-control" style="display:none">
+                            <input type="text" name="username"  readonly  class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group  row">
+                        <label class="col-sm-2 col-form-label">邮箱:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="email" id="email"  class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group  row">
+                        <label class="col-sm-2 col-form-label">手机号:<span class="red">&nbsp;*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="phone" id="phone"  class="form-control" >
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">状态:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <select name="edit_status" id="edit_status" class="chosen-select" tabindex="2">
+                            <select name="status" id="status"  class="chosen-select" tabindex="2">
                                 <option value="1">启用</option>
                                 <option value="0" >禁用</option>
                             </select>
                         </div>
                     </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">用户角色:<span class="red">&nbsp;*</span></label>
-                        <div class="col-sm-10">
-                            <select  class="chosen-select" multiple style="width:350px;" tabindex="4" id="edit_role" name="edit_role">
-                                {% for i in role_list %}
-                                    <option value="{{i.fid}}">{{i.fname}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
@@ -114,23 +114,12 @@
 
 $('.chosen-select').chosen({width: "100%"});
 
+jQuery.validator.addMethod("isMobile", function(value, element) {
+ var length = value.length;
+ var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+ return this.optional(element) || (length == 11 && mobile.test(value));
+}, "请正确填写手机号码");
 
-jQuery.validator.addMethod("isIP", function(value, element) {
-    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-    return reg.test(value)
-}, "IP地址不合法");
-
-
-jQuery.validator.addMethod("positiveinteger", function(value, element) {
-    var aint=parseInt(value);
-    return aint>0&& (aint+"")==value;
-}, "请输入正整数");
-
-
-
-jQuery.validator.addMethod("needsSelection", function(value, element) {
-        return value
-}, "请选择所属集群");
 
 
 $(function () {
@@ -206,14 +195,11 @@ function InitTable(){
 
 
 function actionFormatter(value, row, index){
-    var id = value;
-            var result = "";
+    var result = "";
+    result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + row.id + "')\" title='编辑'>编辑</a>";
+    result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'>删除</a>";
 
-            var args =  row.id + ',' + row.username + ',' + row.is_active + ',' + row.roleids
-            result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + args + "')\" title='编辑'>编辑</a>";
-            result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'>删除</a>";
-
-            return result;
+    return result;
 }
 
 function ReloadTable(){
@@ -221,13 +207,36 @@ function ReloadTable(){
 }
 
 $(document).ready(function(){
+    $("#myForm").validate({
 
-    $("#editForm").validate({
+        rules: {
+            phone: {
+                required: true,
+                number: true,
+                isMobile: true,
+                minlength : 11
+            },
+            email:{
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+		    phone : {
+		        required : "请输入手机号",
+		        minlength : "不能小于11个字符",
+		        isMobile : "请正确填写手机号码"
+		    },
+		    email:{
+		        required : "请输入邮箱地址",
+		        email: '邮箱地址不合法'
+		    }
+  		},
         submitHandler: function(form) {
             $.ajax({
                 type: "POST",
-                url: '/rbac/user/update',
-                data: $("#editForm").serialize(),
+                url:  '/rbac/user/update',
+                data: $("#myForm").serialize(),
                 dataType: "json",
                 success: function(data){
                     if (data['code'] == 0){
@@ -244,26 +253,41 @@ $(document).ready(function(){
             });
         }
     });
-
 });
 
-function EditViewById(content){
-    var arry = content.split(',')
-    $("#edit_id").val(arry[0])
-    $("#edit_username").val(arry[1])
-    role_id_list = arry[3].split('|')
-    console.log(role_id_list)
-    if (arry[2] == 'false'){
-        status = '0'
-    }
-    else{
-        status = '1'
-    }
-    $("#edit_status").val(status)
-    $("#edit_status").trigger("chosen:updated");
-    $("#edit_role").val(role_id_list)
-    $("#edit_role").trigger("chosen:updated");
-    $("#editModal").modal("show")
+function EditViewById(id){
+    $.ajax({
+        type: "POST",
+        url: '/rbac/user/get_user_obj',
+        data: {'id':id},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                console.log(data['data'])
+
+                var username = data['data']['username']
+                var phone = data['data']['phone']
+                var email = data['data']['email']
+                var status = data['data']['status']
+                var form_obj = document.getElementById('myForm');
+                form_obj.id.value = id
+                form_obj.username.value = username
+                form_obj.phone.value = phone
+                form_obj.email.value = email
+                form_obj.status.value = status
+                $("#status").trigger("chosen:updated");
+                $("#title").html("更新用户【"+ username + "】")
+                form_obj.setAttribute('option', 'update')
+                $("#myModal").modal("show")
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
 }
 
 

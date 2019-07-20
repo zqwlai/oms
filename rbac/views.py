@@ -128,25 +128,34 @@ class UserView(BaseResView):
 
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
+    def get_user_obj(self, request):
+        id = request.POST['id']
+        user_obj = OmsUser.objects.get(id=id)
+        if user_obj.is_active:
+            status = 1
+        else:
+            status = 0
+        data = {
+            'phone': user_obj.phone,
+            'email': user_obj.email,
+            'status': status,
+            'username': user_obj.username
+        }
+
+        return JsonResponse({'code':0, 'data':data, 'message':'ok'})
+
     def update(self, request):
-        id = request.POST['edit_id']
-        status = request.POST['edit_status']
+        print request.POST.dict()
+        id = request.POST['id']
+        status = request.POST['status']
+        phone = request.POST['phone']
+        email = request.POST['email']
         print status
-        role_list = request.POST.getlist('edit_role')
         user_obj = OmsUser.objects.get(id=id)
         user_obj.is_active = int(status)
+        user_obj.phone = phone
+        user_obj.email = email
         user_obj.save()
-        #获取原先的权限列表
-        old_role_list = [str(i.fid) for i in user_obj.tsysrole_set.all()]
-        #需要增加的权限
-        need_add_role_list = list(set(role_list).difference(old_role_list))
-        for i in need_add_role_list:
-            user_obj.tsysrole_set.add(i)
-        #需要删除的权限
-        need_remove_role_list = list(set(old_role_list).difference(role_list))
-        for i in need_remove_role_list:
-            user_obj.tsysrole_set.remove(i)
-
         return JsonResponse({'code': 0, 'data': '', 'message': '更新成功'})
 
 
@@ -159,7 +168,8 @@ class UserView(BaseResView):
 
 class RoleView(BaseResView):
     def get(self, request):
-        return render(request, 'rbac/role.html', {'root_node':'rbac','child_node':'role'})
+        user_list = OmsUser.objects.all()
+        return render(request, 'rbac/role.html', locals())
 
 
     def data(self, request):
@@ -173,6 +183,16 @@ class RoleView(BaseResView):
             result.append({'fid': i.fid, 'fname': i.fname, 'fcname':i.fcname,'fcreate_time': str(i.fcreate_time)})
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
+
+    def get_role_obj(self, request):
+        fid = request.POST['fid']
+        role_obj = TSysRole.objects.get(fid=fid)
+        fname = role_obj.fname
+        fcname = role_obj.fcname
+        user_id_list = [int(i.id) for i in role_obj.users.all()]
+        data = {'fname':fname, 'fcname':fcname, 'user_id_list':user_id_list}
+        return JsonResponse({'code':0, 'data':data, 'message':'ok'})
+
     def delete(self, request):
         fid = request.POST['fid']
         TSysRole.objects.filter(fid=fid).delete()
@@ -180,17 +200,29 @@ class RoleView(BaseResView):
 
     def add(self, request):
         fname = request.POST['fname']
+        fcname = request.POST['fcname']
         if TSysRole.objects.filter(fname=fname):
             return JsonResponse({'code': 1, 'data': '', 'message':'角色名已经存在'})
-        TSysRole.objects.create(fname=fname)
+        r = TSysRole.objects.create(fname=fname, fcname=fcname)
+        user_list = request.POST.getlist('users')
+        if user_list:
+            for user in user_list:
+                r.users.add(user)
         return JsonResponse({'code': 0, 'data': '', 'message':'角色【%s】创建成功'%fname})
 
     def update(self, request):
-        fid = request.POST['edit_fid']
-        fname = request.POST['edit_fname']
-        if TSysRole.objects.filter(fname=fname).exclude(fid=fid):
-            return JsonResponse({'code': 1, 'data': '', 'message':'角色名已经存在'})
-        TSysRole.objects.filter(fid=fid).update(fname=fname)
+        fid = request.POST['fid']
+        fcname = request.POST['fcname']
+        role_obj = TSysRole.objects.get(fid=fid)
+        old_user_id_list = [str(i.id) for i in role_obj.users.all()]
+        user_id_list = request.POST.getlist('users')
+        need_add_user_id_list = list(set(user_id_list).difference(old_user_id_list))
+        need_remove_user_id_list = list(set(old_user_id_list).difference(user_id_list))
+        TSysRole.objects.filter(fid=fid).update(fcname=fcname)
+        for i in need_add_user_id_list:
+            role_obj.users.add(i)
+        for i in need_remove_user_id_list:
+            role_obj.users.remove(i)
         return JsonResponse({'code': 0, 'data': '', 'message': '角色更新成功'})
 
     def permission(self, request):      #获取该角色有哪些菜单权限
