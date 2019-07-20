@@ -5,7 +5,7 @@ import json
 import time
 import requests
 
-user = 'admin'
+user = 'root'
 #sig = 'fd3acf4e804d11e986b7005056891887' # 注:sig为数据库uic表中用户对应的sig
 #sig = '41cee1bd7e9811e99971080027f300ca'
 sig = 'default-token-used-in-server-side'
