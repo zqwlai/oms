@@ -10,10 +10,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'NAME': 'oms_db',                      # Or path to database file if using sqlite3.
-        'USER': os.getenv('DB_USER', 'root'),                    # Not used with sqlite3.
-        'PASSWORD': os.getenv('DB_PASSWORD', '123456'),                  # Not used with sqlite3.
-        'HOST': os.getenv('DB_ADDR', '127.0.0.1'),                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': os.getenv('DB_PORT', 3306),
+        'USER': 'oms',                    # Not used with sqlite3.
+        'PASSWORD': 'Qq2345Yyt',                  # Not used with sqlite3.
+        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': 3306,
         'OPTIONS': {
             "init_command": "SET foreign_key_checks = 0;",
         }
