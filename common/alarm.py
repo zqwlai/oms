@@ -49,6 +49,7 @@ def send_mail(mail_host, mail_user, mail_pass, tos, subject, content):
         print('success')
     except smtplib.SMTPException as e:
         print('error',e) #打印错误
+        raise Exception('error', e)
 
 
 def send_mail2(tos, subject, content):
