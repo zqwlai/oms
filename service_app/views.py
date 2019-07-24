@@ -37,7 +37,7 @@ class ConfView(BaseResView):
             query_dict.update({'fport__contains': fport})
 
         if fcluster:
-            query_dict.update({'fclusterr__contains': fcluster})
+            query_dict.update({'fcluster__contains': fcluster})
 
         data = Service.objects.filter(**query_dict)[(page - 1) * limit: page * limit]
         total = Service.objects.filter(**query_dict).count()
@@ -48,6 +48,7 @@ class ConfView(BaseResView):
                 'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname,
                 'fadmin_user':i.fadmin_user, 'fadmin_password':i.fadmin_password})
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
+
 
 
     def add(self, request):
