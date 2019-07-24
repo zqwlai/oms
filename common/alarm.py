@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 
 def check_mailserver(mail_host, mail_user, mail_pass):
     ret = {'status':0, 'message':'ok'}
+    print mail_host, mail_user, mail_pass
     try:
         smtpObj = smtplib.SMTP(timeout=5)
         smtpObj.connect(mail_host, 25)
@@ -13,6 +14,7 @@ def check_mailserver(mail_host, mail_user, mail_pass):
     except Exception,e:
         ret['status'] = 1
         ret['message'] = str(e)
+    print ret
     return ret
 
 

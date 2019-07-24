@@ -20,16 +20,16 @@
             <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
 
         <div class="input-group">
-            <input type="text" class="form-control" id="fcluster" name="fcluster" placeholder="集群名">
+            <input type="text" class="form-control"  name="fcluster" placeholder="集群名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" id="fhostname" name="fhost" placeholder="主机名">
+            <input type="text" class="form-control"  name="fhostname" placeholder="主机名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" id="fname" name="fname" placeholder="服务名">
+            <input type="text" class="form-control" name="fname" placeholder="服务名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" id="fport" name="fport" placeholder="端口号">
+            <input type="text" class="form-control" name="fport" placeholder="端口号">
         </div>
         <div class="input-group">
             <div class="input-group-btn">
@@ -103,7 +103,12 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">服务名:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="fname"></div>
+                            <select class="chosen-select"  name="fname" id="fname">
+                                {% for i in service_list %}
+                                    <option value="{{i}}">{{i}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group row">
@@ -157,6 +162,7 @@
 
 <script>
 
+$('.chosen-select').chosen({width: "100%"});
 
 jQuery.validator.addMethod("isIP", function(value, element) {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
@@ -204,15 +210,16 @@ function InitTable(){
         //得到查询的参数
         queryParams : function (params) {
             //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+            var form_obj = document.getElementById('search_form');
             var temp = {
                 limit: params.limit,                         //页面大小
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhostname: $("#fhostname").val(),
-                fname: $("#fname").val(),
-                fport: $("#fport").val(),
-                fcluster: $("#fcluster").val()
+                fhostname: form_obj.fhostname.value,
+                fname: form_obj.fname.value,
+                fport: form_obj.fport.value,
+                fcluster: form_obj.fcluster.value
             };
             return temp;
         },
@@ -342,7 +349,7 @@ function EditViewById(fid){
         dataType: "json",
         success: function(data){
             if (data['code'] == 0){
-                console.log(data['data'])
+                //console.log(data['data'])
                 var fcluster = data['data']['fcluster']
                 var fhost = data['data']['fhost']
                 var fname = data['data']['fname']
@@ -356,6 +363,7 @@ function EditViewById(fid){
                 form_obj.fcluster.value = fcluster
                 form_obj.fhostname.value = fhostname
                 form_obj.fname.value = fname
+                $("#fname").trigger("chosen:updated");
                 form_obj.fport.value = fport
                 form_obj.fdesc.value = fdesc
                 form_obj.fadmin_user.value = fadmin_user

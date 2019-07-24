@@ -18,7 +18,8 @@ from common.item import items
 
 class ConfView(BaseResView):
     def get(self, request):
-        return render(request, 'service/list.html')
+        service_list = items.keys()
+        return render(request, 'service/list.html', locals())
 
     def data(self, request):
         limit = int(request.GET['limit'])
