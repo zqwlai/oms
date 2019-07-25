@@ -94,7 +94,7 @@ for hostname in hostname_list:
         values = i['Values'] 
         status = 0      #0:未知，1:正常，2:异常
         if values:      #如果期间没有收到上报数据，则认为是未知状态
-            if values[0]['value']:
+            if values[0]['value'] != None :
                 if values[0]['value'] == 1:
                     status = 1
                 else:

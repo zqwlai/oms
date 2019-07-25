@@ -18,6 +18,7 @@ from common.decorators import  login_exempt
 from common.falcon import  Falcon
 from alarm.models import TMailServer
 from oms import settings
+from user_app.models import OmsUser
 
 class EventcaseView(BaseResView):
     def get(self, request):
@@ -68,10 +69,20 @@ class EventcaseView(BaseResView):
         return HttpResponse(json.dumps({'total': total, 'rows': data}))
 
 class SenderView(BaseResView):
+
+    def getMails(self):
+        mail_list = []
+        for i in OmsUser.objects.all():
+            if i.is_active and i.email:
+                mail_list.append(i.email)
+        return ','.join(mail_list)
+
     @login_exempt
     def mail(self, request):
         print request.POST.dict()
-        tos = request.POST['tos']
+        #tos = request.POST['tos']
+        #替换掉falcon里的收件人信息，使用oms里配置的用户邮箱
+        tos = self.getMails()
         subject = request.POST['subject']
         content = request.POST['content']
         #获取邮件服务器信息
