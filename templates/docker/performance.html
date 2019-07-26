@@ -6,7 +6,7 @@
 
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>组件性能监控【主机名：{{service_obj.fhostname}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】</h5>
+                <h5>容器性能监控【容器名：{{container_obj.fhostname}}】</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -79,7 +79,7 @@ function query_graph(){
     }
     $.ajax({
         type: "POST",
-        url: '/service/status/query_graph',
+        url: '/docker/status/query_graph',
         data: {'fid':'{{fid}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
         dataType: "json",
         success: function(data){
@@ -93,7 +93,7 @@ function query_graph(){
 					    zoomType: 'x',
                     };
                    var title = {
-                     text: '{{service_obj.fhostname}}：'+ data[i]['metric'],
+                     text: data[i]['metric'],
                      align: 'left',
                      margin: 0,
 					 x: 30

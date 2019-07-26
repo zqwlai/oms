@@ -44,11 +44,9 @@ class EventcaseView(BaseResView):
         f = Falcon()
         #end_time = int(time.time())  # 必须要整形
         #start_time = end_time - 5 * 86400  # 30分钟
-        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, metrics=settings.port_listen_key, endpoints=fhostname)
-        print data
+        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, endpoints=fhostname)
         data = data[
                (page - 1) * limit: page * limit]
-        print data
         return  HttpResponse(json.dumps({'total':len(data), 'rows':data}))
 
     def detail(self, request):

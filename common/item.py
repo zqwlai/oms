@@ -51,6 +51,13 @@ items = {
         'mem.used.percent': ['es.mem.used.percent'],
         'fs.used.percent': ['es.fs.used.percent'],
         'cpu.percent': ['es.nodes.cpu.percent']
+    },
+    'docker':{
+        'cpu.usage': ['cpu.busy', 'cpu.user', 'cpu.system'],
+        'mem.usage': ['mem.memused','mem.memused.hot', 'mem.memtotal'],
+        'mem.used.percent': ['mem.memused.percent'],
+        'disk.io': ['disk.io.read_bytes', 'disk.io.write_bytes'],
+        'net.if':['net.if.in.bytes', 'net.if.out.bytes']
     }
 }
 

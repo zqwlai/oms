@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'user_app',
     'service_app',
+    'docker',
     'rbac',
     'alarm'
 	

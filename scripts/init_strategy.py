@@ -102,7 +102,7 @@ def create_expression():
       "priority": 1,
       "pause": 0,
       "op": "==",
-      "note": "端口异常",
+      "note": "服务组件端口异常",
       "max_step": 3,
       "func": "all(#1)",
       "expression": "each(metric=listen.port project=oms)",
@@ -125,7 +125,36 @@ def create_expression():
     data3 = json.loads(res3.text)
     # print('得到指定监控项的历史记录',data3)
     print data3
-    return data3
+
+    payload = {
+      "right_value": "0",
+      "priority": 1,
+      "pause": 0,
+      "op": "==",
+      "note": "Docker容器进程异常",
+      "max_step": 3,
+      "func": "all(#1)",
+      "expression": "each(metric=process.status project=oms)",
+      "action": {
+        "url": "",
+        "uic": [
+          "default"
+        ],
+        "callback": 0,
+        "before_callback_sms": 0,
+        "before_callback_mail": 0,
+        "after_callback_sms": 0,
+        "after_callback_mail": 1
+      }
+
+    }
+
+    params['data'] = json.dumps(payload)
+    res3 = requests.post(**params)
+    data3 = json.loads(res3.text)
+    # print('得到指定监控项的历史记录',data3)
+    print data3
+
 
 add_user()
 users = get_users()

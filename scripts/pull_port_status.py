@@ -14,6 +14,7 @@ from common.falcon import Falcon
 
 
 from service_app.models import Service
+from docker.models import VirtualMachine
 from oms import settings
 
 
@@ -101,5 +102,38 @@ for hostname in hostname_list:
                     status = 2
         #将状态更新到数据库
         Service.objects.filter(fhostname=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
+
+
+endpoint_list = []
+
+for i in VirtualMachine.objects.all():
+    endpoint_list.append('%s/%s'%(i.fmaster, i.fhostname))
+payload = {
+"step": 60,
+"start_time": start_time,
+"hostnames": endpoint_list,
+"end_time": end_time,
+"counters": ["process.status/project=oms"],
+"consol_fun": "AVERAGE"
+}
+
+params['data'] = json.dumps(payload)
+r = requests.post(**params)
+data = r.json()
+print data
+for i in data:
+    endpoint = i['endpoint']
+    master = endpoint.split('/')[0]
+    hostname = endpoint.split('/')[1]
+    values = i['Values']
+    status = 0  
+    if values:
+        if values[0]['value'] != None :
+            if values[0]['value'] == 1:
+                status = 1
+            else:
+                status = 2
+    #将状态更新到数据库
+    VirtualMachine.objects.filter(fhostname=hostname, fmaster=master).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
 

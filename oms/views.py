@@ -14,6 +14,7 @@ from django.utils.decorators import classonlymethod
 from django.views.generic.base import View
 from django.conf.urls import include, url
 from service_app.models import Service
+from docker.models import VirtualMachine
 from common.falcon import Falcon
 from oms import  settings
 import traceback
@@ -92,11 +93,15 @@ def dashboard(request):
 
     #统计最近10次的告警事件
     hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
+    print 111
+    for i in VirtualMachine.objects.all():
+        hostname_list.append(i.fmaster + '/' + i.fhostname)
+    hostname_list = list(set(hostname_list))
     if not hostname_list:
         eventcase_list = []
     else:
         f = Falcon()
-        eventcase_list = f.get_eventcase(endpoints=hostname_list, metrics=settings.port_listen_key)
+        eventcase_list = f.get_eventcase(endpoints=hostname_list)
         eventcase_list = eventcase_list[0:10]
     #print eventcase_list
     return render(request, 'dashboard.html',locals())
@@ -161,4 +166,32 @@ def handler_500(request):
             result = {'code':5000, 'data':'', 'message':traceback.format_exc()}
         return JsonResponse(result)
     return render(request, '500.html')
+
+
+
+def getcomponent(request):  #获取对应主机下所有的组件信息
+    hostname = request.POST['hostname']
+    Service.objects.filter(fhostname=hostname)
+    data = []
+    for i in Service.objects.filter(fhostname=hostname):
+        data.append({'fname':i.fname, 'fport':i.fport,'fadmin_user':i.fadmin_user,'fadmin_password':i.fadmin_password})
+    return JsonResponse({'code':0, 'data':data, 'message':'ok'})
+
+def getContainer(request):
+    data = {}
+    for i in VirtualMachine.objects.all():
+        if i.fmaster in data:
+            data[i.fmaster].append(i.fhostname)
+        else:
+            data[i.fmaster] = [i.fhostname]
+    return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
+
+
+def addContainer(request):
+    fhostname = request.POST['fhostname']
+    fmaster = request.POST['fmaster']
+    fip = request.POST.get('fip', '')
+    if not VirtualMachine.objects.filter(fhostname=fhostname, fmaster=fmaster):
+        VirtualMachine.objects.create(fhostname=fhostname, fmaster=fmaster, fip=fip)
+    return JsonResponse({'code': 0, 'data': '', 'message': 'ok'})
 

@@ -47,6 +47,7 @@ class ConfView(BaseResView):
                 'fid': i.fid, 'fcluster': i.fcluster, 'fname': i.fname, 'fport': i.fport,
                 'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname,
                 'fadmin_user':i.fadmin_user, 'fadmin_password':i.fadmin_password})
+            print (i.fcreate_time)
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
 
@@ -146,6 +147,7 @@ class StatusView(BaseResView):
                 'fcreate_time': str(i.fcreate_time),
                 'fstatus': i.fstatus
             })
+
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
     def port(self, request):
@@ -222,10 +224,3 @@ class StatusView(BaseResView):
 
 
 
-def getcomponent(request):  #获取对应主机下所有的组件信息
-    hostname = request.POST['hostname']
-    Service.objects.filter(fhostname=hostname)
-    data = []
-    for i in Service.objects.filter(fhostname=hostname):
-        data.append({'fname':i.fname, 'fport':i.fport,'fadmin_user':i.fadmin_user,'fadmin_password':i.fadmin_password})
-    return JsonResponse({'code':0, 'data':data, 'message':'ok'})
