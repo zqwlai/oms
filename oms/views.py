@@ -93,7 +93,6 @@ def dashboard(request):
 
     #统计最近10次的告警事件
     hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
-    print 111
     for i in VirtualMachine.objects.all():
         hostname_list.append(i.fmaster + '/' + i.fhostname)
     hostname_list = list(set(hostname_list))

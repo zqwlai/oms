@@ -19,7 +19,7 @@ from common.falcon import  Falcon
 from alarm.models import TMailServer
 from oms import settings
 from user_app.models import OmsUser
-
+import traceback
 class EventcaseView(BaseResView):
     def get(self, request):
         end_timestamp = int(time.time())
@@ -44,9 +44,14 @@ class EventcaseView(BaseResView):
         f = Falcon()
         #end_time = int(time.time())  # 必须要整形
         #start_time = end_time - 5 * 86400  # 30分钟
-        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, endpoints=fhostname)
+        if fhostname:
+            endpoints = [fhostname]
+        else:
+            endpoints = []
+        data = f.get_eventcase(startTime=start_timestamp, endTime=end_timestamp, endpoints=endpoints)
         data = data[
                (page - 1) * limit: page * limit]
+
         return  HttpResponse(json.dumps({'total':len(data), 'rows':data}))
 
     def detail(self, request):
