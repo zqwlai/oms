@@ -58,6 +58,19 @@ items = {
         'mem.used.percent': ['mem.memused.percent'],
         'disk.io': ['disk.io.read_bytes', 'disk.io.write_bytes'],
         'net.if':['net.if.in.bytes', 'net.if.out.bytes']
+    },
+    'jmx':{
+        'parnew.gc.avg.time': ['parnew.gc.avg.time'],
+        'concurrentmarksweep.gc.avg.time': ['concurrentmarksweep.gc.avg.time'],
+        'parnew.gc.count': ['parnew.gc.count'],
+        'concurrentmarksweep.gc.count': ['concurrentmarksweep.gc.count'],
+        'gc.throughput': ['gc.throughput'],
+        'new.gen.promotion': ['new.gen.promotion'],
+        'new.gen.avg.promotion': ['new.gen.avg.promotion'],
+        'old.gen.mem.used': ['old.gen.mem.used'],
+        'old.gen.mem.ratio': ['old.gen.mem.ratio'],
+        'thread.active.count': ['thread.active.count'],
+        'thread.peak.count': ['thread.peak.count']
     }
 }
 
