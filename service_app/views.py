@@ -19,6 +19,7 @@ from common.item import items
 class ConfView(BaseResView):
     def get(self, request):
         service_list = items.keys()
+        service_list.remove('docker')
         return render(request, 'service/list.html', locals())
 
     def data(self, request):
@@ -192,7 +193,7 @@ class StatusView(BaseResView):
         for metric,item_list in items[service_obj.fname].items():
 
 
-            counter_list = ['%s/%s=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
+            counter_list = ['%s/%sport=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
             #print counter_list
             f = Falcon()
             history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counter_list, CF='AVERAGE')
