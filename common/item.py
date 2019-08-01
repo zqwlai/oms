@@ -61,9 +61,7 @@ items = {
     },
     'jmx':{
         'parnew.gc.avg.time': ['parnew.gc.avg.time'],
-        'concurrentmarksweep.gc.avg.time': ['concurrentmarksweep.gc.avg.time'],
         'parnew.gc.count': ['parnew.gc.count'],
-        'concurrentmarksweep.gc.count': ['concurrentmarksweep.gc.count'],
         'gc.throughput': ['gc.throughput'],
         'new.gen.promotion': ['new.gen.promotion'],
         'new.gen.avg.promotion': ['new.gen.avg.promotion'],
