@@ -60,8 +60,6 @@ items = {
         'net.if':['net.if.in.bytes', 'net.if.out.bytes']
     },
     'jmx':{
-        'parnew.gc.avg.time': ['parnew.gc.avg.time'],
-        'parnew.gc.count': ['parnew.gc.count'],
         'gc.throughput': ['gc.throughput'],
         'new.gen.promotion': ['new.gen.promotion'],
         'new.gen.avg.promotion': ['new.gen.avg.promotion'],
