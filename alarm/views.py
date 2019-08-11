@@ -161,6 +161,42 @@ class HostGroupView(BaseResView):
             print traceback.format_exc()
         return FalconResponse(result)
 
+    def create(self, request):
+        hostgroup_name = request.POST['hostgroup_name']
+        f = Falcon(request.user.username)
+        result =  f.create_hostgroup(hostgroup_name)
+        return FalconResponse(result)
+
+
+    def hosts(self, request):
+        hostgroup_id = request.GET['id']
+        return render(request, 'alarm/hostgroup_hosts.html', locals())
+
+    def get_hosts(self, request):
+        try:
+            limit = int(request.GET['limit'])
+            page = int(request.GET['page'])
+            name = request.GET['name']
+            hostgroup_id = request.GET['hostgroup_id']
+            f = Falcon()
+            result = f.get_hostgroup_info_by_id(hostgroup_id)
+            data = []
+            for i in result['hosts']:
+                if i['hostname'].find(name) >= 0:
+                    data.append({'id':i['id'], 'hostname':i['hostname']})
+            total = len(data)
+            data = data[
+                     (page - 1) * limit: page * limit]
+        except:
+            print traceback.format_exc()
+        return HttpResponse(json.dumps({'total': total, 'rows': data}))
+
+    def host_templates(self, request):
+        host_id = request.GET['id']
+        f = Falcon()
+        data = f.host_templates(host_id)
+        return render(request, 'alarm/host_templates.html', locals())
+
 
 class TemplateView(BaseResView):
 

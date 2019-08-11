@@ -577,3 +577,57 @@ class Falcon(object):
         print response.text
 
         return response.json()
+
+
+    def create_hostgroup(self, name):
+        directory = '/api/v1/hostgroup'
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        params['data'] = json.dumps({
+            'name': name
+        })
+        response = requests.post(**params)
+        print response.text
+
+        return response.json()
+
+
+    def get_hostgroup_info_by_id(self, id):
+        directory = '/api/v1/hostgroup/%s'%id
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        response = requests.get(**params)
+        print response.text
+
+        return response.json()
+
+    def host_hostgroups(self, host_id):
+        directory = '/api/v1/host/%s/hostgroup' % host_id
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        response = requests.get(**params)
+        print response.text
+
+        return response.json()
+
+
+    def host_templates(self, host_id):
+        directory = '/api/v1/host/%s/template' % host_id
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        response = requests.get(**params)
+        print response.text
+
+        return response.json()

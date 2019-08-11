@@ -19,7 +19,6 @@ class FalconBackend(ModelBackend):
             user_model = get_user_model()
             f = Falcon()
             ret = f.login(username, password)
-            print ret
             if not ret.has_key('error'):
                 #获取falcon里该用户的信息详情，比如手机号、邮箱地址等，更新到OMS用户表
                 userinfo = f.get_userinfo(username)
@@ -30,6 +29,7 @@ class FalconBackend(ModelBackend):
                         user.cname = userinfo.get('cnname', '')
                         user.phone = userinfo.get('phone', '')
                         user.email = userinfo.get('email', '')
+                        user.role = userinfo.get('role', '')
                         user.save()
                     except user_model.DoesNotExist:
                         user = user_model(
@@ -38,7 +38,9 @@ class FalconBackend(ModelBackend):
                             phone=userinfo.get('phone', ''),
                             email=userinfo.get('email', ''),
                             qq=userinfo.get('qq', ''),
-                            is_staff=1)
+                            is_staff=1,
+                            role = userinfo.get('role', '')
+                        )
                         user.save()
                     return user
         except Exception, e:

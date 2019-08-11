@@ -4,7 +4,7 @@
 {% load key %}
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>机器组</h5>
+                <h5>机器列表</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -14,7 +14,7 @@
         <div class="panel-body">
             <form id="formSearch" class="form-horizontal">
                 <div>
-                    <label class="control-label col-sm-1"  style="text-align:left">机器组</label>
+                    <label class="control-label col-sm-1"  style="text-align:left">主机名</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="name" name="name">
                     </div>
@@ -107,7 +107,7 @@ $(function () {
 
 function InitTable(){
     $('#table').bootstrapTable({
-        url: '/alarm/hostgroup/data',              //请求后台的URL（*）
+        url: '/alarm/hostgroup/get_hosts',              //请求后台的URL（*）
         method: 'GET',                      //请求方式（*）
         toolbar: '#toolbar',              //工具按钮用哪个容器
         striped: true,                      //是否显示行间隔色
@@ -139,17 +139,13 @@ function InitTable(){
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
                 name: $("#name").val(),
-
+                hostgroup_id: {{hostgroup_id}}
             };
             return temp;
         },
         columns: [{
-            field: 'name',
-            title: '机器组',
-            sortable: false
-        },{
-            field: 'create_user',
-            title: '创建人',
+            field: 'hostname',
+            title: '主机名',
             sortable: false
         },
         {
@@ -172,8 +168,8 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
     var result = "";
-    result += "<a href='/alarm/hostgroup/templates?id=" + row.id + "'>策略模板</a><span> ¦ </span>";
-    result += "<a href='/alarm/hostgroup/hosts?id=" + row.id + "'>机器列表</a><span> ¦ </span>";
+    result += "<a href='/alarm/hostgroup/host_templates?id=" + row.id + "'>策略模板</a><span> ¦ </span>";
+    result += "<a href='/alarm/hostgroup/host_hosts?id=" + row.id + "'>机器组</a><span> ¦ </span>";
     if ({{request.user.role}} > 0 || '{{request.user.username}}' == row.create_user){
         result += "<a href=\"javascript:edit_hostgroup("    +   row.id    +    ", '" +    row.name   +    "');\" style='text-decoration: none;'><span class='glyphicon glyphicon-edit orange'></span></a><span> ¦ </span>"
         result += "<a href=\"javascript:delete_hostgroup("    +   row.id    +     ");\" style='text-decoration: none;'><span class='glyphicon glyphicon-trash orange'></span></a>"
