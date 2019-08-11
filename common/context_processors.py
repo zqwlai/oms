@@ -16,20 +16,13 @@ def menu_list(request):    #获取该用户拥有的菜单，来做前端展示
             'menu_list': []
 
         }
-    accept_menu_id_list = []     #先获取该用户可以访问哪些菜单ID
-    role_list = request.user.tsysrole_set.all()
-    for role_obj in role_list:
-        for permisson_obj in role_obj.permissions.all():
-            accept_menu_id_list.append(permisson_obj.fid)
-    accept_menu_id_list = list(set(accept_menu_id_list))
+
 
     #再获取整个菜单树
     data = []
     for i in TSysPermission.objects.filter(fparent_id=0).order_by('flocal'):
-        if i.fid in accept_menu_id_list:
-            accept = True
-        else:
-            accept = False
+        accept = True
+
         if not TSysPermission.objects.filter(fparent_id=i.fid):  # 判断该一级节点有没有子节点
             data.append({
                 'fid': i.fid, 'fname': i.fresource_name,
@@ -40,9 +33,8 @@ def menu_list(request):    #获取该用户拥有的菜单，来做前端展示
         else:   #有子节点
             level2_data = []
             for j in TSysPermission.objects.filter(fparent_id=i.fid).order_by('flocal'):        #遍历子节点
-                children_accept = False
-                if j.fid in accept_menu_id_list:
-                    children_accept = True
+
+                children_accept = True
                 level2_data.append({
                     'fid': j.fid, 'fname': j.fresource_name,
                      'fenable': j.favailable,

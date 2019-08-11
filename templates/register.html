@@ -27,8 +27,15 @@
                     <input type="text" name="username" class="form-control" placeholder="用户名" >
                 </div>
                 <div class="form-group">
+                    <input type="text" name="cname" class="form-control" placeholder="中文名" >
+                </div>
+                <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="密码" >
                 </div>
+                <div class="form-group">
+                    <input type="text" name="email" class="form-control" placeholder="邮箱" >
+                </div>
+
                 <button type="submit" class="btn btn-primary block full-width m-b">注册</button>
 
             </form>
@@ -43,9 +50,14 @@
     <script src="/site_static/js/plugins/validate/jquery.validate.min.js"></script>
 
 
-</body>d
+</body>
 
 <script>
+jQuery.validator.addMethod("isChinesChar", function(value, element) {
+    var reg = /^[\u4e00-\u9fa5]+$/;
+    return reg.test(value)
+}, "请输入汉字");
+
 $(document).ready(function(){
     $("#form").validate({
         rules: {
@@ -53,21 +65,36 @@ $(document).ready(function(){
                 required: true,
                 minlength: 6,
             },
-
+            cname:{
+                required: true,
+                isChinesChar: true,
+            },
             password: {
                 required: true,
                 minlength : 6
             },
+            email:{
+                required: true,
+                email: true
+            }
         },
         messages: {
             username: {
                 required: '用户名不能为空',
                 minlength : "长度不能小于6个字符",
             },
+            cname: {
+                required: '中文名不能为空',
+                isChinesChar: '请输入汉字'
+            },
 		    password : {
 		        required: '密码不能为空',
                 minlength : "长度不能小于6个字符",
 		    },
+		    email:{
+		        required : "请输入邮箱地址",
+		        email: '邮箱地址不合法'
+		    }
   		},
         submitHandler: function(form) {
             $.ajax({

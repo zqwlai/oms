@@ -129,15 +129,16 @@ def register(request):
 def process_register(request):
     username = request.POST['username']
     password = request.POST['password']
-    #判断用户是否存在
-    if OmsUser.objects.filter(username=username):
-        return JsonResponse({'code':1, 'data':'', 'message':'用户已经存在!'})
+    cname = request.POST['cname']
+    email = request.POST['email']
 
-    #创建用户并跳转到dashboard
-    p = OmsUser.objects.create_user(username=username,password=password, last_login=time.strftime('%Y-%m-%d %H:%M:%S'))
-    p.tsysrole_set.add(1)   #用户注册后加到默认用户组
-    p.save()
+    f = Falcon()
+    ret = f.register(username, password, cname, email)
+    if ret.has_key('error'):
+        return JsonResponse({'code':1, 'data':'', 'message':ret['error']})
+
     user = auth.authenticate(username=username, password=password)
+    print user
     auth.login(request, user)
     return JsonResponse({'code':0, 'data':'', 'message':'用户注册成功!'})
 

@@ -169,11 +169,16 @@ function InitTable(){
             title: '用户名',
             sortable: false
         }, {
+            field: 'cname',
+            title: '中文名',
+            sortable: false
+        },
+        {
             field: 'email',
             title: '邮箱',
         }, {
-            field: '手机号',
-            title: 'phone',
+            field: 'phone',
+            title: '手机号',
         },{
             field: 'is_active',
             title: '状态'
@@ -181,11 +186,14 @@ function InitTable(){
             field: 'id',
             title: '操作',
             formatter: actionFormatter,
-            align: 'center'
+            align: 'center',
         },
 
         ],
         onLoadSuccess: function () {
+            if ({{request.user.role}} == 0 ){
+                $("#table").bootstrapTable('hideColumn', 'id');
+            }
         },
         onLoadError: function () {
         },
@@ -198,7 +206,6 @@ function actionFormatter(value, row, index){
     var result = "";
     result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + row.id + "')\" title='编辑'>编辑</a>";
     result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'>删除</a>";
-
     return result;
 }
 

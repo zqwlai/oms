@@ -25,5 +25,4 @@ DATABASES = {
 
 falcon_sig = 'default-token-used-in-server-side'
 falcon_domain = 'http://127.0.0.1:8080'
-falcon_user = 'admin'
 port_listen_key = 'listen.port'

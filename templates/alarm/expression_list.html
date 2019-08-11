@@ -4,7 +4,7 @@
 {% load key %}
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>用户组</h5>
+                <h5>表达式</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -14,7 +14,7 @@
         <div class="panel-body">
             <form id="formSearch" class="form-horizontal">
                 <div>
-                    <label class="control-label col-sm-1"  style="text-align:left">用户组</label>
+                    <label class="control-label col-sm-1"  style="text-align:left">表达式关键字</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="name" name="name">
                     </div>
@@ -49,7 +49,7 @@
  </div>
 <div id="toolbar" class="btn-group">
             <button id="btn_add" type="button" class="btn btn-default"  onclick="AddView()">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新建用户组
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新建表达式
             </button>
         <!--
             <button id="btn_edit" type="button" class="btn btn-default">
@@ -70,11 +70,11 @@
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="title">新建用户组</h4></div>
+                <h4 class="modal-title" id="title">新建</h4></div>
             <div class="modal-body">
                 <form  role="form" id="myForm">
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">用户组:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">机器组:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
                             <input type="text" name="id" class="form-control" style="display:none">
                             <input type="text" name="name" class="form-control">
@@ -132,7 +132,7 @@ $(function () {
 
 function InitTable(){
     $('#table').bootstrapTable({
-        url: '/rbac/role/data',              //请求后台的URL（*）
+        url: '/alarm/expression/data',              //请求后台的URL（*）
         method: 'GET',                      //请求方式（*）
         toolbar: '#toolbar',              //工具按钮用哪个容器
         striped: true,                      //是否显示行间隔色
@@ -169,15 +169,22 @@ function InitTable(){
             return temp;
         },
         columns: [{
-            field: 'name',
-            title: '用户组',
-            sortable: false
-        }, {
-            field: 'resume',
-            title: '描述',
-            sortable: false
+            field: 'expression',
+            title: '表达式',
+            sortable: false,
         },{
-            field: 'creator_name',
+            field: 'id',
+            title: '告警条件',
+            formatter: conditionFormatter,
+            align: 'center'
+        },{
+            field: 'id',
+            title: '告警内容',
+            formatter: contentFormatter,
+            align: 'center'
+        },
+        {
+            field: 'create_user',
             title: '创建人',
             sortable: false
         },
@@ -199,114 +206,48 @@ function InitTable(){
 
 
 function actionFormatter(value, row, index){
-    var id = value;
     var result = "";
-    if ({{request.user.role}} > 0 || '{{request.user.username}}' == row.creator_name){
-        result += "<a href='javascript:;' class='btn btn-xs btn-info' onclick=\"EditViewById('" + row.id + "')\" title='编辑'>编辑</a>";
-        result += "<a href='javascript:;' class='btn btn-xs btn-danger m-l-xs btn_user_delete' onclick=\"DeleteByIds('" + row.id + "')\" title='删除'>删除</span></a>";
+    if ({{request.user.role}} > 0 || '{{request.user.username}}' == row.create_user){
+        result += "<a href='/alarm/expression/add?id=" + row.id  +"' style='text-decoration: none;'><span class='glyphicon glyphicon-edit orange'></span></a><span> ¦ </span>"
+        result += "<a href=\"javascript:delete_expression("    +   row.id    +     ");\" style='text-decoration: none;'><span class='glyphicon glyphicon-trash orange'></span></a>"
     }
-        return result;
+    return result;
+}
+
+function conditionFormatter(value, row, index){
+    var result = "";
+    result +=  row.func + row.op + row.right_value
+    return result;
+}
+
+function contentFormatter(value, row, index){
+    var result = "";
+    result += row.note + "( Max: " + row.max_step + ", P" + row.priority + ")"
+    return result;
 }
 
 function ReloadTable(){
     $('#table').bootstrapTable("refresh");
 }
 
-$(document).ready(function(){
-    $("#myForm").validate({
-        ignore: ':hidden:not("#Fcluster")',
-        rules: {
-            name:{
-                required: true,
-            },
-            resume:{
-                required: true,
-            },
-        },
-        messages: {
-            name : {
-                required : "角色名不能为空"
-            },
-            resume : {
-                required : "别名不能为空"
-            },
-        },
-        submitHandler: function(form) {
-            console.log($("#myForm").serialize())
-            if (form.getAttribute('option') == 'create'){
-                var url = '/rbac/role/add'
-            }
-            else{
-                var url = '/rbac/role/update'
-            }
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: $("#myForm").serialize(),
-                dataType: "json",
-                success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
-                },
-                error: function() {
-                   alert('服务器内部错误');
-                }
-            });
-        }
-    });
-});
-
-function EditViewById(id){
-    $.ajax({
-        type: "POST",
-        url: '/rbac/role/get_role_info',
-        data: {'id':id},
-        dataType: "json",
-        success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-
-                var name = data['data']['name']
-                var resume = data['data']['resume']
-                var user_id_list = data['data']['user_id_list']
-                var form_obj = document.getElementById('myForm');
-                form_obj.id.value = id
-                form_obj.name.value = name
-                form_obj.resume.value = resume
-                form_obj.users.value = user_id_list
-                $("#users").trigger("chosen:updated");
-                console.log(user_id_list)
-                $("#title").html("更新用户组【"+name + "】")
-                form_obj.setAttribute('option', 'update')
-                $("#myModal").modal("show")
-            }
-            else{
-                alert(data['message'])
-            }
-        },
-        error: function() {
-           alert('服务器内部错误');
-        }
-    });
-}
 
 
-function DeleteByIds(id){
-    if (confirm('确认要删除这条记录吗？')){
+var setting = {
+    check:{
+        enable:true
+    },
+};
+
+function delete_expression(id){
+    if (confirm('确定要删除吗？')){
         $.ajax({
             type: "POST",
-            url: '/rbac/role/delete',
+            url: '/alarm/expression/delete',
             data: {'id':id},
             dataType: "json",
             success: function(data){
                 if (data['code'] == 0){
-                    alert(data['message'])
-                    window.location.reload();
+                    console.log(data['data'])
                 }
                 else{
                     alert(data['message'])
@@ -316,91 +257,8 @@ function DeleteByIds(id){
                alert('服务器内部错误');
             }
         });
-
     }
-
 }
 
-
-var setting = {
-    check:{
-        enable:true
-    },
-};
-
-
-function AuthByIds(fid){
-    $.ajax({
-        type: "POST",
-        url: '/rbac/role/permission',
-        data: {'fid':fid},
-        dataType: "json",
-        success: function(data){
-            if (data['code'] == 0){
-                var zNodes = data['data']['zNodes']
-                $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-                $("#role_id").val(fid)
-                $("#authModal").modal("show")
-            }
-            else{
-                alert(data['message'])
-            }
-        },
-        error: function() {
-           alert('服务器内部错误');
-        }
-    });
-
-}
-
-
-function UpdateAuth(){
-    var checked_id_list = []
-    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-    var nodes = treeObj.getNodes();
-    console.log(nodes)
-    for (i=0; i< nodes.length; i++){
-        if (nodes[i]['checked'] == true){
-            checked_id_list.push(nodes[i]['fid'])
-        }
-        var children_nodes = nodes[i]['children']
-        if (children_nodes.length !=0){
-            for (j=0; j<children_nodes.length; j++){
-                if (children_nodes[j]['checked'] == true){
-                    checked_id_list.push(children_nodes[j]['fid'])
-                }
-            }
-        }
-    }
-
-
-    $.ajax({
-        type: "POST",
-        url: '/rbac/role/updateauth',
-        data: {'checked_id_list':checked_id_list, 'fid':$("#role_id").val()},
-        dataType: "json",
-        success: function(data){
-            if (data['code'] == 0){
-                alert(data['message'])
-                window.location.reload();
-            }
-            else{
-                alert(data['message'])
-            }
-        },
-        error: function() {
-           alert('服务器内部错误');
-        }
-    });
-
-}
-
-function AddView(){
-    var form_obj = document.getElementById('myForm');
-    form_obj.reset()
-    $("#title").html("新建用户组")
-    form_obj.setAttribute('option', 'create')
-    $("#myModal").modal("show")
-}
 </script>
 {% endblock %}

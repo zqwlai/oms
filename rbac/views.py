@@ -11,6 +11,7 @@ import time
 import json
 from rbac.models import TSysPermission, TSysRole
 from user_app.models import OmsUser
+from common.falcon import Falcon
 from oms import settings
 import traceback
 from oms.views import BaseResView
@@ -111,8 +112,8 @@ class MenuView(BaseResView):
 
 class UserView(BaseResView):
     def get(self, request):
-        role_list = TSysRole.objects.all()
-        return render(request, 'rbac/sysuser.html', {'role_list': role_list})
+
+        return render(request, 'rbac/sysuser.html', locals())
 
     def data(self, request):
         username = request.GET['username']
@@ -122,9 +123,15 @@ class UserView(BaseResView):
         total = OmsUser.objects.filter(username__contains=username).count()
         result = []
         for i in data:
-            role_id_list = [str(j.fid) for j in i.tsysrole_set.all()]
-            roleids = '|'.join(role_id_list)
-            result.append({'id': i.id, 'username': i.username, 'phone': i.phone, 'email':i.email, 'is_active':i.is_active, 'roleids':roleids})
+            result.append({
+                'id': i.id,
+                'username': i.username,
+                'phone': i.phone,
+                'email':i.email,
+                'is_active':i.is_active,
+                'role':i.role,
+                'cname': i.cname
+            })
 
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
@@ -145,17 +152,18 @@ class UserView(BaseResView):
         return JsonResponse({'code':0, 'data':data, 'message':'ok'})
 
     def update(self, request):
-        print request.POST.dict()
         id = request.POST['id']
         status = request.POST['status']
         phone = request.POST['phone']
         email = request.POST['email']
-        print status
         user_obj = OmsUser.objects.get(id=id)
         user_obj.is_active = int(status)
         user_obj.phone = phone
         user_obj.email = email
         user_obj.save()
+        #同时更新falcon用户
+        f = Falcon()
+        f.update_user(user_obj.cname, email, phone, qq='')
         return JsonResponse({'code': 0, 'data': '', 'message': '更新成功'})
 
 
@@ -168,61 +176,63 @@ class UserView(BaseResView):
 
 class RoleView(BaseResView):
     def get(self, request):
-        user_list = OmsUser.objects.all()
+        f = Falcon()
+        user_list = f.get_user_list()
         return render(request, 'rbac/role.html', locals())
 
 
     def data(self, request):
-        fname = request.GET['fname']
+        name = request.GET['name']
         limit = int(request.GET['limit'])
         page = int(request.GET['page'])
-        data = TSysRole.objects.filter(fname__contains=fname)[(page - 1) * limit: page * limit]
-        total = TSysRole.objects.filter(fname__contains=fname).count()
+
+        f = Falcon()
+        data = f.query_team(q=name)
+        print data
+        total = len(data)
+        data = data[(page - 1) * limit: page * limit]
         result = []
         for i in data:
-            result.append({'fid': i.fid, 'fname': i.fname, 'fcname':i.fcname,'fcreate_time': str(i.fcreate_time)})
+            result.append({'id': i['team']['id'], 'name': i['team']['name'], 'resume':i['team']['resume'],'creator_name': i['creator_name']})
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
 
 
-    def get_role_obj(self, request):
-        fid = request.POST['fid']
-        role_obj = TSysRole.objects.get(fid=fid)
-        fname = role_obj.fname
-        fcname = role_obj.fcname
-        user_id_list = [int(i.id) for i in role_obj.users.all()]
-        data = {'fname':fname, 'fcname':fcname, 'user_id_list':user_id_list}
+    def get_role_info(self, request):
+        try:
+            id = request.POST['id']
+            f = Falcon()
+            team_info  = f.get_team_info_by_id(id)
+            name = team_info['name']
+            resume = team_info['resume']
+            user_id_list = [int(i['id']) for i in team_info['users']]
+            data = {'name':name, 'resume':resume, 'user_id_list':user_id_list}
+        except:
+            print traceback.format_exc()
         return JsonResponse({'code':0, 'data':data, 'message':'ok'})
 
     def delete(self, request):
-        fid = request.POST['fid']
-        TSysRole.objects.filter(fid=fid).delete()
+        id = request.POST['id']
+        f = Falcon()
+        print f.delete_team(id)
         return JsonResponse({'code': 0, 'data': '', 'message': '删除成功'})
 
     def add(self, request):
-        fname = request.POST['fname']
-        fcname = request.POST['fcname']
-        if TSysRole.objects.filter(fname=fname):
-            return JsonResponse({'code': 1, 'data': '', 'message':'角色名已经存在'})
-        r = TSysRole.objects.create(fname=fname, fcname=fcname)
+        name = request.POST['name']
+        resume = request.POST['resume']
         user_list = request.POST.getlist('users')
-        if user_list:
-            for user in user_list:
-                r.users.add(user)
-        return JsonResponse({'code': 0, 'data': '', 'message':'角色【%s】创建成功'%fname})
+        user_list = [int(i) for i in user_list]
+        f = Falcon(request.user.username)
+        print f.create_team(name, resume, user_list)
+        return JsonResponse({'code': 0, 'data': '', 'message':'用户组【%s】创建成功'%name})
 
     def update(self, request):
-        fid = request.POST['fid']
-        fcname = request.POST['fcname']
-        role_obj = TSysRole.objects.get(fid=fid)
-        old_user_id_list = [str(i.id) for i in role_obj.users.all()]
+        id = int(request.POST['id'])
+        name = request.POST['resume']
+        resume = request.POST['resume']
         user_id_list = request.POST.getlist('users')
-        need_add_user_id_list = list(set(user_id_list).difference(old_user_id_list))
-        need_remove_user_id_list = list(set(old_user_id_list).difference(user_id_list))
-        TSysRole.objects.filter(fid=fid).update(fcname=fcname)
-        for i in need_add_user_id_list:
-            role_obj.users.add(i)
-        for i in need_remove_user_id_list:
-            role_obj.users.remove(i)
+        user_id_list = [int(i) for i in user_id_list]
+        f = Falcon()
+        print f.update_team(id, name, resume, user_id_list)
         return JsonResponse({'code': 0, 'data': '', 'message': '角色更新成功'})
 
     def permission(self, request):      #获取该角色有哪些菜单权限

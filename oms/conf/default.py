@@ -45,7 +45,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'common.middleware.LogRecordMiddleware',
     'common.middleware.LoginMiddleware',
-    'common.middleware.RbacMiddleware',  # 权限中间件
+    #'common.middleware.RbacMiddleware',  # 权限中间件
 )
 
 ROOT_URLCONF = 'oms.urls'
@@ -178,4 +178,4 @@ LOGGING = {
 
 AUTH_USER_MODEL = 'user_app.OmsUser'
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+AUTHENTICATION_BACKENDS = ('common.backends.FalconBackend' ,'django.contrib.auth.backends.ModelBackend',)

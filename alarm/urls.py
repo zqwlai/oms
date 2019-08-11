@@ -8,4 +8,6 @@ urlpatterns = []
 
 urlpatterns += views.EventcaseView.urls()
 urlpatterns += views.SenderView.urls()
-
+urlpatterns += views.HostGroupView.urls()
+urlpatterns += views.TemplateView.urls()
+urlpatterns += views.ExpressionView.urls()

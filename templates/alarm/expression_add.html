@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load key %}
+{% load in_list %}
+{% load split %}
+<div class="row">
+    <div class="col-lg-12">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">{% if expression_id == 0 %}创建表达式 {% else %}更新表达式{% endif %} <span class="gray">e.g. each(metric=qps srv=falcon) </span></div>
+            <div class="panel-body">
+
+                <textarea class="form-control" rows="2" id="expression"
+                          placeholder="e.g. each(metric=qps srv=falcon)">{{expression_info|key:'expression'|key:'expression'}}</textarea>
+
+                <div class="form-inline mt10" role="form">
+                    <div class="form-group">
+                        if <input type="text" value="{{expression_info|key:'expression'|key:'func'}}" class="form-control" id="func"
+                                  style="width: 500px;">
+                        <select class="form-control" id="op">
+                            {% for i in op_list %}
+                                {% if i == expression_info|key:'expression'|key:'op' %}
+                                    <option value="{{i}}" selected>{{i}}</option>
+                                {% else %}
+                                    <option value="{{i}}">{{i}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input type="text" value="{{expression_info|key:'expression'|key:'right_value'}}" class="form-control"
+                               id="right_value"
+                               style="width: 100px;">
+                        : alarm(); callback();
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">def alarm(): #配置了UIC组才会发报警</div>
+            <div class="panel-body">
+                报警接收组（在用户组管理中管理报警组，<a target="_blank" href="/rbac/role">快捷入口</a>）：
+                <select name="uic" id="uic"  class="chosen-select" multiple tabindex="2" >
+                    {% for i in all_uic_list %}
+                        {% if i|in_list:current_uic_list %}
+                            <option value="{{i}}" selected>{{i}}</option>
+                        {% else %}
+                            <option value="{{i}}">{{i}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="form-inline mt10" role="form">
+                    <div class="form-group">
+                        最多报警次数：<input class="form-control" id="max_step" style="width: 100px;"
+                                      value="{{expression_info|key:'expression'|key:'max_step'}}">
+                        报警级别（&lt;3: sms and mail; &gt;=3: mail）：
+                        <input class="form-control" id="priority"
+                               style="width: 60px;"
+                               value="{{expression_info|key:'expression'|key:'priority'}}">
+                        备注信息（将附在告警内容中发送）：<input class="form-control" id="note" value="{{expression_info|key:'expression'|key:'note'}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">def callback(): #高级用法，配置了callback地址才会触发回调</div>
+            <div class="panel-body">
+                callback地址（只支持http get方式回调）：
+                <input class="form-control" id="callback_url" value="{{expression_info|key:'action'|key:'url'}}">
+
+                <div class="mt10">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="before_callback_sms" {% if expression_info|key:'action'|key:'before_callback_sms' == 1 %}checked value="1" {% else %} value="0"{% endif %}
+                               > 回调之前发提醒短信
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="before_callback_mail" {% if expression_info|key:'action'|key:'before_callback_mail' == 1 %} checked value="1" {% else %} value="0" {% endif %}
+                               > 回调之前发提醒邮件
+                    </label>
+                    <label class="checkbox-inline" >
+                        <input type="checkbox" id="after_callback_sms" {% if expression_info|key:'action'|key:'after_callback_sms' == 1 %} checked value="1" {% else %} value="0" {% endif %}
+                               > 回调之后发结果短信
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="after_callback_mail" {% if expression_info|key:'action'|key:'after_callback_mail' == 1 %} checked value="1" {% else %} value="0" {% endif %}
+                               > 回调之后发结果邮件
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb20">
+            <button class="btn btn-default" onclick="update_expression();">Submit</button>
+            <button class="btn btn-default" onclick="history.go(-1);">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                <span>Back</span>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+$('.chosen-select').chosen({width: "400px"});
+
+function update_expression(){
+    callback_url = $("#callback_url").val()
+    if (callback_url.length == 0){
+        callback = 0
+    }else{
+        callback = 1
+    }
+    var data= {
+        'expression': $("#expression").val(),
+        'func': $("#func").val(),
+        'op': $("#op").val(),
+        'right_value': $("#right_value").val(),
+        'note': $("#note").val(),
+        'max_step': $("#max_step").val(),
+        'priority': $("#priority").val(),
+        'action':{
+            'url': callback_url,
+            'uic': $("#uic").val(),
+            'callback': callback,
+            'before_callback_sms': $("#before_callback_sms").val(),
+            'before_callback_mail': $("#before_callback_mail").val(),
+            'after_callback_sms': $("#after_callback_sms").val(),
+            'after_callback_mail': $("#after_callback_mail").val()
+        }
+    }
+
+    if ({{id}} == 0){
+        url = '/alarm/expression/create'
+    }else{
+        url = '/alarm/expression/update'
+        data['id'] = {{id}}
+    }
+    $.ajax({
+        type: "POST",
+        contentType: 'application/json',        //因为传递的字典参数里又包裹了一层字典，所以要用json的的编码方式传参
+        url: url,
+        data: JSON.stringify(data),
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                console.log(data['data'])
+            }
+            else{
+                alert(data['message'])
+            }
+        },
+        error: function() {
+           alert('服务器内部错误');
+        }
+    });
+}
+
+</script>
+{% endblock %}

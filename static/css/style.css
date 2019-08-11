@@ -3869,45 +3869,6 @@ table.table-mail tr td {
 .black-bg {
   background-color: #262626;
 }
-.panel-primary {
-  border-color: #1ab394;
-}
-.panel-primary > .panel-heading {
-  background-color: #1ab394;
-  border-color: #1ab394;
-}
-.panel-success {
-  border-color: #1c84c6;
-}
-.panel-success > .panel-heading {
-  background-color: #1c84c6;
-  border-color: #1c84c6;
-  color: #ffffff;
-}
-.panel-info {
-  border-color: #23c6c8;
-}
-.panel-info > .panel-heading {
-  background-color: #23c6c8;
-  border-color: #23c6c8;
-  color: #ffffff;
-}
-.panel-warning {
-  border-color: #f8ac59;
-}
-.panel-warning > .panel-heading {
-  background-color: #f8ac59;
-  border-color: #f8ac59;
-  color: #ffffff;
-}
-.panel-danger {
-  border-color: #ed5565;
-}
-.panel-danger > .panel-heading {
-  background-color: #ed5565;
-  border-color: #ed5565;
-  color: #ffffff;
-}
 .progress-bar {
   background-color: #1ab394;
 }
@@ -8226,4 +8187,13 @@ body.md-skin {
   #page-wrapper {
     margin: 0;
   }
+}
+
+
+.orange {
+    color: orange;
+}
+
+.green {
+    color: green;
 }
