@@ -677,3 +677,16 @@ class Falcon(object):
         print response.text
 
         return response.json()
+
+
+    def delete_template(self, template_id):
+        directory = '/api/v1/template/%s'%template_id
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        response = requests.delete(**params)
+        print response.text
+
+        return response.json()

@@ -359,6 +359,14 @@ class TemplateView(BaseResView):
         return FalconResponse(result)
 
 
+    def delete(self, request):
+        template_id = request.POST['template_id']
+        f = Falcon()
+        result = f.delete_template(template_id)
+        return FalconResponse(result)
+
+
+
 class ExpressionView(BaseResView):
 
     def get(self, request):

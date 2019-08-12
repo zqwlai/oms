@@ -199,7 +199,10 @@ function InitTable(){
 
 function actionFormatter(value, row, index){
     var result = "";
-
+    if ({{request.user.role}} > 0 || '{{request.user.username}}' == row.create_user){
+        result += "<a href='/alarm/template/update?id=" + row.id +"' style='text-decoration: none;'><span class='glyphicon glyphicon-edit orange'></span></a><span> ¦ </span>"
+        result += "<a href=\"javascript:delete_template("    +   row.id    +     ");\" style='text-decoration: none;'><span class='glyphicon glyphicon-trash orange'></span></a>"
+    }
     return result;
 }
 
@@ -241,6 +244,27 @@ function create_template(){
     });
 }
 
+
+function delete_template(template_id){
+    my_confirm('确定要删除该模板吗？', ['确定', '取消'], function () {
+        $.ajax({
+            type: "POST",
+            url: '/alarm/template/delete',
+            data: {'template_id':template_id},
+            dataType: "json",
+            success: function(data){
+               handle_quietly(data, function(){location.reload() })
+            },
+            error: function() {
+               err_message_quietly('服务器内部错误');
+            }
+        });
+
+        ;
+    }, function () {
+        return false;
+    });
+}
 
 </script>
 {% endblock %}
