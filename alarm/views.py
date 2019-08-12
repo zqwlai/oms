@@ -82,21 +82,18 @@ class SenderView(BaseResView):
 
     @login_exempt
     def mail(self, request):
-        try:
-            print request.POST.dict()
-            tos = request.POST['tos']
-            subject = request.POST['subject']
-            content = request.POST['content']
-            #获取邮件服务器信息
-            mailserver_obj = TMailServer.objects.first()
-            if not mailserver_obj:
-                return JsonResponse({'code':1, 'message':'邮箱服务器未设置', 'data':''})
-            mail_host = mailserver_obj.fhost
-            mail_user = mailserver_obj.fuser
-            mail_pass = mailserver_obj.fpassword
-            send_mail(mail_host,mail_user,mail_pass, tos, subject, content)
-        except:
-            print traceback.format_exc()
+        print request.POST.dict()
+        tos = request.POST['tos']
+        subject = request.POST['subject']
+        content = request.POST['content']
+        #获取邮件服务器信息
+        mailserver_obj = TMailServer.objects.first()
+        if not mailserver_obj:
+            return JsonResponse({'code':1, 'message':'邮箱服务器未设置', 'data':''})
+        mail_host = mailserver_obj.fhost
+        mail_user = mailserver_obj.fuser
+        mail_pass = mailserver_obj.fpassword
+        send_mail(mail_host,mail_user,mail_pass, tos, subject, content)
         return JsonResponse({'code':0, 'data':'', 'message':'发送成功'})
 
 
