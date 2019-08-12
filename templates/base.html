@@ -11,16 +11,19 @@
     <link href="/site_static/bootstrap-3.3.4/css/bootstrap.css" rel="stylesheet" />
     <link href="/site_static/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="/site_static/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet">
+    <link href="/site_static/css/animate.css" rel="stylesheet">
+
+    <link href="/site_static/layer/skin/layer.css" rel="stylesheet">
+
+    <link href="/site_static/css/style.css" rel="stylesheet">
+    <link href="/site_static/css/jumpserver.css" rel="stylesheet">
 
     <!-- FooTable -->
     <link href="/site_static/css/plugins/footable/footable.core.css" rel="stylesheet">
 
-    <link href="/site_static/css/animate.css" rel="stylesheet">
 
 
     <script src="/site_static/js/jquery-2.1.1.js"></script>
-
-
     <script src="/site_static/bootstrap-3.3.4/js/bootstrap.js"></script>
 
 
@@ -36,9 +39,10 @@
     <script type="text/javascript" src="/site_static/zTree_v3/js/jquery.ztree.exedit.js"></script>
 
 
+    <script src="/site_static/layer/layer.min.js"></script>
+    <script src="/site_static/js/g.js"></script>
+    <script type="text/javascript" src="/site_static/layer/extend/layer.ext.js"></script>
 
-    <link href="/site_static/css/style.css" rel="stylesheet">
-    <link href="/site_static/css/jumpserver.css" rel="stylesheet">
 
     <style type="text/css">
         body{ font-size:16px;}
@@ -77,7 +81,7 @@
 
 
                 {% for menu in menu_list %}
-                    {% if menu|key:'accept' or request.user.is_superuser %}
+                    {% if menu|key:'accept'  %}
                         {% if not menu|key:'children' %}
                             <li class="{{menu|key:'fresource_url'|contains:request.path}}">
                                 <a href="{{menu|key:'fresource_url'}}"><i class="fa fa-{{menu|key:'fmenu_icon'}}"></i> <span class="nav-label">{{menu|key:'fname'}}</span></a>
@@ -87,7 +91,7 @@
                                 <a href="#1"><i class="fa fa-{{menu|key:'fmenu_icon'}}"></i> <span class="nav-label">{{menu|key:'fname'}}</span><span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                 {% for child in menu|key:'children' %}
-                                    {% if child|key:'accept' or request.user.is_superuser %}
+                                    {% if child|key:'accept'  %}
                                         <li class="{{child|key:'fresource_url'|contains:request.path}}"><a href="{{child|key:'fresource_url'}}">{{child|key:'fname'}}</a></li>
                                     {% endif %}
                                 {% endfor %}

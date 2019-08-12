@@ -8197,3 +8197,10 @@ body.md-skin {
 .green {
     color: green;
 }
+
+.mb20 {
+    margin-bottom: 20px !important;
+}
+.mt20 {
+    margin-top: 20px !important;
+}

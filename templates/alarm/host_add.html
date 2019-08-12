@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load key %}
+<div class="row">
+    <div class="col-lg-12">
+    <span class="green">
+        <span class="glyphicon glyphicon-tag"></span>
+        {{hostgroup_info|key:'grp_name'}}
+    </span>
+
+    <input type="hidden" id="group_id" value="2">
+
+    <div>
+        <div class="mt20 mb20">
+            <div class="pull-left">
+                <textarea class="form-control" rows="17" id="hosts" placeholder="多个主机名换行输入"
+                          style="width: 600px;"></textarea>
+            </div>
+            <div class="pull-left" style="padding-left: 20px;" id="message">
+
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+
+        <button class="btn btn-default" onclick="batch_add_host();">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Host
+        </button>
+        <button class="btn btn-default" onclick="history.go(-1);">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+            Back
+        </button>
+    </div>
+
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+function batch_add_host(){
+    hostnames = $("#hosts").val()
+    if (hostnames.length == 0){
+        err_message_quietly('主机名不能为空')
+    }
+    $.ajax({
+        type: "POST",
+        url: '/alarm/hostgroup/addhost',
+        data: {'hostgroup_id':{{hostgroup_id}}, 'hostnames':hostnames},
+        dataType: "json",
+        success: function(data){
+            handle_quietly(data, function(){location.reload() })
+        },
+        error: function() {
+           err_message_quietly('服务器内部错误');
+        }
+    });
+}
+</script>
+{% endblock %}

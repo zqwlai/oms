@@ -239,25 +239,23 @@ var setting = {
 };
 
 function delete_expression(id){
-    if (confirm('确定要删除吗？')){
+    my_confirm('确定要删除吗？', ['确定', '取消'], function () {
         $.ajax({
             type: "POST",
             url: '/alarm/expression/delete',
             data: {'id':id},
             dataType: "json",
             success: function(data){
-                if (data['code'] == 0){
-                    console.log(data['data'])
-                }
-                else{
-                    alert(data['message'])
-                }
+               handle_quietly(data, function(){location.reload() })
             },
             error: function() {
-               alert('服务器内部错误');
+               err_message_quietly('服务器内部错误');
             }
         });
-    }
+    }, function () {
+        return false;
+    });
+
 }
 
 </script>

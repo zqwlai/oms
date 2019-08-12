@@ -147,15 +147,10 @@ function update_expression(){
         data: JSON.stringify(data),
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }

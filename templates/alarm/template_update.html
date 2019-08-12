@@ -275,11 +275,11 @@ function process_strategy(operation, strategy_id){
                     $("#current_sid").val(strategy_id)
                 }
                 else{
-                    alert(data['message'])
+                    err_message_quietly(data['message'])
                 }
             },
             error: function() {
-               alert('服务器内部错误');
+               err_message_quietly('服务器内部错误');
             }
         });
     }
@@ -298,16 +298,10 @@ function update_template(){
         data: {'template_id':template_id, 'parent_id':parent_id, 'name':name, 'group_ids':group_ids},
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert('更新成功!')
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }
@@ -341,16 +335,10 @@ function save_strategy(){
         data: data,
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+            err_message_quietly('服务器内部错误');
         }
     });
 }
@@ -387,16 +375,10 @@ function save_action_for_tpl(action_id){
         data: data,
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+            err_message_quietly('服务器内部错误');
         }
     });
 

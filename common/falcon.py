@@ -631,3 +631,48 @@ class Falcon(object):
         print response.text
 
         return response.json()
+
+    def host_hostgroups(self, host_id):
+        directory = '/api/v1/host/%s/hostgroup' % host_id
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        response = requests.get(**params)
+        print response.text
+
+        return response.json()
+
+    def unbindHost2HostGroup(self, host_id, hostgroup_id):
+        directory = '/api/v1/hostgroup/host'
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        params['data'] = json.dumps({
+            'host_id': host_id,
+            'hostgroup_id': hostgroup_id
+        })
+        response = requests.put(**params)
+        print response.text
+
+        return response.json()
+
+
+    def addHost2HhostGroup(self, hostgroup_id, hostname_list):
+        directory = '/api/v1/hostgroup/host'
+        params = {
+            'url': self.domain + directory,
+            'headers': self.falcon_header,
+            'timeout': 30
+        }
+        params['data'] = json.dumps({
+            'hosts': hostname_list,
+            'hostgroup_id': hostgroup_id
+        })
+        response = requests.post(**params)
+        print response.text
+
+        return response.json()

@@ -769,9 +769,10 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                                    <div class="col-lg-offset-2 col-lg-10">
+                                    <div class="col-lg-offset-2 col-lg-10">{% if request.user.role > 0 %}
                                         <button class="btn btn-success btn-sm" type="button" onclick="update()">修改</button>
                                         <button class="btn btn-danger btn-sm" type="button" onclick="delete_menu()">删除 </button>
+                                        {% endif %}
                                     </div>
                                 </div>
                     </form>
@@ -1544,9 +1545,10 @@
                             </div>
                         </div>
 
-                        <div class="modal-footer">
+                        <div class="modal-footer">{% if request.user.role > 0 %}
                             <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
                             <button  class="btn btn-primary" type="submit">保存</button>
+                            {% endif %}
                         </div>
                     </form>
 
@@ -1657,11 +1659,11 @@ $('.chosen-select').chosen({width: "100%"});
                         $.fn.zTree.init($("#treeDemo"), setting, zNodes);
                     }
                     else{
-                        alert(data['message'])
+                        err_message_quietly(data['message'])
                     }
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                   err_message_quietly('服务器内部错误');
                 }
             });
 
@@ -1676,16 +1678,10 @@ $('.chosen-select').chosen({width: "100%"});
                 data: $("#editForm").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
 
@@ -1724,45 +1720,36 @@ $('.chosen-select').chosen({width: "100%"});
                 data: $("#addForm").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
         }
     });
 
 
-    function delete_menu(){
-        if (confirm('确定要删除该节点吗？')){
-            var form_obj = document.getElementById('editForm');
-            $.ajax({
-                type: "POST",
-                url: '/rbac/menu/delete',
-                data: {'fid':form_obj.fid.value},
-                dataType: "json",
-                success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
-                },
-                error: function() {
-                   alert('服务器内部错误');
-                }
-            });
-        }
-    }
+function delete_menu(){
+    var form_obj = document.getElementById('editForm');
+    my_confirm('确定要删除该节点吗？', ['确定', '取消'], function () {
+        $.ajax({
+            type: "POST",
+            url: '/rbac/menu/delete',
+            data: {'fid':form_obj.fid.value},
+            dataType: "json",
+            success: function(data){
+                handle_quietly(data, function(){location.reload() })
+            },
+            error: function() {
+                err_message_quietly('服务器内部错误');
+            }
+        });
+    }, function () {
+        return false;
+    });
+
+}
 
 	</SCRIPT>
 

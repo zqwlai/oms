@@ -45,7 +45,7 @@ class MailSettingsView(BaseResView):
 
 class MenuView(BaseResView):
     def get(self, request):
-        return render(request, 'rbac/menu_list.html',{'root_node':'rbac','child_node':'menu'})
+        return render(request, 'rbac/menu_list.html', locals())
 
     def update(self, request):
         print request.POST.dict()

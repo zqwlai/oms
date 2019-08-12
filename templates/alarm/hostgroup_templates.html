@@ -76,27 +76,22 @@
 $('.chosen-select').chosen({width: "400px"});
 
 function tpl_unbind_group(template_id, hostgroup_id){
-    if (confirm('确定要解绑该模板吗？')){
+    my_confirm('确定要解绑该模板吗？', ['确定', '取消'], function () {
         $.ajax({
             type: "POST",
             url: '/alarm/hostgroup/unbind_template',
             data: {'template_id':template_id, 'hostgroup_id':hostgroup_id},
             dataType: "json",
             success: function(data){
-                console.log(data['data'])
-                if (data['code'] == 0){
-
-                    window.location.reload()
-                }
-                else{
-                    alert(data['message'])
-                }
+               handle_quietly(data, function(){location.reload() })
             },
             error: function() {
-               alert('服务器内部错误');
+               err_message_quietly('服务器内部错误');
             }
         });
-    }
+    }, function () {
+        return false;
+    });
 }
 
 function bind_template(hostgroup_id){
@@ -110,18 +105,10 @@ function bind_template(hostgroup_id){
         data: {'template_id':template_id, 'hostgroup_id':hostgroup_id},
         dataType: "json",
         success: function(data){
-            console.log(data['data'])
-            if (data['code'] == 0){
-
-                alert(data['message'])
-                window.location.reload()
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 

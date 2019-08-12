@@ -149,16 +149,13 @@ class HostGroupView(BaseResView):
         id = int(request.POST['id'])
         f = Falcon()
         result = f.delete_hostgroup(id)
-        return FalconResponse(request)
+        return FalconResponse(result)
 
     def update(self, request):
-        try:
-            hostgroup_id = int(request.POST['hostgroup_id'])
-            hostgroup_name = request.POST['hostgroup_name']
-            f = Falcon()
-            result = f.update_hostgroup(hostgroup_id, hostgroup_name)
-        except:
-            print traceback.format_exc()
+        hostgroup_id = int(request.POST['hostgroup_id'])
+        hostgroup_name = request.POST['hostgroup_name']
+        f = Falcon()
+        result = f.update_hostgroup(hostgroup_id, hostgroup_name)
         return FalconResponse(result)
 
     def create(self, request):
@@ -170,6 +167,9 @@ class HostGroupView(BaseResView):
 
     def hosts(self, request):
         hostgroup_id = request.GET['id']
+        f = Falcon()
+        result = f.get_hostgroup_info_by_id(hostgroup_id)
+        hostgroup_info = result['hostgroup']
         return render(request, 'alarm/hostgroup_hosts.html', locals())
 
     def get_hosts(self, request):
@@ -193,10 +193,50 @@ class HostGroupView(BaseResView):
 
     def host_templates(self, request):
         host_id = request.GET['id']
+        hostname = request.GET['hostname']
         f = Falcon()
         data = f.host_templates(host_id)
         return render(request, 'alarm/host_templates.html', locals())
 
+
+    def host_hostgroups(self, request):
+        host_id = request.GET['id']
+        hostname = request.GET['hostname']
+        f = Falcon()
+        data = f.host_hostgroups(host_id)
+        return render(request, 'alarm/host_hostgroups.html', locals())
+
+
+    def host_unbind_hostgroup(self, request):
+        host_id = int(request.POST['host_id'])
+        hostgroup_id = int(request.POST['hostgroup_id'])
+        f = Falcon()
+        result = f.unbindHost2HostGroup(host_id, hostgroup_id)
+        return FalconResponse(result)
+
+
+    def host_add(self, request):
+        hostgroup_id = request.GET['hostgroup_id']
+        f = Falcon()
+        result = f.get_hostgroup_info_by_id(hostgroup_id)
+        hostgroup_info = result['hostgroup']
+        return render(request, 'alarm/host_add.html', locals())
+
+    def addhost(self, request):
+        try:
+            hostgroup_id = int(request.POST['hostgroup_id'])
+            hostnames = request.POST['hostnames']
+            #先统计该机器组现有的机器列表
+            f = Falcon()
+            result = f.get_hostgroup_info_by_id(hostgroup_id)
+            hosts = result['hosts']
+            hostname_list = [i['hostname'] for i in hosts]
+            hostname_list +=  hostnames.strip().split()
+            hostname_list = list(set(hostname_list))
+            result = f.addHost2HhostGroup(hostgroup_id, hostname_list)
+        except:
+            print traceback.format_exc()
+        return FalconResponse(result)
 
 class TemplateView(BaseResView):
 

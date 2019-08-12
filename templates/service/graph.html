@@ -134,11 +134,11 @@ function query_graph(){
                 myChart.setOption(option);
             }
             else{
-                alert(data['message'])
+                err_message_quietly(data['message'])
             }
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }

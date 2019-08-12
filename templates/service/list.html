@@ -325,16 +325,10 @@ $(document).ready(function(){
                 data: $("#myForm").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
         }
@@ -373,38 +367,33 @@ function EditViewById(fid){
                 $("#myModal").modal("show")
             }
             else{
-                alert(data['message'])
+                err_message_quietly(data['message'])
             }
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }
 
 
 function DeleteByIds(fid){
-    if (confirm('确认要删除这条记录吗？')){
+    my_confirm('确认要删除这条记录吗？', ['确定', '取消'], function () {
         $.ajax({
             type: "POST",
             url: '/service/conf/delete',
             data: {'fid':fid},
             dataType: "json",
             success: function(data){
-                if (data['code'] == 0){
-                    alert(data['message'])
-                    window.location.reload();
-                }
-                else{
-                    alert(data['message'])
-                }
+                handle_quietly(data, function(){location.reload() })
             },
             error: function() {
-               alert('服务器内部错误');
+                err_message_quietly('服务器内部错误');
             }
         });
-
-    }
+    }, function () {
+        return false;
+    });
 
 }
 

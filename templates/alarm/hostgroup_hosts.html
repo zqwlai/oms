@@ -4,7 +4,7 @@
 {% load key %}
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>机器列表</h5>
+                <h5>机器组：【{{hostgroup_info|key:'grp_name'}}】</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -48,10 +48,11 @@
 
  </div>
 <div id="toolbar"  class="form-inline">
-            <input type="text" placeholder="input name to create" class="form-control" id="grp_name" onkeydown="if(event.keyCode==13)create_hostgroup()">
-            <button type="button" onclick="create_hostgroup();" class="btn btn-default">
+            <a  href="/alarm/hostgroup/host_add?hostgroup_id={{hostgroup_id}}"
+               class="btn btn-default" style="margin-left: 10px;">
                 <span class="glyphicon glyphicon-plus"></span>
-            </button>
+                Add Host
+            </a>
         </div>
 
 
@@ -168,13 +169,9 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var id = value;
     var result = "";
-    result += "<a href='/alarm/hostgroup/host_templates?id=" + row.id + "'>策略模板</a><span> ¦ </span>";
-    result += "<a href='/alarm/hostgroup/host_hosts?id=" + row.id + "'>机器组</a><span> ¦ </span>";
-    if ({{request.user.role}} > 0 || '{{request.user.username}}' == row.create_user){
-        result += "<a href=\"javascript:edit_hostgroup("    +   row.id    +    ", '" +    row.name   +    "');\" style='text-decoration: none;'><span class='glyphicon glyphicon-edit orange'></span></a><span> ¦ </span>"
-        result += "<a href=\"javascript:delete_hostgroup("    +   row.id    +     ");\" style='text-decoration: none;'><span class='glyphicon glyphicon-trash orange'></span></a>"
-    }
-        return result;
+    result += "<a href='/alarm/hostgroup/host_templates?id=" + row.id + "&hostname=" + row.hostname +"'>策略模板</a><span> ¦ </span>";
+    result += "<a href='/alarm/hostgroup/host_hostgroups?id=" + row.id + "&hostname=" + row.hostname +"'>机器组</a>";
+    return result;
 }
 
 function ReloadTable(){
@@ -190,91 +187,6 @@ var setting = {
     },
 };
 
-function delete_hostgroup(id){
-    if (confirm('确定要删除该机器组吗？')){
-
-        $.ajax({
-            type: "POST",
-            url: '/alarm/hostgroup/delete',
-            data: {'id':id},
-            dataType: "json",
-            success: function(data){
-                if (data['code'] == 0){
-                    console.log(data['data'])
-                    alert(data['message'])
-                    location.reload()
-                }
-                else{
-                    alert(data['message'])
-                }
-            },
-            error: function() {
-               alert('服务器内部错误');
-            }
-        });
-    }
-
-}
-
-
-function edit_hostgroup(hostgroup_id, hostgorup_name){
-    var form_obj = document.getElementById('myForm');
-    form_obj.hostgroup_id.value = hostgroup_id
-    form_obj.hostgroup_name.value = hostgorup_name
-    $("#myModal").modal("show")
-}
-
-
-function update_hostgroup(){
-    $.ajax({
-        type: "POST",
-        url: '/alarm/hostgroup/update',
-        data: $("#myForm").serialize(),
-        dataType: "json",
-        success: function(data){
-            $("#myModal").modal("hide")
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-                location.reload()
-            }
-            else{
-                alert(data['message'])
-            }
-        },
-        error: function() {
-           alert('服务器内部错误');
-        }
-    });
-
-
-}
-
-function create_hostgroup(){
-    hostgroup_name = $("#grp_name").val()
-    if (hostgroup_name.length == 0){
-        return false
-    }
-    $.ajax({
-        type: "POST",
-        url: '/alarm/hostgroup/create',
-        data: {'hostgroup_name': hostgroup_name},
-        dataType: "json",
-        success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-                location.reload()
-            }
-            else{
-                alert(data['message'])
-            }
-        },
-        error: function() {
-           alert('服务器内部错误');
-        }
-    });
-}
 
 </script>
 {% endblock %}

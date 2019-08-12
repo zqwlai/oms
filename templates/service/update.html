@@ -122,16 +122,10 @@ $(document).ready(function(){
                 data: $("#editForm").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                   err_message_quietly('服务器内部错误');
                 }
             });
         }
@@ -172,16 +166,10 @@ $(document).ready(function(){
                 data: $("#editForm").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.href="/service/list";
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
         }
@@ -208,16 +196,10 @@ function DeleteByIds(id){
             data: {'id':id},
             dataType: "json",
             success: function(data){
-                if (data['code'] == 0){
-                    alert(data['message'])
-                    window.location.reload();
-                }
-                else{
-                    alert(data['message'])
-                }
+                handle_quietly(data, function(){location.reload() })
             },
             error: function() {
-               alert('服务器内部错误');
+                err_message_quietly('服务器内部错误');
             }
         });
 

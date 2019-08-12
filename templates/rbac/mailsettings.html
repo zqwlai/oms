@@ -75,15 +75,10 @@ function checkmail(){
         data: {'user':user, 'password':password, 'host':host},
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                alert(data['data']['message'])
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+            err_message_quietly('服务器内部错误');
         }
     });
 }
@@ -112,15 +107,10 @@ function update(){
         data: {'user':user, 'password':password, 'host':host},
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                alert(data['message'])
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+            err_message_quietly('服务器内部错误');
         }
     });
 }

@@ -233,17 +233,10 @@ function create_template(){
         data: {'template_name': template_name},
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert('创建成功!')
-                location.replace(location)
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }

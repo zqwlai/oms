@@ -108,16 +108,10 @@ $(document).ready(function(){
                 data: $("#form").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
         }
@@ -163,16 +157,10 @@ $(document).ready(function(){
                 data: $("#form2").serialize(),
                 dataType: "json",
                 success: function(data){
-                    if (data['code'] == 0){
-                        alert(data['message'])
-                        window.location.reload();
-                    }
-                    else{
-                        alert(data['message'])
-                    }
+                    handle_quietly(data, function(){location.reload() })
                 },
                 error: function() {
-                   alert('服务器内部错误');
+                    err_message_quietly('服务器内部错误');
                 }
             });
         }

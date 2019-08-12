@@ -195,28 +195,24 @@ var setting = {
 };
 
 function delete_hostgroup(id){
-    if (confirm('确定要删除该机器组吗？')){
-
+    my_confirm('确定要删除该机器组吗？', ['确定', '取消'], function () {
         $.ajax({
             type: "POST",
             url: '/alarm/hostgroup/delete',
             data: {'id':id},
             dataType: "json",
             success: function(data){
-                if (data['code'] == 0){
-                    console.log(data['data'])
-                    alert(data['message'])
-                    location.reload()
-                }
-                else{
-                    alert(data['message'])
-                }
+               handle_quietly(data, function(){location.reload() })
             },
             error: function() {
-               alert('服务器内部错误');
+               err_message_quietly('服务器内部错误');
             }
         });
-    }
+
+        ;
+    }, function () {
+        return false;
+    });
 
 }
 
@@ -237,17 +233,10 @@ function update_hostgroup(){
         dataType: "json",
         success: function(data){
             $("#myModal").modal("hide")
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-                location.reload()
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 
@@ -265,17 +254,10 @@ function create_hostgroup(){
         data: {'hostgroup_name': hostgroup_name},
         dataType: "json",
         success: function(data){
-            if (data['code'] == 0){
-                console.log(data['data'])
-                alert(data['message'])
-                location.reload()
-            }
-            else{
-                alert(data['message'])
-            }
+            handle_quietly(data, function(){location.reload() })
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 }
