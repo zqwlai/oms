@@ -352,8 +352,8 @@ function save_action_for_tpl(action_id){
     else{
         var callback =1
     }
-    var uic = $("#uic").val()
     var data = {
+        'uic': $("#uic").val(),
         'after_callback_mail': $("#after_callback_mail").val(),
         'after_callback_sms': $("#after_callback_sms").val(),
         'before_callback_mail': $("#before_callback_mail").val(),

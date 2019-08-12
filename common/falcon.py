@@ -440,6 +440,7 @@ class Falcon(object):
             'headers': self.falcon_header,
             'timeout': 30
         }
+        print uic
         params['data'] = json.dumps({
             'id': int(action_id),
             'uic': uic,

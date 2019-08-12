@@ -335,14 +335,20 @@ class TemplateView(BaseResView):
 
 
     def create_action(self, request):
+        data = request.POST.dict()
+        data['uic'] = ','.join(request.POST.getlist('uic[]'))
+        data.pop('uic[]')
         f = Falcon(request.user.username)
-        result = f.create_action(**request.POST.dict())
+        result = f.create_action(**data)
         return FalconResponse(result)
 
 
     def update_action(self, request):
+        data =  request.POST.dict()
+        data['uic'] = ','.join(request.POST.getlist('uic[]'))
+        data.pop('uic[]')
         f = Falcon(request.user.username)
-        result =  f.update_action(**request.POST.dict())
+        result =  f.update_action(**data)
         return FalconResponse(result)
 
 
