@@ -39,7 +39,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">def alarm(): #配置了UIC组才会发报警</div>
             <div class="panel-body">
-                报警接收组（在用户组管理中管理报警组，<a target="_blank" href="/rbac/role">快捷入口</a>）：
+                报警接收组：
                 <select name="uic" id="uic"  class="chosen-select" multiple tabindex="2" >
                     {% for i in all_uic_list %}
                         {% if i|in_list:current_uic_list %}
@@ -49,6 +49,7 @@
                         {% endif %}
                     {% endfor %}
                 </select>
+
                 <div class="form-inline mt10" role="form">
                     <div class="form-group">
                         最多报警次数：<input class="form-control" id="max_step" style="width: 100px;"
