@@ -82,20 +82,21 @@ class SenderView(BaseResView):
 
     @login_exempt
     def mail(self, request):
-        print request.POST.dict()
-        #tos = request.POST['tos']
-        #替换掉falcon里的收件人信息，使用oms里配置的用户邮箱
-        tos = self.getMails()
-        subject = request.POST['subject']
-        content = request.POST['content']
-        #获取邮件服务器信息
-        mailserver_obj = TMailServer.objects.first()
-        if not mailserver_obj:
-            return JsonResponse({'code':1, 'message':'邮箱服务器未设置', 'data':''})
-        mail_host = mailserver_obj.fhost
-        mail_user = mailserver_obj.fuser
-        mail_pass = mailserver_obj.fpassword
-        send_mail(mail_host,mail_user,mail_pass, tos, subject, content)
+        try:
+            print request.POST.dict()
+            tos = request.POST['tos']
+            subject = request.POST['subject']
+            content = request.POST['content']
+            #获取邮件服务器信息
+            mailserver_obj = TMailServer.objects.first()
+            if not mailserver_obj:
+                return JsonResponse({'code':1, 'message':'邮箱服务器未设置', 'data':''})
+            mail_host = mailserver_obj.fhost
+            mail_user = mailserver_obj.fuser
+            mail_pass = mailserver_obj.fpassword
+            send_mail(mail_host,mail_user,mail_pass, tos, subject, content)
+        except:
+            print traceback.format_exc()
         return JsonResponse({'code':0, 'data':'', 'message':'发送成功'})
 
 
