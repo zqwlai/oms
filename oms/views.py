@@ -170,10 +170,9 @@ def handler_500(request):
 
 
 def getcomponent(request):  #获取对应主机下所有的组件信息
-    hostname = request.POST['hostname']
-    Service.objects.filter(fhostname=hostname)
+    client_ip = request.POST['client_ip']
     data = []
-    for i in Service.objects.filter(fhostname=hostname):
+    for i in Service.objects.filter(fhost=client_ip):
         data.append({'fname':i.fname, 'fport':i.fport,'fadmin_user':i.fadmin_user,'fadmin_password':i.fadmin_password})
     return JsonResponse({'code':0, 'data':data, 'message':'ok'})
 
