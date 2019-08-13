@@ -25,13 +25,13 @@ class ConfView(BaseResView):
     def data(self, request):
         limit = int(request.GET['limit'])
         page = int(request.GET['page'])
-        fhostname = request.GET['fhostname']
+        fhost = request.GET['fhost']
         fname = request.GET['fname']
         fport = request.GET['fport']
         fcluster = request.GET['fcluster']
         query_dict = {}
-        if fhostname:
-            query_dict.update({'fhostname__contains': fhostname})
+        if fhost:
+            query_dict.update({'fhost__contains': fhost})
         if fname:
             query_dict.update({'fname__contains': fname})
         if fport:
@@ -46,7 +46,7 @@ class ConfView(BaseResView):
         for i in data:
             result.append({
                 'fid': i.fid, 'fcluster': i.fcluster, 'fname': i.fname, 'fport': i.fport,
-                'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname,
+                'fdesc': i.fdesc, 'fcreate_time': str(i.fcreate_time), 'fhostname':i.fhostname, 'fhost': i.fhost,
                 'fadmin_user':i.fadmin_user, 'fadmin_password':i.fadmin_password})
             print (i.fcreate_time)
         return HttpResponse(json.dumps({'total': total, 'rows': result}))
@@ -113,7 +113,7 @@ class StatusView(BaseResView):
     def data(self, request):
         limit = int(request.GET['limit'])
         page = int(request.GET['page'])
-        fhostname = request.GET['fhostname']
+        fhost = request.GET['fhost']
         fname = request.GET['fname']
         fport = request.GET['fport']
         fcluster = request.GET['fcluster']
@@ -126,7 +126,7 @@ class StatusView(BaseResView):
             oder_string = '-' + sort
         query_dict = {
             'fcluster__contains':fcluster,
-            'fhostname__contains':fhostname,
+            'fhost__contains':fhost,
             'fname__contains':fname,
             'fport__contains': fport
         }
@@ -141,6 +141,7 @@ class StatusView(BaseResView):
             result.append({
                 'fid': i.fid,
                 'fcluster': i.fcluster,
+                'fhost': i.fhost,
                 'fhostname':i.fhostname,
                 'fname': i.fname,
                 'fport': i.fport,

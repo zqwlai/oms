@@ -23,7 +23,7 @@
             <input type="text" class="form-control"  name="fcluster" placeholder="集群名">
         </div>
         <div class="input-group">
-            <input type="text" class="form-control"  name="fhostname" placeholder="主机名">
+            <input type="text" class="form-control"  name="fhost" placeholder="主机IP">
         </div>
         <div class="input-group">
             <input type="text" class="form-control" name="fname" placeholder="服务名">
@@ -216,7 +216,7 @@ function InitTable(){
                 page: (params.offset / params.limit) + 1,   //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order, //排位命令（desc，asc）
-                fhostname: form_obj.fhostname.value,
+                fhost: form_obj.fhost.value,
                 fname: form_obj.fname.value,
                 fport: form_obj.fport.value,
                 fcluster: form_obj.fcluster.value
@@ -228,8 +228,8 @@ function InitTable(){
             title: '所属集群',
             sortable: false
         },{
-            field: 'fhostname',
-            title: '主机名',
+            field: 'fhost',
+            title: '主机IP',
         }, {
             field: 'fname',
             title: '服务名',
