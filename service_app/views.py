@@ -22,6 +22,7 @@ class ConfView(BaseResView):
         service_list.remove('docker')
         return render(request, 'service/list.html', locals())
 
+
     def data(self, request):
         limit = int(request.GET['limit'])
         page = int(request.GET['page'])
@@ -83,12 +84,11 @@ class ConfView(BaseResView):
         fcluster = request.POST['fcluster'].strip()
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
-        if Service.objects.filter(fhoste=fhost, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
+        if Service.objects.filter(fhost=fhost, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhost, fname, fport)})
         Service.objects.filter(fid=fid).update(
             fname=fname, fhost=fhost, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
-
         return JsonResponse({'code': 0, 'data': '', 'message': '服务更新成功'})
 
 
