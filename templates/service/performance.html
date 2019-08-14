@@ -6,7 +6,7 @@
 
  <div class="ibox ">
             <div class="ibox-title">
-                <h5>组件性能监控【主机名：{{service_obj.fhostname}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】</h5>
+                <h5>组件性能监控【主机：{{service_obj.fhost}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】</h5>
             </div>
 <div class="ibox-content m-b-sm border-bottom">
 
@@ -93,7 +93,7 @@ function query_graph(){
 					    zoomType: 'x',
                     };
                    var title = {
-                     text: '{{service_obj.fhostname}}：'+ data[i]['metric'],
+                     text: '{{service_obj.fhost}}：'+ data[i]['metric'],
                      align: 'left',
                      margin: 0,
 					 x: 30

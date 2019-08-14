@@ -54,7 +54,7 @@ class ConfView(BaseResView):
 
 
     def add(self, request):
-        fhostname = request.POST['fhostname'].strip()
+        fhost = request.POST['fhost'].strip()
         fname = request.POST['fname'].strip()
         fport = request.POST['fport'].strip()
         fdesc = request.POST['fdesc']
@@ -62,11 +62,11 @@ class ConfView(BaseResView):
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
         # 判断服务是否已经存在
-        if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster):
+        if Service.objects.filter(fhost=fhost, fname=fname, fport=fport, fcluster=fcluster):
             return JsonResponse(
-                {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在！' % (fcluster, fhostname, fname, fport)})
+                {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在！' % (fcluster, fhost, fname, fport)})
         s = Service.objects.create(
-            fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
+            fhost=fhost, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
         return JsonResponse({'code': 0, 'data': '', 'message': '服务创建成功！'})
 
     def delete(self, request):
@@ -76,18 +76,18 @@ class ConfView(BaseResView):
 
     def update(self, request):
         fid = request.POST['fid']
-        fhostname = request.POST['fhostname'].strip()
+        fhost = request.POST['fhost'].strip()
         fname = request.POST['fname'].strip()
         fport = request.POST['fport'].strip()
         fdesc = request.POST['fdesc'].strip()
         fcluster = request.POST['fcluster'].strip()
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
-        if Service.objects.filter(fhostname=fhostname, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
+        if Service.objects.filter(fhoste=fhost, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
             return JsonResponse(
-                {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhostname, fname, fport)})
+                {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhost, fname, fport)})
         Service.objects.filter(fid=fid).update(
-            fname=fname, fhostname=fhostname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
+            fname=fname, fhost=fhost, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
 
         return JsonResponse({'code': 0, 'data': '', 'message': '服务更新成功'})
 
@@ -97,6 +97,7 @@ class ConfView(BaseResView):
         service_obj = Service.objects.get(fid=fid)
         data = {
             'fid':service_obj.fid,'fhostname':service_obj.fhostname,'fname':service_obj.fname,
+            'fhost': service_obj.fhost,
             'fport':service_obj.fport,'fcluster':service_obj.fcluster,'fdesc':service_obj.fdesc,'fcreate_time':service_obj.fcreate_time,
             'fadmin_user':service_obj.fadmin_user, 'fadmin_password':service_obj.fadmin_password
         }
@@ -171,7 +172,7 @@ class StatusView(BaseResView):
         start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
         end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
         service_obj = Service.objects.get(fid=fid)
-        endpoint = service_obj.fhostname
+        endpoint = service_obj.fhost
         f = Falcon()
         history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], [counter], CF='AVERAGE')
         # print history_data[0]
@@ -188,7 +189,7 @@ class StatusView(BaseResView):
         start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
         end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
         service_obj = Service.objects.get(fid=fid)
-        endpoint = service_obj.fhostname
+        endpoint = service_obj.fhost
         #统计该组件对应的大metric有哪些
         all_data = []
         for metric,item_list in items[service_obj.fname].items():

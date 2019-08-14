@@ -95,9 +95,9 @@
                     </div>
 
                     <div class="form-group  row">
-                        <label class="col-sm-2 col-form-label">主机名:<span class="red">&nbsp;*</span></label>
+                        <label class="col-sm-2 col-form-label">机器IP:<span class="red">&nbsp;*</span></label>
                         <div class="col-sm-10">
-                            <input type="text" name="fhostname" class="form-control"></div>
+                            <input type="text" name="fhost" class="form-control"></div>
                     </div>
 
                     <div class="form-group row">
@@ -286,7 +286,7 @@ $(document).ready(function(){
             fcluster:{
                 required: true,
             },
-            fhostname:{
+            fhost{
                 required: true,
             },
             fname: {
@@ -301,7 +301,7 @@ $(document).ready(function(){
             fcluster: {
                 required: '所属集群不能为空'
             },
-            fhostname: {
+            fhost: {
                 required: '主机名不能为空'
             },
             fname : {
@@ -347,7 +347,7 @@ function EditViewById(fid){
                 var fcluster = data['data']['fcluster']
                 var fhost = data['data']['fhost']
                 var fname = data['data']['fname']
-                var fhostname = data['data']['fhostname']
+                var fhost = data['data']['fhost']
                 var fport = data['data']['fport']
                 var fdesc = data['data']['fdesc']
                 var fadmin_user = data['data']['fadmin_user']
@@ -355,7 +355,7 @@ function EditViewById(fid){
                 var form_obj = document.getElementById('myForm');
                 form_obj.fid.value = fid
                 form_obj.fcluster.value = fcluster
-                form_obj.fhostname.value = fhostname
+                form_obj.fhost.value = fhost
                 form_obj.fname.value = fname
                 $("#fname").trigger("chosen:updated");
                 form_obj.fport.value = fport
