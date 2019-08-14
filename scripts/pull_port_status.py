@@ -30,7 +30,7 @@ def gen_tags(tags):
 
 falcon_domain = settings.falcon_domain
 
-falcon_user = settings.falcon_user
+falcon_user = 'root'
 falcon_sig = settings.falcon_sig
 
 port_listen_key = settings.port_listen_key
@@ -58,23 +58,23 @@ params = {
 
 #先统计主机列表
 
-hostname_list = []
+host_list = []
 
-for i in Service.objects.values('fhostname').distinct():
-    hostname_list.append(i['fhostname'])
+for i in Service.objects.values('fhost').distinct():
+    host_list.append(i['fhost'])
 
 
 
-for hostname in hostname_list:
+for host in host_list:
     #统计每个主机下有哪些端口号
     counters = []
-    for i in Service.objects.filter(fhostname=hostname):
+    for i in Service.objects.filter(fhost=host):
         counters.append('listen.port/port=%s,project=oms'%i.fport)
         
     payload = {
        "step": 60,
        "start_time": start_time,
-       "hostnames": [hostname],
+       "hostnames": [host],
        "end_time": end_time,
        "counters": counters,
        "consol_fun": "AVERAGE"
@@ -101,13 +101,14 @@ for hostname in hostname_list:
                 else:
                     status = 2
         #将状态更新到数据库
-        Service.objects.filter(fhostname=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
+        Service.objects.filter(fhost=endpoint, fport=port).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
 
 endpoint_list = []
 
 for i in VirtualMachine.objects.all():
-    endpoint_list.append('%s/%s'%(i.fmaster, i.fhostname))
+    #endpoint_list.append('%s/%s'%(i.fmaster, i.fhostname))
+    endpoint_list.append(i.fhostname)
 payload = {
 "step": 60,
 "start_time": start_time,
@@ -123,8 +124,8 @@ data = r.json()
 print data
 for i in data:
     endpoint = i['endpoint']
-    master = endpoint.split('/')[0]
-    hostname = endpoint.split('/')[1]
+    #master = endpoint.split('/')[0]
+    #hostname = endpoint.split('/')[1]
     values = i['Values']
     status = 0  
     if values:
@@ -134,6 +135,6 @@ for i in data:
             else:
                 status = 2
     #将状态更新到数据库
-    VirtualMachine.objects.filter(fhostname=hostname, fmaster=master).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
+    VirtualMachine.objects.filter(fhostname=endpoint).update(fstatus=status,fmodify_time=time.strftime('%Y-%m-%d %H:%M:%S'))
 
 
