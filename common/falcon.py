@@ -45,7 +45,6 @@ class Falcon(object):
             "counters": counters,
             "consol_fun": CF
         }
-        print start_time, end_time
         params['data'] = json.dumps(payload)
         r = requests.post(**params)
         return r.json()

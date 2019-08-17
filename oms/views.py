@@ -139,7 +139,6 @@ def process_register(request):
         return JsonResponse({'code':1, 'data':'', 'message':ret['error']})
 
     user = auth.authenticate(username=username, password=password)
-    print user
     auth.login(request, user)
     return JsonResponse({'code':0, 'data':'', 'message':'用户注册成功!'})
 
@@ -198,25 +197,64 @@ def addContainer(request):
 
 
 def query_cluster_status(request):    #统计每个集群的可用性
-    try:
-        range = request.POST['range']
-        end_timestamp = int(time.time())
-        start_timestamp = end_timestamp - int(range)
-        #先统计有哪些集群名
-        cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
-        print cluster_list
-        data = []
-        counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
-        endpoint = get_local_ip()
-        f = Falcon()
-        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=60, CF='AVERAGE')
-        print history_data
-        data = []
-        for i in history_data:
-            ts_value = [ [j['timestamp']*1000, j['value']] for j in i['Values']]
+    range = request.POST['range']
+    end_timestamp = int(time.time())
+    start_timestamp = end_timestamp - int(range)
+    #先统计有哪些集群名
+    cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+    counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
+    endpoint = get_local_ip()
+    f = Falcon()
+    history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=12*60*60, CF='AVERAGE')
+    data = []
+    for i in history_data:
+        ts_value = [ [j['timestamp']*1000, j['value']] for j in i['Values']]
+        tags = i['counter'].split('/')[1]
+        tag_dict = gen_tags(tags)
+        data.append({'data':ts_value, 'name':tag_dict.get('clusterName')})
+
+    return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
+
+
+def query_service_top(request):
+    range = request.POST['range']
+    topn = int(request.POST['topn'])
+    end_timestamp = int(time.time())
+    start_timestamp = end_timestamp - int(range)
+    #先统计有endporints和couters
+    endpoints = []
+    ports = []
+    for i in Service.objects.all():
+        if i.fhost:
+            endpoints.append(i.fhost)
+        if i.fport:
+            ports.append(i.fport)
+    endpoints = list(set(endpoints))
+    ports = list(set(ports))
+    counters = ['%s/port=%s,project=oms'%(settings.port_listen_key, i) for i in ports]
+    f = Falcon()
+    history_data = f.get_history_data(start_timestamp, end_timestamp, endpoints, counters, step=60, CF='AVERAGE')
+    names = []
+    values = []
+    data = {}
+    for i in history_data:
+        if i['Values']:
+            host = i['endpoint']
             tags = i['counter'].split('/')[1]
             tag_dict = gen_tags(tags)
-            data.append({'data':ts_value, 'name':tag_dict.get('clusterName')})
-    except:
-        print traceback.format_exc()
-    return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
+            port = tag_dict['port']
+            #计算故障率
+            fail_count = 0
+            for j in i['Values']:
+                if j['value'] == 0:
+                    fail_count += 1
+            fail_rate = '%.2f'%(float(fail_count)/len(i['Values'])*100)
+            fail_rate = float(fail_rate)
+            data['%s:%s'%(host, port)] = fail_rate
+        #排序
+    data = sorted(data.items(), key=lambda x: x[1], reverse=True)[:topn]
+    for k, v in data:
+        names.append(k)
+        values.append(v)
+    print values
+    return JsonResponse({'code': 0, 'data': {'names':names, 'values':values}, 'message': 'ok'})

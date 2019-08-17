@@ -122,8 +122,37 @@
 
         </div>
 
-
     </div>
+
+
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                服务故障率TopN
+                <div class="btn-group pull-right chart-config">
+                TOP：<select id="topn" onchange="change_top($(this).val())">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
+                     时间范围：<select id="range2" onchange="change_range2($(this).val())">
+                    {% for k,v in RANGE %}
+                    <option value="{{v}}">{{k}}</option>
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="flot-chart">
+
+                    <div class="flot-chart-content" id="service"></div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 <div class="row">
@@ -270,10 +299,10 @@ function query_cluster_status(range){
             };
             var yAxis = {
                 gridLineWidth: 2,
-                max: 1,
+                max: 100,
                 min: 0,
                 title: {
-                    text: ''
+                    text: '%'
                 },
 
             };
@@ -333,6 +362,95 @@ function query_cluster_status(range){
 }
 
 
+
+function qury_service_top(range, topn){
+    $.ajax({
+        type: "POST",
+        url: '/api/query_service_top',
+        data: {'range': range, 'topn': topn},
+        dataType: "json",
+        success: function(data){
+            var title = {
+                 text: ''
+            };
+            var subtitle = {
+                text: ''
+            };
+            var xAxis = {
+                categories: data['data']['names'],
+                crosshair: true
+            };
+            var yAxis = {
+                min: 0,
+                max: 100,
+                title: {
+                    text: '%'
+                },
+
+            };
+
+            var tooltip = {
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                        '故障率：'+ this.y + '<br/>'
+                }
+            }
+
+            var legend = {
+                enabled: false
+            };
+
+            var plotOptions =  {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    pointWidth: 30
+                },
+                series: {
+                    minPointLength: 3
+                }
+            };
+            var series = [{ 'data': data['data']['values'] }]
+
+            var credits = {
+                enabled:false // 禁用版权信息
+            }
+
+            var json = {};
+            json.chart = {'type':'column'}
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
+            json.credits = credits;
+            json.plotOptions = plotOptions
+
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false,
+                }
+            });
+            Highcharts.chart('service',json)
+        },
+        error: function() {
+            err_message_quietly('服务器内部错误');
+        }
+    });
+}
+
 query_cluster_status($("#range1").val())
+qury_service_top($("#range2").val(), $("#topn").val())
+
+function change_top(topn){
+    qury_service_top($("#range2").val(), topn)
+}
+
+function change_range2(range){
+    qury_service_top(range, $("#topn").val())
+}
+
 </script>
 {% endblock %}

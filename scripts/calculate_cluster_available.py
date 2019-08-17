@@ -123,14 +123,14 @@ for i in Service.objects.values('fcluster').distinct():
         cluster_available_rate = 100
 
     else:
-        cluster_available_rate = '%.2f'%(float(success_count)/total)
+        cluster_available_rate = '%.2f'%(float(success_count)/total*100)
 
 
     p.append({
         'endpoint': get_local_ip() ,
         'metric': 'cluster.available.percent',
         'timestamp': ts,
-        'step': 60,
+        'step': 12*60*60,
         'value': cluster_available_rate,
         'counterType': 'GAUGE',
         'tags': 'clusterName=%s,project=oms'%cluster_name
