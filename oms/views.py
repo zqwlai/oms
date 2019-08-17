@@ -17,6 +17,7 @@ from service_app.models import Service
 from docker.models import VirtualMachine
 from common.falcon import Falcon
 from oms import  settings
+from common.utils import  get_local_ip, gen_tags
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -194,3 +195,28 @@ def addContainer(request):
         VirtualMachine.objects.create(fhostname=fhostname, fmaster=fmaster, fip=fip)
     return JsonResponse({'code': 0, 'data': '', 'message': 'ok'})
 
+
+
+def query_cluster_status(request):    #统计每个集群的可用性
+    try:
+        range = request.POST['range']
+        end_timestamp = int(time.time())
+        start_timestamp = end_timestamp - int(range)
+        #先统计有哪些集群名
+        cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+        print cluster_list
+        data = []
+        counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
+        endpoint = get_local_ip()
+        f = Falcon()
+        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=60, CF='AVERAGE')
+        print history_data
+        data = []
+        for i in history_data:
+            ts_value = [ [j['timestamp']*1000, j['value']] for j in i['Values']]
+            tags = i['counter'].split('/')[1]
+            tag_dict = gen_tags(tags)
+            data.append({'data':ts_value, 'name':tag_dict.get('clusterName')})
+    except:
+        print traceback.format_exc()
+    return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})

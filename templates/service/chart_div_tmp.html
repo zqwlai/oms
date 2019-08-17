@@ -1,0 +1,64 @@
+{% load index %}
+{% load index_reverse %}
+{% for i in data %}
+
+    {% if i|length == 2 %}
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        {{i|index:'0'|index_reverse:metric_list}}
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="flot-chart">
+
+                            <div class="flot-chart-content" id="cluster_{{i|index:'0'}}"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        {{i|index:'1'|index_reverse:metric_list}}
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="flot-chart">
+
+                            <div class="flot-chart-content" id="cluster_{{i|index:'1'}}"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        {{i|index:'0'|index_reverse:metric_list}}
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="flot-chart">
+
+                            <div class="flot-chart-content" id="cluster_{{i|index:'0'}}"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endfor %}

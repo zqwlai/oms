@@ -9,5 +9,7 @@ from common.decorators import  login_exempt
 urlpatterns = [
     url(r'^getComponent$', login_exempt(views.getcomponent)),
     url(r'^container/list', login_exempt(views.getContainer)),
-    url(r'^container/add', login_exempt(views.addContainer))
+    url(r'^container/add', login_exempt(views.addContainer)),
+    url(r'^query_cluster_status$', login_exempt(views.query_cluster_status))
+
 ]

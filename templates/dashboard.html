@@ -4,143 +4,172 @@
 {% block content %}
 {% load key %}
 {% load utc2local %}
-        <div class="row">
-                        <div class="col-sm-4">
-                            <div class="ibox float-e-margins">
-                                <div class="ibox-title">
-                                    <span class="label label-success pull-right">Clusters</span>
-                                    <h5>集群总数</h5></div>
-                                <div class="ibox-content">
-                                    <h1 class="no-margins">
-                                        <a href="#">{{cluster_count}}</a></h1>
-                                    <small>All Cluters</small></div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="ibox float-e-margins">
-                                <div class="ibox-title">
-                                    <span class="label label-info pull-right">Hosts</span>
-                                    <h5>主机总数</h5></div>
-                                <div class="ibox-content">
-                                    <h1 class="no-margins">
-                                        <a href="#">{{host_count}}</a></h1>
-                                    <small>All hosts</small></div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="ibox float-e-margins">
-                                <div class="ibox-title">
-                                    <span class="label label-primary pull-right">Services</span>
-                                    <h5>服务总数</h5></div>
-                                <div class="ibox-content">
-                                    <h1 class="no-margins">
-                                        <a href="#">
-                                            <span id="online_users"></span>{{service_count}}</a>
-                                    </h1>
-                                    <small>Services</small></div>
-                            </div>
-                        </div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-success pull-right">Clusters</span>
+                <h5>集群总数</h5></div>
+            <div class="ibox-content">
+                <h1 class="no-margins">
+                    <a href="#">{{cluster_count}}</a></h1>
+                <small>All Cluters</small></div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-info pull-right">Hosts</span>
+                <h5>主机总数</h5></div>
+            <div class="ibox-content">
+                <h1 class="no-margins">
+                    <a href="#">{{host_count}}</a></h1>
+                <small>All hosts</small></div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-primary pull-right">Services</span>
+                <h5>服务总数</h5></div>
+            <div class="ibox-content">
+                <h1 class="no-margins">
+                    <a href="#">
+                        <span id="online_users"></span>{{service_count}}</a>
+                </h1>
+                <small>Services</small></div>
+        </div>
+    </div>
 
-                    </div>
+</div>
 
 
 
-        <div class="row">
-            <div class="col-lg-12">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>集群健康状态</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <div id="cluster_status" class="ct-perfect-fourth"></div>
-                            <table class="footable table table-stripped toggle-arrow-tiny">
-                                <thead>
-                                <tr>
-                                    <th data-toggle="true">集群名</th>
-                                    <th>状态</th>
-                                    <th>运行服务数</th>
-                                    <th>服务总数</th>
-                                    <th >操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in status_info %}
-                                    <tr>
-                                        <td>{{i|key:'fcluster'}}</td>
-                                        {% if i|key:'success_num' == 0 %}
-                                            <td><i class="fa fa-times text-danger"></i> 已停止</td>
-                                        {% else %}
-                                            <td><i class="fa fa-check text-navy"></i> 运行中</td>
-                                        {% endif %}
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1">{{i|key:'success_num'}}</a></td>
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0">{{i|key:'total_num'}}</a></td>
-                                        <td><a href="/service/status?fcluster={{i|key:'fcluster'}}">详情</a></td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <td colspan="5">
-                                        <ul class="pagination float-right"></ul>
-                                    </td>
-                                </tr>
-                                </tfoot>
-                            </table>
+<div class="row">
+    <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>集群健康状态</h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="cluster_status" class="ct-perfect-fourth"></div>
+                    <table class="footable table table-stripped toggle-arrow-tiny">
+                        <thead>
+                        <tr>
+                            <th data-toggle="true">集群名</th>
+                            <th>状态</th>
+                            <th>运行服务数</th>
+                            <th>服务总数</th>
+                            <th >操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in status_info %}
+                            <tr>
+                                <td>{{i|key:'fcluster'}}</td>
+                                {% if i|key:'success_num' == 0 %}
+                                    <td><i class="fa fa-times text-danger"></i> 已停止</td>
+                                {% else %}
+                                    <td><i class="fa fa-check text-navy"></i> 运行中</td>
+                                {% endif %}
+                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1">{{i|key:'success_num'}}</a></td>
+                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0">{{i|key:'total_num'}}</a></td>
+                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}">详情</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <ul class="pagination float-right"></ul>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
 
-                        </div>
-                    </div>
+                </div>
+            </div>
+        </div>
+
+
+</div>
+
+
+
+<div class="row">
+    <div class="col-lg-6">
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                集群健康状态
+                <div class="btn-group pull-right chart-config">
+                时间范围：<select id="range1" onchange="change_range1($(this).val())">
+                    {% for k,v in RANGE1 %}
+                    <option value="{{v}}">{{k}}</option>
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="flot-chart">
+
+                    <div class="flot-chart-content" id="cluster"></div>
                 </div>
 
+            </div>
 
         </div>
 
 
+    </div>
+</div>
 
-
-        <div class="row">
-            <div class="col-lg-12">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>最近10条告警事件</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <div id="cluster_status" class="ct-perfect-fourth"></div>
-                             <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>状态</th>
-                                    <th>主机</th>
-                                    <th>监控项</th>
-                                    <th>事件信息</th>
-                                    <th>更新时间</th>
-                                    <th>详情</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in eventcase_list %}
-                                    <tr>
-                                        <td>{{i|key:'status'}}</td>
-                                        <td>{{i|key:'endpoint'}}</td>
-                                        <td>{{i|key:'metric'}}</td>
-                                        {% if i|key:'status' == 'PROBLEM' %}
-                                            <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
-                                        {% else %}
-                                            <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
-                                        {% endif %}
-                                        <td>{{i|key:'timestamp'|utc2local}}</td>
-                                        <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-
-
-                        </div>
-                    </div>
+<div class="row">
+    <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>最近10条告警事件</h5>
                 </div>
+                <div class="ibox-content">
+                    <div id="cluster_status" class="ct-perfect-fourth"></div>
+                     <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>状态</th>
+                            <th>主机</th>
+                            <th>监控项</th>
+                            <th>事件信息</th>
+                            <th>更新时间</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in eventcase_list %}
+                            <tr>
+                                <td>{{i|key:'status'}}</td>
+                                <td>{{i|key:'endpoint'}}</td>
+                                <td>{{i|key:'metric'}}</td>
+                                {% if i|key:'status' == 'PROBLEM' %}
+                                    <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
+                                {% else %}
+                                    <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
+                                {% endif %}
+                                <td>{{i|key:'timestamp'|utc2local}}</td>
+                                <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
 
 
+                </div>
+            </div>
         </div>
+
+
+</div>
 
 
 
@@ -155,7 +184,7 @@
     chart: {
         inverted: false,
         polar: false,
-        type: 'column'
+        type: 'spline'
     },
     credits: {
         enabled:false // 禁用版权信息
@@ -167,7 +196,10 @@
 		text: null
 	},
 	xAxis: {
-		categories: {{cluster_list|safe}}
+		type: 'datetime',
+		labels: {
+			overflow: 'justify'
+		}
 	},
 	yAxis: {
 	    max:100,
@@ -182,21 +214,13 @@
 		shared: true
 	},
 	plotOptions :{
-        column: {
-            minPointLength: 3,
-            cursor:'pointer',
-            animation:false,
-            pointWidth:25,
-            stacking: 'percent',
-            events: {
-                click: function(e) {
-                //console.log(e.point.category)
-                    location.href = '/service/status?fcluster='+e.point.category;
-                    //上面是当前页跳转，如果是要跳出新页面，那就用
-                    //window.open(e.point.url);
-                    //这里的url要后面的data里给出
-                }
-            }
+        spline: {
+            lineWidth: 4,
+            states: {
+				hover: {
+					lineWidth: 5
+				}
+			},
         }
 	},
 	series: {{series|safe}}
@@ -205,12 +229,110 @@
 
 $(document).ready(function() {
 
-            $('.footable').footable();
+    $('.footable').footable();
 
-        });
-
-
+});
 
 
+
+function change_range1(range){
+    query_cluster_status(range)
+}
+
+
+function query_cluster_status(range){
+    $.ajax({
+        type: "POST",
+        url: '/api/query_cluster_status',
+        data: {'range': range},
+        dataType: "json",
+        success: function(data){
+            var title = {
+                 text: ''
+            };
+            var subtitle = {
+                text: ''
+            };
+            var xAxis = {
+                gridLineWidth: 2,
+                type: 'datetime',
+
+                dateTimeLabelFormats: {
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%m-%d',
+                    week: '%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+            };
+            var yAxis = {
+                gridLineWidth: 2,
+                max: 1,
+                min: 0,
+                title: {
+                    text: ''
+                },
+
+            };
+
+            var tooltip = {
+                formatter:function(){
+                    return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '</strong>';
+                }
+            }
+
+            var legend = {
+
+            };
+
+            var plotOptions =  {
+                spline: {
+                    lineWidth: 2,
+                    states: {
+                        hover: {
+                            lineWidth: 2
+                        }
+                    },
+                    marker: {
+                        enabled: false
+                    },
+                }
+            };
+            var series = data['data']
+
+            var credits = {
+                enabled:false // 禁用版权信息
+            }
+
+            var json = {};
+            json.chart = {'type':'spline'}
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
+            json.credits = credits;
+            json.plotOptions = plotOptions
+
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false,
+                }
+            });
+            Highcharts.chart('cluster',json)
+        },
+        error: function() {
+            err_message_quietly('服务器内部错误');
+        }
+    });
+}
+
+
+query_cluster_status($("#range1").val())
 </script>
 {% endblock %}

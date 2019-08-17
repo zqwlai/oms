@@ -2,12 +2,12 @@
 
 items = {
     'mysql':{
-        'Sent Received':['MySQL.bytes.received', 'MySQL.bytes.sent'],
+        '发送/接收':['MySQL.bytes.received', 'MySQL.bytes.sent'],
         'Com operations': ['Com.select', 'Com.insert', 'Com.update', 'Com.delete', 'Com.replace'],
         #'Innodb rows operations':['Innodb_rows_deleted', 'Innodb_rows_inserted', 'Innodb_rows_read', 'Innodb_rows_updated'],
-        'Slow Queries':['Slow.queries'],
+        '慢查询':['Slow.queries'],
         'QPS/TPS': ['MySQL.QPS', 'MySQL.TPS'],
-        'Connections':['MySQL.Connections']
+        '连接数':['MySQL.Connections']
     },
 
     'redis':{

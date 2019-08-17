@@ -63,7 +63,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'common.context_processors.mysetting',
-                'common.context_processors.menu_list'
+                'common.context_processors.menu_list',
+                'common.context_processors.const',
             ],
         },
     },

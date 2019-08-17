@@ -15,6 +15,8 @@ from oms import settings
 import traceback
 from oms.views import BaseResView
 from common.item import items
+from common.utils import serialize_number
+from django import template
 
 class ConfView(BaseResView):
     def get(self, request):
@@ -63,7 +65,7 @@ class ConfView(BaseResView):
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
         # 判断服务是否已经存在
-        if Service.objects.filter(fhost=fhost, fname=fname, fport=fport, fcluster=fcluster):
+        if Service.objects.filter(fhost=fhost, fport=fport, fcluster=fcluster):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在！' % (fcluster, fhost, fname, fport)})
         s = Service.objects.create(
@@ -84,7 +86,7 @@ class ConfView(BaseResView):
         fcluster = request.POST['fcluster'].strip()
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
-        if Service.objects.filter(fhost=fhost, fname=fname, fport=fport, fcluster=fcluster).exclude(fid=fid):
+        if Service.objects.filter(fhost=fhost, fport=fport, fcluster=fcluster).exclude(fid=fid):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhost, fname, fport)})
         Service.objects.filter(fid=fid).update(
@@ -156,56 +158,60 @@ class StatusView(BaseResView):
     def port(self, request):
         fid = request.GET['fid']
         service_obj = Service.objects.get(fid=fid)
-        end_timestamp = int(time.time())
-        start_timestamp = end_timestamp - 3600  # 默认取1个小时
-        end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_timestamp))
-        start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_timestamp))
-        counter = '%s/port=%s,project=oms'%(settings.port_listen_key, service_obj.fport)
+        counter = '%s/port=%s,project=oms'%(settings.port_listen_key,service_obj.fport)
         return render(request, 'service/port.html', locals())
 
 
     def query_graph2(self, request):
         fid = request.POST['fid']
-        start_time = request.POST['start_time']
-        end_time = request.POST['end_time']
         counter = request.POST['counter']
-        start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
-        end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
+        range = request.POST['range']
+        end_ts = int(time.time())
+        start_ts = end_ts - int(range)
         service_obj = Service.objects.get(fid=fid)
         endpoint = service_obj.fhost
         f = Falcon()
-        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], [counter], CF='AVERAGE')
+        history_data = f.get_history_data(start_ts, end_ts, [endpoint], [counter], CF='AVERAGE')
         # print history_data[0]
         hdata = []
         for i in history_data:
-            hdata.append({'name': i['endpoint'], 'data': [[j['timestamp'], j['value']] for j in i['Values']]})
+            hdata.append({'name': i['endpoint'], 'data': [[j['timestamp']*1000, j['value']] for j in i['Values']]})
         return JsonResponse({'code': 0, 'data': {'hdata': hdata}, 'message': 'ok'})
 
 
     def query_graph(self, request):
-        fid = request.POST['fid']
-        start_time = request.POST['start_time']
-        end_time = request.POST['end_time']
-        start_timestamp = int(time.mktime(time.strptime(str(start_time), '%Y-%m-%d %H:%M:%S')))
-        end_timestamp = int(time.mktime(time.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')))
-        service_obj = Service.objects.get(fid=fid)
-        endpoint = service_obj.fhost
-        #统计该组件对应的大metric有哪些
-        all_data = []
-        for metric,item_list in items[service_obj.fname].items():
+        try:
+            fid = request.POST['fid']
+            range = request.POST['range']
+            end_ts = int(time.time())
+            start_ts = end_ts - int(range)
+            service_obj = Service.objects.get(fid=fid)
+            endpoint = service_obj.fhost
+            #统计该组件对应的大metric有哪些
+            all_data = []
+            metric_list = []
+            for metric, item_list in items[service_obj.fname].items():
 
-
-            counter_list = ['%s/%sport=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
-            #print counter_list
-            f = Falcon()
-            history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counter_list, CF='AVERAGE')
-            #print history_data[0]
-            hdata = []
-            for i in history_data:
-                hdata.append({'name':i['counter'], 'data':[[j['timestamp'], j['value'] ]for j in i['Values']]})
-            all_data.append({'metric':metric, 'hdata':hdata})
-
-        return JsonResponse({'code':0, 'data':{'all_data':all_data}, 'message':'ok'})
+                metric_list.append(metric)
+                counter_list = ['%s/%sport=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
+                #print counter_list
+                f = Falcon()
+                history_data = f.get_history_data(start_ts, end_ts, [endpoint], counter_list, CF='AVERAGE')
+                #print history_data[0]
+                hdata = []
+                for i in history_data:
+                    hdata.append({'name':i['counter'], 'data':[[j['timestamp']*1000, j['value'] ]for j in i['Values']]})
+                all_data.append({'metric':metric, 'hdata':hdata})
+            print all_data
+            #同时渲染文件
+            f = open('templates/service/chart_div_tmp.html')
+            t = template.Template(f.read())
+            con = template.Context({'data': serialize_number(len(all_data), 2), 'metric_list':metric_list})
+            res = t.render(con)
+            f.close()
+        except:
+            print traceback.format_exc()
+        return JsonResponse({'code':0, 'data':{'all_data':all_data, 'html_content':res}, 'message':'ok'})
 
 
     def performance(self, request):

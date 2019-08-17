@@ -2,6 +2,10 @@
 
 from oms import settings
 from rbac.models import *
+from common.constant import constant
+
+def const(request):
+    return constant
 
 
 def mysetting(request):
