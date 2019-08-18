@@ -47,53 +47,58 @@
 
 <div class="row">
     <div class="col-lg-12">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <h5>集群健康状态</h5>
-                </div>
-                <div class="ibox-content">
-                    <div id="cluster_status" class="ct-perfect-fourth"></div>
-                    <table class="footable table table-stripped toggle-arrow-tiny">
-                        <thead>
-                        <tr>
-                            <th data-toggle="true">集群名</th>
-                            <th>状态</th>
-                            <th>运行服务数</th>
-                            <th>服务总数</th>
-                            <th >操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in status_info %}
-                            <tr>
-                                <td>{{i|key:'fcluster'}}</td>
-                                {% if i|key:'success_num' == 0 %}
-                                    <td><i class="fa fa-times text-danger"></i> 已停止</td>
-                                {% else %}
-                                    <td><i class="fa fa-check text-navy"></i> 运行中</td>
-                                {% endif %}
-                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1">{{i|key:'success_num'}}</a></td>
-                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0">{{i|key:'total_num'}}</a></td>
-                                <td><a href="/service/status?fcluster={{i|key:'fcluster'}}">详情</a></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                <ul class="pagination float-right"></ul>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
 
-                </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                集群信息
+
             </div>
+
+            <div class="panel-body">
+                <div id="cluster_status" class="ct-perfect-fourth"></div>
+                <table class="footable table table-stripped toggle-arrow-tiny">
+                    <thead>
+                    <tr>
+                        <th data-toggle="true">集群名</th>
+                        <th>状态</th>
+                        <th>运行服务数</th>
+                        <th>服务总数</th>
+                        <th >操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in status_info %}
+                        <tr>
+                            <td>{{i|key:'fcluster'}}</td>
+                            {% if i|key:'success_num' == 0 %}
+                                <td><i class="fa fa-times text-danger"></i> 已停止</td>
+                            {% else %}
+                                <td><i class="fa fa-check text-navy"></i> 运行中</td>
+                            {% endif %}
+                            <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=1">{{i|key:'success_num'}}</a></td>
+                            <td><a href="/service/status?fcluster={{i|key:'fcluster'}}&fstatus=0">{{i|key:'total_num'}}</a></td>
+                            <td><a href="/service/status?fcluster={{i|key:'fcluster'}}">详情</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <ul class="pagination float-right"></ul>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+
         </div>
+
+    </div>
 
 
 </div>
-
 
 
 <div class="row">
@@ -155,52 +160,55 @@
 
 </div>
 
+
 <div class="row">
     <div class="col-lg-12">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <h5>最近10条告警事件</h5>
-                </div>
-                <div class="ibox-content">
-                    <div id="cluster_status" class="ct-perfect-fourth"></div>
-                     <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>状态</th>
-                            <th>主机</th>
-                            <th>监控项</th>
-                            <th>事件信息</th>
-                            <th>更新时间</th>
-                            <th>详情</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in eventcase_list %}
-                            <tr>
-                                <td>{{i|key:'status'}}</td>
-                                <td>{{i|key:'endpoint'}}</td>
-                                <td>{{i|key:'metric'}}</td>
-                                {% if i|key:'status' == 'PROBLEM' %}
-                                    <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
-                                {% else %}
-                                    <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
-                                {% endif %}
-                                <td>{{i|key:'timestamp'|utc2local}}</td>
-                                <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
 
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                最近10条告警事件
 
-                </div>
             </div>
+
+            <div class="panel-body">
+                <div id="cluster_status" class="ct-perfect-fourth"></div>
+                 <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>状态</th>
+                        <th>主机</th>
+                        <th>监控项</th>
+                        <th>事件信息</th>
+                        <th>更新时间</th>
+                        <th>详情</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in eventcase_list %}
+                        <tr>
+                            <td>{{i|key:'status'}}</td>
+                            <td>{{i|key:'endpoint'}}</td>
+                            <td>{{i|key:'metric'}}</td>
+                            {% if i|key:'status' == 'PROBLEM' %}
+                                <td style="background-color:#E97659;color:#52190b">{{i|key:'note'}}</td>
+                            {% else %}
+                                <td style="background-color:#73BF00;color:#52190b">{{i|key:'note'}}</td>
+                            {% endif %}
+                            <td>{{i|key:'timestamp'|utc2local}}</td>
+                            <td><a href="/alarm/eventcase/detail?id={{i|key:'id'}}">详情</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
         </div>
+
+    </div>
 
 
 </div>
-
-
 
 {% endblock %}
 

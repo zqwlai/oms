@@ -180,37 +180,33 @@ class StatusView(BaseResView):
 
 
     def query_graph(self, request):
-        try:
-            fid = request.POST['fid']
-            range = request.POST['range']
-            end_ts = int(time.time())
-            start_ts = end_ts - int(range)
-            service_obj = Service.objects.get(fid=fid)
-            endpoint = service_obj.fhost
-            #统计该组件对应的大metric有哪些
-            all_data = []
-            metric_list = []
-            for metric, item_list in items[service_obj.fname].items():
-
-                metric_list.append(metric)
-                counter_list = ['%s/%sport=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
-                #print counter_list
-                f = Falcon()
-                history_data = f.get_history_data(start_ts, end_ts, [endpoint], counter_list, CF='AVERAGE')
-                #print history_data[0]
-                hdata = []
-                for i in history_data:
-                    hdata.append({'name':i['counter'], 'data':[[j['timestamp']*1000, j['value'] ]for j in i['Values']]})
-                all_data.append({'metric':metric, 'hdata':hdata})
-            print all_data
-            #同时渲染文件
-            f = open('templates/service/chart_div_tmp.html')
-            t = template.Template(f.read())
-            con = template.Context({'data': serialize_number(len(all_data), 2), 'metric_list':metric_list})
-            res = t.render(con)
-            f.close()
-        except:
-            print traceback.format_exc()
+        fid = request.POST['fid']
+        range = request.POST['range']
+        end_ts = int(time.time())
+        start_ts = end_ts - int(range)
+        service_obj = Service.objects.get(fid=fid)
+        endpoint = service_obj.fhost
+        #统计该组件对应的大metric有哪些
+        all_data = []
+        metric_list = []
+        f = Falcon()
+        for metric, item_list in items[service_obj.fname].items():
+            metric_list.append(metric)
+            counter_list = ['%s/%sport=%s'%(i, service_obj.fname, service_obj.fport) for i in item_list]
+            #print counter_list
+            history_data = f.get_history_data(start_ts, end_ts, [endpoint], counter_list, CF='AVERAGE')
+            #print history_data[0]
+            hdata = []
+            for i in history_data:
+                hdata.append({'name':i['counter'], 'data':[[j['timestamp']*1000, j['value'] ]for j in i['Values']]})
+            all_data.append({'metric':metric, 'hdata':hdata})
+        print all_data
+        #同时渲染文件
+        f = open('templates/service/chart_div_tmp.html')
+        t = template.Template(f.read())
+        con = template.Context({'data': serialize_number(len(all_data), 2), 'metric_list':metric_list})
+        res = t.render(con)
+        f.close()
         return JsonResponse({'code':0, 'data':{'all_data':all_data, 'html_content':res}, 'message':'ok'})
 
 

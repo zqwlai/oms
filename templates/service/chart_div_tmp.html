@@ -5,7 +5,7 @@
     {% if i|length == 2 %}
         <div class="row">
             <div class="col-lg-6">
-                <div class="panel panel-info">
+                <div class="{% if forloop.counter|divisibleby:'2' %} panel panel-info {% else %} panel panel-warning {% endif %}">
                     <div class="panel-heading">
                         {{i|index:'0'|index_reverse:metric_list}}
                     </div>
@@ -22,7 +22,7 @@
             </div>
 
             <div class="col-lg-6">
-                <div class="panel panel-warning">
+                <div class="{% if forloop.counter|divisibleby:'2' %} panel panel-info {% else %} panel panel-warning {% endif %}">
                     <div class="panel-heading">
                         {{i|index:'1'|index_reverse:metric_list}}
                     </div>
@@ -43,7 +43,7 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div class="panel panel-info">
+                <div class="{% if forloop.counter|divisibleby:'2' %} panel panel-info {% else %} panel panel-warning {% endif %}">
                     <div class="panel-heading">
                         {{i|index:'0'|index_reverse:metric_list}}
                     </div>

@@ -3,178 +3,140 @@
 {% block content %}
 
 
+<div class="row">
+    <div class="col-lg-12">
 
- <div class="ibox ">
-            <div class="ibox-title">
-                <h5>容器性能监控【容器名：{{container_obj.fhostname}}】</h5>
-            </div>
-<div class="ibox-content m-b-sm border-bottom">
-
-
-
-    <div class="panel-body" style="padding-bottom:0px;">
-    <div class="panel panel-default">
-        <div class="panel-heading">查询条件</div>
-        <div class="panel-body">
-            <form id="formSearch" class=" form-inline" style="padding-bottom: 8px">
-
-                <div class="form-group" id="date">
-                    <div class="input-daterange input-group" id="datepicker">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="start_time" class="input-sm form-control" style="width: 180px;" name="start_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{start_time}}">
-
-                        <span class="input-group-addon">to</span>
-                        <input type="text" id="end_time" class="input-sm form-control" style="width: 180px;" name="end_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{{end_time}}">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="query_graph()">
-                        查询
-                        </button>
-                    </div>
-                </div>
-
-            </form>
-        </div>
-    </div>
-</div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-content" id="main">
-
-
-
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                组件性能监控【主机：{{service_obj.fhost}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】
+                <div class="btn-group pull-right chart-config">
+                时间范围：<select id="range" onchange="change_range($(this).val())">
+                    {% for k,v in RANGE %}
+                    <option value="{{v}}">{{k}}</option>
+                    {% endfor %}
+                </select>
                 </div>
             </div>
+
+            <div class="panel-body">
+                <div id="main"></div>
+
+            </div>
+
         </div>
+
+
     </div>
-
-
 </div>
-
- </div>
 
 {% endblock %}
 
 {% block script %}
 <script>
-
-$('.chosen-select').chosen({width: "200px"});
-
-
 window.onload=function(){
   query_graph()
 }
 
 
-
-
 function query_graph(){
-    if ( {{metric_list_length}} == 0){
-        return false
-    }
     $.ajax({
         type: "POST",
         url: '/docker/status/query_graph',
-        data: {'fid':'{{fid}}', 'start_time':$("#start_time").val(), 'end_time':$("#end_time").val()},
+        data: {'fid':'{{fid}}', 'range':$("#range").val()},
         dataType: "json",
         success: function(data){
             if (data['code'] == 0){
-                $("#main").html('')
-                var data = data['data']['all_data']
-                for (i=0;i<data.length;i++){
-                    var chart = {
-                        spacingTop: 20,
-					    spacingBottom: 20,
-					    zoomType: 'x',
+                $("#main").html(data['data']['html_content'])
+                for (i in data['data']['all_data']){
+
+                    var series = data['data']['all_data'][i]['hdata']
+                    console.log(series)
+                    var title = {
+                        text: ''
                     };
-                   var title = {
-                     text: data[i]['metric'],
-                     align: 'left',
-                     margin: 0,
-					 x: 30
-                   };
-                   var subtitle = {
-                      text: null
-                   };
-                   var xAxis = {
-                      //categories: data['data']['time_list'],
+                    var subtitle = {
+                        text: ''
+                    };
+                    var xAxis = {
+                        gridLineWidth: 2,
                         type: 'datetime',
-                        labels: {
-                            formatter: function() {
 
-                                return  Highcharts.dateFormat('%H:%M', this.value*1000);
-                            }
+                        dateTimeLabelFormats: {
+                            millisecond: '%H:%M:%S.%L',
+                            second: '%H:%M:%S',
+                            minute: '%H:%M',
+                            hour: '%H:%M',
+                            day: '%m-%d',
+                            week: '%m-%d',
+                            month: '%Y-%m',
+                            year: '%Y'
                         }
-                   };
-                   var yAxis = {
-                      title: {
-                         text: ''
-                      },
-                   };
+                    };
+                    var yAxis = {
+                        gridLineWidth: 2,
+                        min: 0,
+                        title: {
+                            text: ''
+                        },
 
-                   var tooltip = {
+                    };
+
+                    var tooltip = {
                         formatter:function(){
-                            return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x*1000)+': '+ '<strong>' + this.y + '</strong>';
-                         }
-                   }
-
-                   var legend = {
-                        //layout: 'vertical',
-                        //align: 'left',
-                        verticalAlign: 'bottom',
-                        itemStyle : {
-                            'fontSize' : '16px'
+                            return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '</strong>';
                         }
-                   };
+                    }
 
-                   var plotOptions =  {
+                    var legend = {
+
+                    };
+
+                    var plotOptions =  {
                         spline: {
-                            animation:false,
+                            lineWidth: 2,
+                            states: {
+                                hover: {
+                                    lineWidth: 2
+                                }
+                            },
                             marker: {
                                 enabled: false
-                            }
+                            },
                         }
                     };
-                   var series = data[i]['hdata']
 
-                   var credits = {
+                    var credits = {
                         enabled:false // 禁用版权信息
-                   };
+                    }
 
-                   var json = {};
-                   json.chart = chart;
-                   json.title = title;
-                   json.subtitle = subtitle;
-                   json.xAxis = xAxis;
-                   json.yAxis = yAxis;
-                   json.tooltip = tooltip;
-                   json.legend = legend;
-                   json.series = series;
-                   json.credits = credits;
-                   json.plotOptions = plotOptions
-                   Highcharts.setOptions({
+                    var json = {};
+                    json.chart = {'type':'spline'}
+                    json.title = title;
+                    json.subtitle = subtitle;
+                    json.xAxis = xAxis;
+                    json.yAxis = yAxis;
+                    json.tooltip = tooltip;
+                    json.legend = legend;
+                    json.series = series;
+                    json.credits = credits;
+                    json.plotOptions = plotOptions
+
+                    Highcharts.setOptions({
                         global: {
                             useUTC: false,
                         }
                     });
+                    console.log('cluster_'+ (Number(i)+1).toString())
+                    Highcharts.chart('cluster_'+ (Number(i)+1).toString() ,json)
 
-
-                    $('<div class="chart">')
-				        .appendTo('#main')
-				        .highcharts(json)
                 }
             }
             else{
-                alert(data['message'])
+                err_message_quietly(data['message'])
             }
         },
         error: function() {
-           alert('服务器内部错误');
+           err_message_quietly('服务器内部错误');
         }
     });
 
