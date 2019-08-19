@@ -64,12 +64,13 @@ class ConfView(BaseResView):
         fcluster = request.POST['fcluster'].strip()
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
+        fweight = request.POST.get('fweight', 1)
         # 判断服务是否已经存在
         if Service.objects.filter(fhost=fhost, fport=fport, fcluster=fcluster):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在！' % (fcluster, fhost, fname, fport)})
-        s = Service.objects.create(
-            fhost=fhost, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
+        Service.objects.create(
+            fhost=fhost, fname=fname, fport=fport, fcluster=fcluster, fdesc=fdesc,fweight=fweight, fadmin_user=fadmin_user,fadmin_password=fadmin_password)
         return JsonResponse({'code': 0, 'data': '', 'message': '服务创建成功！'})
 
     def delete(self, request):
@@ -83,6 +84,7 @@ class ConfView(BaseResView):
         fname = request.POST['fname'].strip()
         fport = request.POST['fport'].strip()
         fdesc = request.POST['fdesc'].strip()
+        fweight = request.POST['fweight'].strip()
         fcluster = request.POST['fcluster'].strip()
         fadmin_user = request.POST['fadmin_user'].strip()
         fadmin_password = request.POST['fadmin_password'].strip()
@@ -90,7 +92,7 @@ class ConfView(BaseResView):
             return JsonResponse(
                 {'code': 1, 'data': '', 'message': '集群%s-主机%s-服务%s-端口%s已经存在' % (fcluster, fhost, fname, fport)})
         Service.objects.filter(fid=fid).update(
-            fname=fname, fhost=fhost, fport=fport, fcluster=fcluster, fdesc=fdesc,fadmin_user=fadmin_user,fadmin_password=fadmin_password)
+            fname=fname, fhost=fhost, fport=fport, fcluster=fcluster, fdesc=fdesc,fweight=fweight, fadmin_user=fadmin_user,fadmin_password=fadmin_password)
         return JsonResponse({'code': 0, 'data': '', 'message': '服务更新成功'})
 
 
@@ -101,6 +103,7 @@ class ConfView(BaseResView):
             'fid':service_obj.fid,'fhostname':service_obj.fhostname,'fname':service_obj.fname,
             'fhost': service_obj.fhost,
             'fport':service_obj.fport,'fcluster':service_obj.fcluster,'fdesc':service_obj.fdesc,'fcreate_time':service_obj.fcreate_time,
+            'fweight': service_obj.fweight,
             'fadmin_user':service_obj.fadmin_user, 'fadmin_password':service_obj.fadmin_password
         }
         return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})

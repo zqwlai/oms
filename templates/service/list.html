@@ -123,6 +123,12 @@
                             <input type="text" class="form-control" name="fdesc"></div>
                     </div>
 
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">权重:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="fweight" value="1"></div>
+                    </div>
+
 
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">管理用户:</label>
@@ -350,6 +356,7 @@ function EditViewById(fid){
                 var fhost = data['data']['fhost']
                 var fport = data['data']['fport']
                 var fdesc = data['data']['fdesc']
+                var fweight = data['data']['fweight']
                 var fadmin_user = data['data']['fadmin_user']
                 var fadmin_password = data['data']['fadmin_password']
                 var form_obj = document.getElementById('myForm');
@@ -360,6 +367,7 @@ function EditViewById(fid){
                 $("#fname").trigger("chosen:updated");
                 form_obj.fport.value = fport
                 form_obj.fdesc.value = fdesc
+                form_obj.fweight.value = fweight
                 form_obj.fadmin_user.value = fadmin_user
                 form_obj.fadmin_password.value = fadmin_password
                 $("#title").html("更新服务")
