@@ -93,15 +93,15 @@ def dashboard(request):
     cluster_list = json.dumps(cluster_list)
 
     #统计最近10次的告警事件
-    hostname_list = [i['fhostname'] for i in Service.objects.values('fhostname').distinct()]
+    host_list = [i['fhost'] for i in Service.objects.values('fhost').distinct()]
     for i in VirtualMachine.objects.all():
-        hostname_list.append(i.fmaster + '/' + i.fhostname)
-    hostname_list = list(set(hostname_list))
-    if not hostname_list:
+        host_list.append(i.fhostname)
+    host_list = list(set(host_list))
+    if not host_list:
         eventcase_list = []
     else:
         f = Falcon()
-        eventcase_list = f.get_eventcase(endpoints=hostname_list)
+        eventcase_list = f.get_eventcase(endpoints=host_list)
         eventcase_list = eventcase_list[0:10]
     #print eventcase_list
     return render(request, 'dashboard.html',locals())

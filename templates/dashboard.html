@@ -318,7 +318,7 @@ function query_cluster_status(range){
 
             var tooltip = {
                 formatter:function(){
-                    return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '</strong>';
+                    return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '%</strong>';
                 }
             }
 
@@ -401,7 +401,7 @@ function qury_service_top(range, topn){
             var tooltip = {
                 formatter: function () {
                     return '<b>' + this.x + '</b><br/>' +
-                        '故障率：'+ this.y + '<br/>'
+                        '故障率：'+ this.y + '%<br/>'
                 }
             }
 
