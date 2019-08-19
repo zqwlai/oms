@@ -8,7 +8,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                组件性能监控【主机：{{service_obj.fhost}} - 服务名：{{service_obj.fname}} - 端口号：{{service_obj.fport}}】
+                docker性能监控【主机名：{{container_obj.fhostname}}】
                 <div class="btn-group pull-right chart-config">
                 时间范围：<select id="range" onchange="change_range($(this).val())">
                     {% for k,v in RANGE %}
