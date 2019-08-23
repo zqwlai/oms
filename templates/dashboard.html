@@ -166,7 +166,7 @@
 
         <div class="panel panel-success">
             <div class="panel-heading">
-                最近10条告警事件
+                最近10条告警事件<a href="/alarm/eventcase">【所有告警事件】</a>
 
             </div>
 
@@ -318,7 +318,7 @@ function query_cluster_status(range){
 
             var tooltip = {
                 formatter:function(){
-                    return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '%</strong>';
+                    return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d',this.x)+': '+ '<strong>' + this.y + '%</strong>';
                 }
             }
 

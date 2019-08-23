@@ -18,6 +18,7 @@ from docker.models import VirtualMachine
 from common.falcon import Falcon
 from oms import  settings
 from common.utils import  get_local_ip, gen_tags
+from common.calc import get_cluster_available
 import traceback
 import logging
 logger_500 = logging.getLogger("500")
@@ -170,10 +171,8 @@ def handler_500(request):
 
 
 def getcomponent(request):  #获取对应主机下所有的组件信息
-    client_ip = request.POST['client_ip']
-    data = []
-    for i in Service.objects.filter(fhost=client_ip):
-        data.append({'fname':i.fname, 'fport':i.fport,'fadmin_user':i.fadmin_user,'fadmin_password':i.fadmin_password})
+    result = Service.objects.values('fhost', 'fport', 'fname', 'fadmin_user', 'fadmin_password').distinct()
+    data = [{'fhost': i['fhost'], 'fport':i['fport'], 'fname':i['fname'], 'fadmin_user':i['fadmin_user'], 'fadmin_password':i['fadmin_password'] } for i in result]
     return JsonResponse({'code':0, 'data':data, 'message':'ok'})
 
 def getContainer(request):
@@ -197,22 +196,35 @@ def addContainer(request):
 
 
 def query_cluster_status(request):    #统计每个集群的可用性
-    range = request.POST['range']
-    end_timestamp = int(time.time())
-    start_timestamp = end_timestamp - int(range)
-    #先统计有哪些集群名
-    cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
-    counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
-    endpoint = get_local_ip()
-    f = Falcon()
-    history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=12*60*60, CF='AVERAGE')
-    data = []
-    for i in history_data:
-        ts_value = [ [j['timestamp']*1000, j['value']] for j in i['Values']]
-        tags = i['counter'].split('/')[1]
-        tag_dict = gen_tags(tags)
-        data.append({'data':ts_value, 'name':tag_dict.get('clusterName')})
+    try:
+        range = request.POST['range']
+        end_timestamp = int(time.time())
+        start_timestamp = end_timestamp - int(range)
+        #先统计有哪些集群名
+        cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+        counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
+        endpoint = get_local_ip()
+        f = Falcon()
+        history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=24*60*60, CF='AVERAGE')
+        data = []
+        print history_data
+        for i in history_data:
+            tags = i['counter'].split('/')[1]
+            tag_dict = gen_tags(tags)
+            cluster = tag_dict.get('clusterName')
+            ts_value = []
+            c_date = time.strftime("%Y-%m-%d")
+            c_timestamp = int(time.mktime(time.strptime(c_date, '%Y-%m-%d'))) * 1000
+            for j in i['Values']:
+                if (j['timestamp'] - 8*60*60)*1000 == c_timestamp:
+                    ts_value.append([c_timestamp, get_cluster_available(cluster, c_date)])
+                else:
+                    ts_value.append([(j['timestamp'] - 8*60*60)*1000, j['value']])  #这里要减去8个小时，是因为rrd里存的点的时刻是8点钟
 
+            print ts_value
+            data.append({'data':ts_value, 'name':cluster})
+    except:
+        print traceback.format_exc()
     return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
 
 
