@@ -133,8 +133,14 @@
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
+
                 服务故障率TopN
                 <div class="btn-group pull-right chart-config">
+                    集群名：<select id="cluster" onchange="change_cluster($(this).val())">
+                    {% for i in cluster_list %}
+                    <option value="{{i}}">{{i}}</option>
+                    {% endfor %}
+                </select>
                 TOP：<select id="topn" onchange="change_top($(this).val())">
                     <option value="10">10</option>
                     <option value="20">20</option>

@@ -55,43 +55,11 @@ def dashboard(request):
     service_count = Service.objects.values('fhost', 'fname', 'fport').distinct().count()
     host_count = Service.objects.values('fhost').distinct().count()
 
-    #统计每个集群的健康度
-    status_info = []
-
     cluster_list = []
-    success_rate_list = []
-    series = []
-    success_num_list = []
-    unknow_num_list = []
-    fail_num_list = []
+
     for i in Service.objects.values('fcluster').distinct():
         fcluster = i['fcluster']
         cluster_list.append(fcluster)
-
-        success_num = int(Service.objects.filter(fcluster=fcluster, fstatus=1).count())
-        unknow_num = int(Service.objects.filter(fcluster=fcluster, fstatus=0).count())
-        fail_num = int(Service.objects.filter(fcluster=fcluster, fstatus=2).count())
-        total = success_num+unknow_num+fail_num
-
-
-        success_num_list.append(success_num)
-        unknow_num_list.append(unknow_num)
-        fail_num_list.append(fail_num)
-        if total == 0:
-            success_rate = 100
-        else:
-            success_rate = '%.2f'%(float(success_num)/total*100)
-            success_rate = float(success_rate)
-        success_rate_list.append(success_rate)
-        status_info.append({'fcluster':fcluster, 'success_num':success_num,'unknow_num':unknow_num,
-                            'fail_num':fail_num, 'total_num':success_num+unknow_num+fail_num})
-    series.append({'name':'正常服务数', 'data':success_num_list, 'color':'#008000'})
-    series.append({'name': '未知服务数', 'data': unknow_num_list, 'color':'#FF8C00'})
-    series.append({'name': '异常服务数', 'data': fail_num_list, 'color':'#FF0000'})
-    series = json.dumps(series)
-    status_json = json.dumps(status_info)
-    #success_rate_list = json.dumps(success_rate_list)
-    cluster_list = json.dumps(cluster_list)
 
     #统计最近10次的告警事件
     host_list = [i['fhost'] for i in Service.objects.values('fhost').distinct()]
