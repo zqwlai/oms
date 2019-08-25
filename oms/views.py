@@ -47,33 +47,8 @@ class BaseResView(View):
 
 
 def index(request):
-    return HttpResponseRedirect('/dashboard')
+    return HttpResponseRedirect('/dashboard/main')
 
-def dashboard(request):
-    #统计集群数，服务数、机器数
-    cluster_count = Service.objects.values('fcluster').distinct().count()
-    service_count = Service.objects.values('fhost', 'fname', 'fport').distinct().count()
-    host_count = Service.objects.values('fhost').distinct().count()
-
-    cluster_list = []
-
-    for i in Service.objects.values('fcluster').distinct():
-        fcluster = i['fcluster']
-        cluster_list.append(fcluster)
-
-    #统计最近10次的告警事件
-    host_list = [i['fhost'] for i in Service.objects.values('fhost').distinct()]
-    for i in VirtualMachine.objects.all():
-        host_list.append(i.fhostname)
-    host_list = list(set(host_list))
-    if not host_list:
-        eventcase_list = []
-    else:
-        f = Falcon()
-        eventcase_list = f.get_eventcase(endpoints=host_list)
-        eventcase_list = eventcase_list[0:10]
-    #print eventcase_list
-    return render(request, 'dashboard.html',locals())
 
 def process_login(request):
     username = request.POST['username']
@@ -82,7 +57,7 @@ def process_login(request):
     if user is not None and user.is_active:
         auth.login(request, user)
         # isadmin=is_admin(request.user)
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/dashboard/main')
     else:
         return render(request, 'login.html', {'err': '用户名或密码不正确！'})
 
@@ -238,3 +213,156 @@ def query_service_top(request):
         values.append(v)
     print values
     return JsonResponse({'code': 0, 'data': {'names':names, 'values':values}, 'message': 'ok'})
+
+
+class DashboardView(BaseResView):
+    def main(self, request):
+        # 统计集群数，服务数、机器数
+        cluster_count = Service.objects.values('fcluster').distinct().count()
+        service_count = Service.objects.values('fhost', 'fname', 'fport').distinct().count()
+        host_count = Service.objects.values('fhost').distinct().count()
+
+        # 统计每个集群的健康度
+        status_info = []
+
+        cluster_list = []
+        success_rate_list = []
+        series = []
+        success_num_list = []
+        unknow_num_list = []
+        fail_num_list = []
+        for i in Service.objects.values('fcluster').distinct():
+            fcluster = i['fcluster']
+            cluster_list.append(fcluster)
+
+            success_num = int(Service.objects.filter(fcluster=fcluster, fstatus=1).count())
+            unknow_num = int(Service.objects.filter(fcluster=fcluster, fstatus=0).count())
+            fail_num = int(Service.objects.filter(fcluster=fcluster, fstatus=2).count())
+            total = success_num + unknow_num + fail_num
+
+            success_num_list.append(success_num)
+            unknow_num_list.append(unknow_num)
+            fail_num_list.append(fail_num)
+            if total == 0:
+                success_rate = 100
+            else:
+                success_rate = '%.2f' % (float(success_num) / total * 100)
+                success_rate = float(success_rate)
+            success_rate_list.append(success_rate)
+            status_info.append({'fcluster': fcluster, 'success_num': success_num, 'unknow_num': unknow_num,
+                                'fail_num': fail_num, 'total_num': success_num + unknow_num + fail_num})
+
+        # 统计最近10次的告警事件
+        host_list = [i['fhost'] for i in Service.objects.values('fhost').distinct()]
+        for i in VirtualMachine.objects.all():
+            host_list.append(i.fhostname)
+        host_list = list(set(host_list))
+        if not host_list:
+            eventcase_list = []
+        else:
+            f = Falcon()
+            eventcase_list = f.get_eventcase(endpoints=host_list)
+            eventcase_list = eventcase_list[0:10]
+        # print eventcase_list
+        return render(request, 'dashboard.html', locals())
+
+    def servicetop(self, request):
+        cluster = request.GET.get('cluster', '')
+        ts = request.GET.get('ts')
+        if not ts:
+            date = time.strftime('%Y-%m-%d')
+        else:
+            x = time.localtime(float(ts))
+            date = time.strftime('%Y-%m-%d', x)
+
+        cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct()]
+        print cluster_list
+        return  render(request, 'service_top.html', locals())
+
+
+    def query_service_top(self, request):
+        try:
+            cluster = request.POST['cluster']
+            date = request.POST['date']
+            topn = int(request.POST['topn'])
+            start_ts = int(time.mktime(time.strptime(date, '%Y-%m-%d')))
+            end_ts = start_ts + 86400
+            #先插集群下有哪些ip和端口
+            endpoints = []
+            ports = []
+            for i in Service.objects.filter(fcluster=cluster):
+                if i.fhost:
+                    endpoints.append(i.fhost)
+                if i.fport:
+                    ports.append(i.fport)
+            endpoints = list(set(endpoints))
+            ports = list(set(ports))
+            counters = ['%s/port=%s,project=oms' % (settings.port_listen_key, i) for i in ports]
+            f = Falcon()
+            history_data = f.get_history_data(start_ts, end_ts, endpoints, counters, step=60, CF='AVERAGE')
+            print history_data
+            names = []
+            values = []
+            data = {}
+            for i in history_data:
+                if i['Values']:
+                    host = i['endpoint']
+                    tags = i['counter'].split('/')[1]
+                    tag_dict = gen_tags(tags)
+                    port = tag_dict['port']
+                    if not Service.objects.filter(fhost=host,fport=port,fcluster=cluster):
+                        continue
+                    # 计算故障率
+                    fail_count = 0
+                    for j in i['Values']:
+                        if j['value'] == 0:
+                            fail_count += 1
+                    fail_rate = '%.2f' % (float(fail_count) / len(i['Values']) * 100)
+                    fail_rate = float(fail_rate)
+                    data['%s:%s' % (host, port)] = fail_rate
+                # 排序
+            if data:
+                print data
+                data = sorted(data.items(), key=lambda x: x[1], reverse=True)[:topn]
+                for k, v in data:
+                    names.append(k)
+                    values.append(v)
+        except:
+            print traceback.format_exc()
+        return JsonResponse({'code': 0, 'data': {'names': names, 'values': values}, 'message': 'ok'})
+
+    def port(self, request):
+        host = request.GET.get('host', '')
+        port = request.GET.get('port', '')
+        date = request.GET.get('date')
+        if not date:
+            start_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(ts-3600))     #1小时前
+            end_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(ts))
+        else:
+
+            start_ts = int(time.mktime(time.strptime(date, '%Y-%m-%d')))
+            end_ts = start_ts + 86400
+            start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_ts))
+            end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_ts))
+        return  render(request, 'port.html', locals())
+
+
+    def query_port(self, request):
+        host = request.POST['host']
+        port = request.POST['port']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        start_ts = int(time.mktime(time.strptime(start_time,'%Y-%m-%d %H:%M:%S')))
+        end_ts = int(time.mktime(time.strptime(end_time, '%Y-%m-%d %H:%M:%S')))
+        counter = '%s/port=%s,project=oms'%(settings.port_listen_key, port)
+        f = Falcon()
+        history_data = f.get_history_data(start_ts, end_ts, [host], [counter], CF='AVERAGE')
+        hdata = []
+        for i in history_data:
+            hdata.append({'name': i['endpoint'], 'data': [[j['timestamp'] * 1000, j['value']] for j in i['Values']]})
+        return JsonResponse({'code': 0, 'data': {'hdata': hdata}, 'message': 'ok'})
+
+
+
+
+

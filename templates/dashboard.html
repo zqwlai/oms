@@ -145,7 +145,7 @@
                     <option value="10">10</option>
                     <option value="20">20</option>
                 </select>
-                     时间范围：<select id="range2" onchange="change_range2($(this).val())">
+                     日期：<select id="range2" onchange="change_range2($(this).val())">
                     {% for k,v in RANGE %}
                     <option value="{{v}}">{{k}}</option>
                     {% endfor %}
@@ -343,6 +343,14 @@ function query_cluster_status(range){
                     marker: {
                         enabled: false
                     },
+                },
+                series: {
+                    cursor: 'pointer',
+                    events: {
+                        click: function (event) {
+                            window.location.href='/dashboard/servicetop?cluster='+this.name + '&ts=' + event.point.category/1000
+                        }
+                    }
                 }
             };
             var series = data['data']

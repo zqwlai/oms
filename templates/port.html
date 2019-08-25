@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="ibox ">
+    <div class="ibox-title">
+        <h5>端口监控</h5></div>
+    <div class="ibox-content m-b-sm border-bottom">
+        <div class="panel-body" style="padding-bottom:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+            <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
+
+        <div class="input-group">
+            IP：<input type="text" id="host"  value="{{host}}">
+        </div>
+
+        <div class="input-group">
+            端口：<input type="text" id="port"  value="{{port}}">
+        </div>
+
+        <div class="input-group">
+            时间：<input type="text" id="start_time" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy:MM:dd'})", value="{{start_time}}">
+        </div>
+
+        <div class="input-group">
+            to <input type="text" id="end_time" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy:MM:dd'})", value="{{end_time}}">
+        </div>
+
+
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="query_port()">
+                    查询
+                </button>
+            </div>
+        </div>
+    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="flot-chart">
+
+                            <div class="flot-chart-content" id="main"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+$('.chosen-select').chosen({width: "100%"});
+
+query_port()
+
+function query_port(){
+    host = $("#host").val()
+    port = $("#port").val()
+    start_time = $("#start_time").val()
+    end_time = $("#end_time").val()
+    if (host.length == 0 || port.length ==0 ){
+        return false
+    }
+    query(host, port, start_time, end_time)
+}
+
+function query(host, port, start_time, end_time){
+    $.ajax({
+        type: "POST",
+        url: '/dashboard/query_port',
+        data: {'host': host, 'port': port, 'start_time':start_time, 'end_time':end_time},
+        dataType: "json",
+        success: function(data){
+            if (data['code'] == 0){
+                var series = data['data']['hdata']
+                var title = {
+                    text: ''
+                };
+                var subtitle = {
+                    text: ''
+                };
+                var xAxis = {
+                    gridLineWidth: 2,
+                    type: 'datetime',
+
+                    dateTimeLabelFormats: {
+                        millisecond: '%H:%M:%S.%L',
+                        second: '%H:%M:%S',
+                        minute: '%H:%M',
+                        hour: '%H:%M',
+                        day: '%m-%d',
+                        week: '%m-%d',
+                        month: '%Y-%m',
+                        year: '%Y'
+                    }
+                };
+                var yAxis = {
+                    gridLineWidth: 2,
+                    max: 1,
+                    min: 0,
+                    minRange: 1,
+                    title: {
+                        text: ''
+                    },
+
+                };
+
+                var tooltip = {
+                    formatter:function(){
+                        return'<strong>'+this.series.name+'</strong><br>'+ Highcharts.dateFormat('%Y-%m-%d %H:%M:%S',this.x)+': '+ '<strong>' + this.y + '</strong>';
+                    }
+                }
+
+                var legend = {
+
+                };
+
+                var plotOptions =  {
+                    spline: {
+                        lineWidth: 2,
+                        states: {
+                            hover: {
+                                lineWidth: 2
+                            }
+                        },
+                        marker: {
+                            enabled: false
+                        },
+                    }
+                };
+
+
+                var credits = {
+                    enabled:false // 禁用版权信息
+                }
+
+                var json = {};
+                json.chart = {'type':'spline'}
+                json.title = title;
+                json.subtitle = subtitle;
+                json.xAxis = xAxis;
+                json.yAxis = yAxis;
+                json.tooltip = tooltip;
+                json.legend = legend;
+                json.series = series;
+                json.credits = credits;
+                json.plotOptions = plotOptions
+
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false,
+                    }
+                });
+                Highcharts.chart('main',json)
+            }
+        },
+        error: function() {
+           err_message_quietly('服务器内部错误');
+        }
+    });
+
+}
+
+</script>
+
+{% endblock %}

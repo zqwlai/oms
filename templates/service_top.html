@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="ibox ">
+    <div class="ibox-title">
+        <h5>服务故障TOP展示</h5></div>
+    <div class="ibox-content m-b-sm border-bottom">
+        <div class="panel-body" style="padding-bottom:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+            <form id="search_form" method="get" action="" class=" form-inline" style="padding-bottom: 8px">
+
+        <div class="input-group">
+            <select name="cluster" id="cluster" data-placeholder="集群名" class="chosen-select">
+                集群名：{% for i in cluster_list %}
+                    {% if i == cluster %}
+                        <option value="{{i}}" selected>{{i}}</option>
+                    {% else %}
+                        <option value="{{i}}" >{{i}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group">
+            日期：<input type="text" id="date" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy:MM:dd'})", value="{{date}}">
+        </div>
+
+        <div class="input-group">
+           TOP：<select id="topn">
+               <option value="10">10</option>
+               <option value="20">20</option>
+           </select>
+        </div>
+
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id='search_btn' type="button" class="btn btn-sm btn-primary" onclick="query_service()">
+                    查询
+                </button>
+            </div>
+        </div>
+    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="flot-chart">
+
+                            <div class="flot-chart-content" id="service"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+$('.chosen-select').chosen({width: "100%"});
+
+query_service()
+
+function query_service(){
+    cluster = $("#cluster").val()
+    date = $("#date").val()
+    topn = $("#topn").val()
+    if (cluster.length ==0){
+        return false
+    }
+    query(cluster, date, topn)
+}
+
+function query(cluster, date, topn){
+    $.ajax({
+        type: "POST",
+        url: '/dashboard/query_service_top',
+        data: {'cluster': cluster, 'date': date, 'topn':topn},
+        dataType: "json",
+        success: function(data){
+            var title = {
+                 text: ''
+            };
+            var subtitle = {
+                text: ''
+            };
+            var xAxis = {
+                categories: data['data']['names'],
+                crosshair: true
+            };
+            var yAxis = {
+                min: 0,
+                max: 100,
+                title: {
+                    text: '%'
+                },
+
+            };
+
+            var tooltip = {
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                        '故障率：'+ this.y + '%<br/>'
+                }
+            }
+
+            var legend = {
+                enabled: false
+            };
+
+            var plotOptions =  {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    pointWidth: 30
+                },
+                series: {
+                    minPointLength: 3,
+                    cursor: 'pointer',
+                    events: {
+                        click: function (event) {
+                            console.log(event)
+                            var host_port = event.point.category
+                            var host = host_port.split(':')[0]
+                            var port = host_port.split(':')[1]
+                            window.location.href='/dashboard/port?host='+ host + '&port=' + port + '&date=' +$("#date").val()
+                        }
+                    }
+                }
+            };
+            var series = [{ 'data': data['data']['values'] }]
+
+            var credits = {
+                enabled:false // 禁用版权信息
+            }
+
+            var json = {};
+            json.chart = {'type':'column'}
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
+            json.credits = credits;
+            json.plotOptions = plotOptions
+
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false,
+                }
+            });
+            Highcharts.chart('service',json)
+        },
+        error: function() {
+            err_message_quietly('服务器内部错误');
+        }
+    });
+
+}
+
+</script>
+
+{% endblock %}

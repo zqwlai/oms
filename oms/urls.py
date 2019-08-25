@@ -32,7 +32,6 @@ urlpatterns = [
     url(r'^register$', login_exempt(TemplateView.as_view(template_name="register.html"))),
     url(r'^process_login$', login_exempt(views.process_login)),
     url(r'^process_register$', login_exempt(views.process_register)),
-    url(r'^dashboard$', views.dashboard),
     url(r'^logout$', login_exempt(views.logout)),
     url(r'^user/', include('user_app.urls')),
     url(r'^service/', include('service_app.urls')),
@@ -43,7 +42,7 @@ urlpatterns = [
     url(r'^site_static/(?P<path>.*)$',static_serve,{'document_root':settings.STATIC_ROOT,}),
 
 ]
-
+urlpatterns += views.DashboardView.urls()
 
 handler404 = views.handler_404
 handler500  = views.handler_500
