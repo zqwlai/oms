@@ -51,6 +51,9 @@ function query_graph(){
 
                     var series = data['data']['all_data'][i]['hdata']
                     console.log(series)
+                    var exporting = {
+                        enabled: false
+                    }
                     var title = {
                         text: ''
                     };
@@ -112,6 +115,7 @@ function query_graph(){
 
                     var json = {};
                     json.chart = {'type':'spline'}
+                    json.exporting = exporting
                     json.title = title;
                     json.subtitle = subtitle;
                     json.xAxis = xAxis;

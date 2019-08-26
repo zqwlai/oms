@@ -290,11 +290,18 @@ function query_cluster_status(range){
         data: {'range': range},
         dataType: "json",
         success: function(data){
+
+            var exporting = {
+                enabled: false
+            };
             var title = {
                  text: ''
             };
             var subtitle = {
                 text: ''
+            };
+            var lang = {
+
             };
             var xAxis = {
                 gridLineWidth: 2,
@@ -360,9 +367,11 @@ function query_cluster_status(range){
             }
 
             var json = {};
+            json.exporting = exporting
             json.chart = {'type':'spline'}
             json.title = title;
             json.subtitle = subtitle;
+            json.lang = lang;
             json.xAxis = xAxis;
             json.yAxis = yAxis;
             json.tooltip = tooltip;
@@ -393,6 +402,9 @@ function qury_service_top(range, topn){
         data: {'range': range, 'topn': topn},
         dataType: "json",
         success: function(data){
+            var exporting = {
+                enabled: false
+            };
             var title = {
                  text: ''
             };
@@ -440,6 +452,7 @@ function qury_service_top(range, topn){
             }
 
             var json = {};
+            json.exporting = exporting;
             json.chart = {'type':'column'}
             json.title = title;
             json.subtitle = subtitle;

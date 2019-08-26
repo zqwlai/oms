@@ -14,7 +14,7 @@
 
         <div class="input-group">
             <select name="cluster" id="cluster" data-placeholder="集群名" class="chosen-select">
-                集群名：{% for i in cluster_list %}
+                {% for i in cluster_list %}
                     {% if i == cluster %}
                         <option value="{{i}}" selected>{{i}}</option>
                     {% else %}
@@ -24,7 +24,7 @@
             </select>
         </div>
         <div class="input-group">
-            日期：<input type="text" id="date" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy:MM:dd'})", value="{{date}}">
+            日期：<input type="text" style="height:30px" id="date" class="Wdate" onclick="WdatePicker({})" value="{{date}}">
         </div>
 
         <div class="input-group">
@@ -52,7 +52,9 @@
                     <div class="ibox-content">
                         <div class="flot-chart">
 
-                            <div class="flot-chart-content" id="service"></div>
+
+
+                            <div id="service" class="chart"></div>
                         </div>
                     </div>
                 </div>
@@ -88,9 +90,32 @@ function query(cluster, date, topn){
         data: {'cluster': cluster, 'date': date, 'topn':topn},
         dataType: "json",
         success: function(data){
-            var title = {
-                 text: ''
+
+            var lang = {
+                printChart: '打印图表',
+                downloadJPEG: '下载 JPEG 文件',
+                downloadPDF: '下载 PDF   文件',
+                downloadPNG: '下载 PNG  文件',
+                downloadSVG: '下载 SVG  文件',
+                downloadCSV: '下载 CSV  文件',
+                downloadXLS: '下载 XLS   文件',
+                viewData: '查看数据表格'
             };
+            var exporting = {
+                buttons: {
+                    contextButton: {
+                        menuItems: [
+                            Highcharts.getOptions().exporting.buttons.contextButton.menuItems[3],
+                            Highcharts.getOptions().exporting.buttons.contextButton.menuItems[4],
+                            Highcharts.getOptions().exporting.buttons.contextButton.menuItems[8],
+                            Highcharts.getOptions().exporting.buttons.contextButton.menuItems[9]
+                        ]
+                    }
+                }
+            };
+            var title = {
+                 text: '服务故障TOP'+ topn + '【' + cluster + '】'
+             };
             var subtitle = {
                 text: ''
             };
@@ -145,6 +170,8 @@ function query(cluster, date, topn){
             }
 
             var json = {};
+            json.exporting = exporting
+            json.lang = lang
             json.chart = {'type':'column'}
             json.title = title;
             json.subtitle = subtitle;
@@ -161,7 +188,7 @@ function query(cluster, date, topn){
                     useUTC: false,
                 }
             });
-            Highcharts.chart('service',json)
+            Highcharts.chart('service',json, function() {})
         },
         error: function() {
             err_message_quietly('服务器内部错误');

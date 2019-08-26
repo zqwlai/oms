@@ -59,6 +59,9 @@ function query_graph(range){
         success: function(data){
             if (data['code'] == 0){
                 var series = data['data']['hdata']
+                var exporting = {
+                    enabled: false
+                }
                 var title = {
                     text: ''
                 };
@@ -121,6 +124,7 @@ function query_graph(range){
                 }
 
                 var json = {};
+                json.exporting = exporting
                 json.chart = {'type':'spline'}
                 json.title = title;
                 json.subtitle = subtitle;

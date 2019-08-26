@@ -57,8 +57,11 @@ function query_graph(range){
         success: function(data){
             if (data['code'] == 0){
                 var series = data['data']['hdata']
+                var exporting = {
+                    enabled: false
+                };
                 var title = {
-                    text: ''
+                    text: '端口状态'
                 };
                 var subtitle = {
                     text: ''
@@ -119,6 +122,7 @@ function query_graph(range){
                 }
 
                 var json = {};
+                json.exporting = exporting
                 json.chart = {'type':'spline'}
                 json.title = title;
                 json.subtitle = subtitle;

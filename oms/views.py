@@ -336,8 +336,9 @@ class DashboardView(BaseResView):
         port = request.GET.get('port', '')
         date = request.GET.get('date')
         if not date:
-            start_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(ts-3600))     #1小时前
-            end_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(ts))
+            c_ts = int(time.time())
+            start_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(c_ts-3600))     #1小时前
+            end_time = time.strftime('%Y-%m-%d %H:%M:%S',  time.localtime(c_ts))
         else:
 
             start_ts = int(time.mktime(time.strptime(date, '%Y-%m-%d')))
