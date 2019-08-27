@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load key %}
+<div class="row">
+    <div class="col-lg-12">
+    <span class="green">
+        <span class="glyphicon glyphicon-tag"></span>
+        MC数据库配置
+    </span>
+
+    <input type="hidden" id="group_id" value="2">
+
+    <div>
+        <div class="mt20 mb20">
+            <div class="pull-left">
+                <textarea class="form-control" rows="17" id="config" placeholder="ip|端口|用户名|密码|库名  多个数据库配置以换行符分隔"
+                          style="width: 600px;">{{content}}</textarea>
+            </div>
+            <div class="pull-left" style="padding-left: 20px;" id="message">
+
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+
+
+        <button class="btn btn-success btn-sm" type="button" onclick="update()">更新</button>
+        <button class="btn btn-default" onclick="history.go(-1);">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+            Back
+        </button>
+    </div>
+
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+function update(){
+    content = $("#config").val()
+    if (content.length == 0){
+        err_message_quietly('配置不能为空')
+        return false
+    }
+    $.ajax({
+        type: "POST",
+        url: '/rbac/mcconfig/update',
+        data: {'content':content},
+        dataType: "json",
+        success: function(data){
+            handle_quietly(data, function(){location.reload() })
+        },
+        error: function() {
+           err_message_quietly('服务器内部错误');
+        }
+    });
+}
+</script>
+{% endblock %}

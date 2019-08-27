@@ -17,6 +17,7 @@ import traceback
 from oms.views import BaseResView
 from alarm.models import TMailServer
 from common.alarm import check_mailserver
+from alarm.models import TConfig
 
 class MailSettingsView(BaseResView):
     def get(self, request):
@@ -42,6 +43,24 @@ class MailSettingsView(BaseResView):
         else:
             TMailServer.objects.create(fuser=user, fpassword=password, fhost=host)
         return     JsonResponse( {'code':0, 'data':'', 'message':'更新成功'})
+
+
+class McConfigView(BaseResView):
+    def get(self, request):
+        if TConfig.objects.filter(fkey='mc'):
+            content = TConfig.objects.get(fkey='mc').fvalue
+        else:
+            content = ''
+        return render(request, 'rbac/mcconfig.html', locals())
+
+    def update(self, request):
+        content = request.POST['content']
+        if TConfig.objects.filter(fkey='mc'):
+            TConfig.objects.filter(fkey='mc').update(fvalue=content)
+        else:
+            TConfig.objects.create(fkey='mc', fvalue=content)
+        return JsonResponse( {'code':0, 'data':'', 'message':'更新成功'})
+
 
 class MenuView(BaseResView):
     def get(self, request):
