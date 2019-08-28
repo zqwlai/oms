@@ -146,7 +146,8 @@ function InitTable(){
 function actionFormatter(value, row, index){
     var result = "";
     result += "<a href=/docker/status/process/?fid=" + row.fid + " title='详情'>进程监控</a> | ";
-    result += "<a href=/docker/status/performance/?fid=" + row.fid + " title='详情'>性能监控</a>";
+    result += "<a href=/docker/status/performance/?fid=" + row.fid + " title='详情'>性能监控</a> |";
+    result += "<a href=\"javascript:delete_container("    +   row.fid    +     ");\"> 删除</a>"
     return result
 }
 
@@ -171,7 +172,27 @@ function ReloadTable(){
     $('#table').bootstrapTable("refresh");
 }
 
+function delete_container(id){
+    my_confirm('确定要删除该容器吗？', ['确定', '取消'], function () {
+        $.ajax({
+            type: "POST",
+            url: '/docker/status/delete',
+            data: {'id':id},
+            dataType: "json",
+            success: function(data){
+               handle_quietly(data, function(){location.reload() })
+            },
+            error: function() {
+               err_message_quietly('服务器内部错误');
+            }
+        });
 
+        ;
+    }, function () {
+        return false;
+    });
+
+}
 
 
 </script>

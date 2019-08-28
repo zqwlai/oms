@@ -137,4 +137,8 @@ class StatusView(BaseResView):
 
         return render(request, 'docker/performance.html', locals())
 
+    def delete(self, request):
+        id = request.POST['id']
+        VirtualMachine.objects.filter(fid=id).delete()
+        return JsonResponse({'code': 0, 'data':'', 'message':'ok'})
 
