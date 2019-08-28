@@ -56,7 +56,7 @@
             </div>
 
             <div class="panel-body">
-                <div id="cluster_status" class="ct-perfect-fourth"></div>
+                <div id="cluster_info" class="ct-perfect-fourth"></div>
                 <table class="footable table table-stripped toggle-arrow-tiny">
                     <thead>
                     <tr>
@@ -109,6 +109,11 @@
             <div class="panel-heading">
                 集群健康状态
                 <div class="btn-group pull-right chart-config">
+                    集群名：<select id="cluster" onchange="change_cluster($(this).val())">
+                    {% for i in cluster_list %}
+                    <option value="{{i}}">{{i}}</option>
+                    {% endfor %}
+                </select>
                 时间范围：<select id="range1" onchange="change_range1($(this).val())">
                     {% for k,v in RANGE1 %}
                     <option value="{{v}}">{{k}}</option>
@@ -120,7 +125,7 @@
             <div class="panel-body">
                 <div class="flot-chart">
 
-                    <div class="flot-chart-content" id="cluster"></div>
+                    <div class="flot-chart-content" id="cluster_status"></div>
                 </div>
 
             </div>
@@ -136,11 +141,7 @@
 
                 服务故障率TopN
                 <div class="btn-group pull-right chart-config">
-                    集群名：<select id="cluster" onchange="change_cluster($(this).val())">
-                    {% for i in cluster_list %}
-                    <option value="{{i}}">{{i}}</option>
-                    {% endfor %}
-                </select>
+
                 TOP：<select id="topn" onchange="change_top($(this).val())">
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -177,7 +178,7 @@
             </div>
 
             <div class="panel-body">
-                <div id="cluster_status" class="ct-perfect-fourth"></div>
+                <div  class="ct-perfect-fourth"></div>
                  <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -222,53 +223,7 @@
 {% block  script %}
 
 <script>
-    /*
-    var chart = Highcharts.chart('cluster_status', {
-    chart: {
-        inverted: false,
-        polar: false,
-        type: 'spline'
-    },
-    credits: {
-        enabled:false // 禁用版权信息
-    },
-	title: {
-		text: '各集群的服务状态'
-	},
-	subtitle: {
-		text: null
-	},
-	xAxis: {
-		type: 'datetime',
-		labels: {
-			overflow: 'justify'
-		}
-	},
-	yAxis: {
-	    max:100,
-	    title: {
-			text: null
-		}
-	},
-	tooltip: {
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>' +
-		'({point.percentage:.0f}%)<br/>',
-		//:.0f 表示保留 0 位小数，详见教程：https://www.hcharts.cn/docs/basic-labels-string-formatting
-		shared: true
-	},
-	plotOptions :{
-        spline: {
-            lineWidth: 4,
-            states: {
-				hover: {
-					lineWidth: 5
-				}
-			},
-        }
-	},
-	series: {{series|safe}}
-});
-*/
+
 
 $(document).ready(function() {
 
@@ -279,15 +234,20 @@ $(document).ready(function() {
 
 
 function change_range1(range){
-    query_cluster_status(range)
+    query_cluster_status($("#cluster").val(), range)
+}
+function change_cluster(cluster){
+    query_cluster_status(cluster, $("#range1").val())
 }
 
-
-function query_cluster_status(range){
+function query_cluster_status(cluster, range){
+    if (cluster.length == 0){
+        return false
+    }
     $.ajax({
         type: "POST",
         url: '/api/query_cluster_status',
-        data: {'range': range},
+        data: {'cluster':cluster,'range': range},
         dataType: "json",
         success: function(data){
 
@@ -385,7 +345,7 @@ function query_cluster_status(range){
                     useUTC: false,
                 }
             });
-            Highcharts.chart('cluster',json)
+            Highcharts.chart('cluster_status',json)
         },
         error: function() {
             err_message_quietly('服务器内部错误');
@@ -477,7 +437,7 @@ function qury_service_top(range, topn){
     });
 }
 
-query_cluster_status($("#range1").val())
+query_cluster_status($("#cluster").val(), $("#range1").val())
 qury_service_top($("#range2").val(), $("#topn").val())
 
 function change_top(topn){

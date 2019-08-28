@@ -140,17 +140,18 @@ def addContainer(request):
 
 def query_cluster_status(request):    #统计每个集群的可用性
     try:
+        cluster = request.POST['cluster']
         range = request.POST['range']
         end_timestamp = int(time.time())
         start_timestamp = end_timestamp - int(range)
         #先统计有哪些集群名
-        cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+        #cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+        cluster_list = [cluster]
         counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
         endpoint = get_local_ip()
         f = Falcon()
         history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=24*60*60, CF='AVERAGE')
         data = []
-        print history_data
         for i in history_data:
             tags = i['counter'].split('/')[1]
             tag_dict = gen_tags(tags)
@@ -164,7 +165,6 @@ def query_cluster_status(request):    #统计每个集群的可用性
                 else:
                     ts_value.append([(j['timestamp'] - 8*60*60)*1000, j['value']])  #这里要减去8个小时，是因为rrd里存的点的时刻是8点钟
 
-            print ts_value
             data.append({'data':ts_value, 'name':cluster})
     except:
         print traceback.format_exc()
