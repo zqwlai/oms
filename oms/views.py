@@ -153,19 +153,20 @@ def query_cluster_status(request):    #统计每个集群的可用性
         history_data = f.get_history_data(start_timestamp, end_timestamp, [endpoint], counters, step=24*60*60, CF='AVERAGE')
         data = []
         for i in history_data:
-            tags = i['counter'].split('/')[1]
-            tag_dict = gen_tags(tags)
-            cluster = tag_dict.get('clusterName')
-            ts_value = []
-            c_date = time.strftime("%Y-%m-%d")
-            c_timestamp = int(time.mktime(time.strptime(c_date, '%Y-%m-%d'))) * 1000
-            for j in i['Values']:
-                if (j['timestamp'] - 8*60*60)*1000 == c_timestamp:
-                    ts_value.append([c_timestamp, get_cluster_available(cluster, c_date)])
-                else:
-                    ts_value.append([(j['timestamp'] - 8*60*60)*1000, j['value']])  #这里要减去8个小时，是因为rrd里存的点的时刻是8点钟
+            if i['counter']:
+                tags = i['counter'].split('/')[1]
+                tag_dict = gen_tags(tags)
+                cluster = tag_dict.get('clusterName')
+                ts_value = []
+                c_date = time.strftime("%Y-%m-%d")
+                c_timestamp = int(time.mktime(time.strptime(c_date, '%Y-%m-%d'))) * 1000
+                for j in i['Values']:
+                    if (j['timestamp'] - 8*60*60)*1000 == c_timestamp:
+                        ts_value.append([c_timestamp, get_cluster_available(cluster, c_date)])
+                    else:
+                        ts_value.append([(j['timestamp'] - 8*60*60)*1000, j['value']])  #这里要减去8个小时，是因为rrd里存的点的时刻是8点钟
 
-            data.append({'data':ts_value, 'name':cluster})
+                data.append({'data':ts_value, 'name':cluster})
     except:
         print traceback.format_exc()
     return JsonResponse({'code': 0, 'data': data, 'message': 'ok'})
