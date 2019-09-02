@@ -241,7 +241,7 @@ function change_cluster(cluster){
 }
 
 function query_cluster_status(cluster, range){
-    if (cluster.length == 0 || cluster == null){
+    if ( cluster == null || cluster.length == 0){
         return false
     }
     $.ajax({
