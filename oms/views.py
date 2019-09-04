@@ -145,8 +145,10 @@ def query_cluster_status(request):    #统计每个集群的可用性
         end_timestamp = int(time.time())
         start_timestamp = end_timestamp - int(range)
         #先统计有哪些集群名
-        #cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
-        cluster_list = [cluster]
+        if  cluster == 'all':
+            cluster_list = [i['fcluster'] for i in Service.objects.values('fcluster').distinct() if i['fcluster']]
+        else:
+            cluster_list = [cluster]
         counters = ['cluster.available.percent/clusterName=%s,project=oms'%i for i in cluster_list]
         endpoint = get_local_ip()
         f = Falcon()
@@ -232,7 +234,7 @@ class DashboardView(BaseResView):
         success_num_list = []
         unknow_num_list = []
         fail_num_list = []
-        for i in Service.objects.values('fcluster').distinct():
+        for i in Service.objects.values('fcluster').distinct().order_by('fcluster'):
             fcluster = i['fcluster']
             cluster_list.append(fcluster)
 
