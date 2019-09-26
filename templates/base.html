@@ -168,9 +168,7 @@
                     <div class="col-sm-10">
                         <h2></h2>
                         <ol class="breadcrumb">
-                            <li>
-                                <a href="">仪表盘</a>
-                            </li>
+
                             {% for menu in menu_list %}
                                 {% if menu|key:'fresource_url'|contains:request.path %}
                                     <li><a>{{menu|key:'fname'}}</a></li>
